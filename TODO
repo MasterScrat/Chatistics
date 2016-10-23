@@ -1,11 +1,11 @@
-- parse Facebook Messenger data
+- parse Facebook Messenger data                                         OK
 - parse Google Chat data (https://github.com/coandco/gtalk_export/)     WONTDO                                              
 - handle alias
 - proper arguments handling
     - stopwords lists
     - senderName/conversationWithName filters
     - dpi/number of words/mask file/max word size
-- fix wrong conversationWithName
+- fix Hangouts wrong conversationWithName                               CURRENT
 - make top-level script that parses and generates images?
 - remove links (http://stackoverflow.com/a/11332580/318557)             OK
 - lowercase everything                                                  OK
@@ -20,3 +20,4 @@
     - directory structure
 - figure out OWN_NAME automatically                                     WONTDO
 - handle group chat                                                     WONTDO
+- remove references to "IDs"

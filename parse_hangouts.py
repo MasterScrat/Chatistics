@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-import matplotlib.pyplot as plt
-from ggplot import *
 import json
-import pprint
-import operator
 import pandas as pd
 import numpy as np
 import datetime
@@ -24,6 +20,12 @@ def idToName(id):
 	else:
 		return None
 
+def saveNameForId(name, id):
+	if not id in names:
+		names[id] = name
+	elif names[id] != name:
+		print names[id], 'assumed to be', name
+
 data = []
 conversationId = ""
 conversationWithId = ""
@@ -40,7 +42,7 @@ for state in archive["conversation_state"]:
 	if "conversation" in state["conversation_state"]:
 		for participant in state["conversation_state"]["conversation"]["participant_data"]:
 			if "fallback_name" in participant:
-				names[participant["id"]["gaia_id"]] = participant["fallback_name"]
+				saveNameForId(participant["fallback_name"], participant["id"]["gaia_id"])
 
 	for event in state["conversation_state"]["event"]:
 		timestamp = int(event["timestamp"])
@@ -54,24 +56,33 @@ for state in archive["conversation_state"]:
 			conversationId = event["conversation_id"]["id"]
 			senderId = event["sender_id"]["chat_id"]
 
-			# cant rely on current_participant! need to map conversation_id to interlocutor manually
-			for participant in state["conversation_state"]["conversation"]["current_participant"]:
-				if participant["gaia_id"] != OWN_ID:
-					conversationWithId = participant["gaia_id"]
+			participants = state["conversation_state"]["conversation"]["current_participant"]
 
-			if idToName(senderId)!=None or idToName(conversationWithId)!=None:
-				row = [datetime.date.fromtimestamp(timestamp/1000000).toordinal(), conversationWithId, idToName(conversationWithId), senderId, idToName(senderId), text]
-				data += [row]
-			else:
-				print "No senderName for either senderId", senderId, conversationWithId
+			if len(participants) == 2:
+				for participant in participants:
+					if participant["gaia_id"] != OWN_ID:
+						conversationWithId = participant["gaia_id"]
 
-			if len(data) >= MAX_EXPORTED_MSGS:
-				break
+				if idToName(senderId)!=None or idToName(conversationWithId)!=None:
+					if senderId != OWN_ID and senderId != conversationWithId:
+						# unexpected sender
+						print idToName(senderId), 'in conversation with', idToName(conversationWithId), '!'
+
+					# saves the message
+					timestamp = datetime.date.fromtimestamp(timestamp/1000000).toordinal()
+					data += [[timestamp, conversationWithId, idToName(conversationWithId), senderId, idToName(senderId), text]]
+
+				else:
+					# unknown sender
+					print "No senderName for either senderId", senderId, conversationWithId
+
+				if len(data) >= MAX_EXPORTED_MSGS:
+					break
 
 print len(data), 'messages parsed.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, 200000), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
 df = pd.DataFrame(data)
 
 print 'Saving to pickle file...'

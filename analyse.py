@@ -10,7 +10,7 @@ import sys
 filterConversation = None
 plotDensity = False
 
-TOP_N = 10;
+TOP_N = 20;
 
 # avoids unicode errors
 reload(sys)
@@ -35,8 +35,8 @@ merged = merged[['timestamp', 'conversationWithName', 'senderName']]
 if filterConversation != None:
     merged = merged[merged['conversationWithName'] == filterConversation]
 
-merged = merged[merged['senderName'] != 'Florian Laurent']
-merged = merged[merged['senderName'] != 'florian.laurent@gmail.com']
+#merged = merged[merged['senderName'] != 'Florian Laurent']
+#merged = merged[merged['senderName'] != 'florian.laurent@gmail.com']
 
 if plotDensity == True:
     plot = ggplot(aes(x='timestamp', color='conversationWithName', fill='conversationWithName'), data=merged) \
