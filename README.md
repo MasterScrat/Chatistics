@@ -1,6 +1,6 @@
 # ChatShape
 
-**Python scripts to generate shaped word clouds from chat logs.** Currently supports Google Hangouts and Facebook Messenger log formats.
+**Python scripts to generate histograms and shaped word clouds from chat logs.** Currently supports Google Hangouts and Facebook Messenger log formats.
 
 <p align="center">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/renders/Florian_Laurent_10001_1000.png" width="600" height="376">
@@ -8,13 +8,15 @@
 
 ## How to use it?
 
+There are no convenient API to access chat logs for these services. Instead, you will download a "dump" of all your conversations and process them to the proper format.
+
 ### 1. Download your chat logs
 
 #### Google Hangouts
 
 Use Google Takeout: https://accounts.google.com/ServiceLogin?service=backup
 
-Ask for an archive containing your chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of ChatShape.
+Request an archive containing your chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of ChatShape.
 
 *Google switched from "Google Talk" to "Google Hangouts" mid-2013. You will only get your Hangouts logs.*
 
@@ -27,14 +29,51 @@ Ask for an archive containing your chat logs. Extract the file called `Hangouts.
 
 ### 2. Parse the logs into ChatShape format
 
-* Google Hangouts: `python parse_hangouts.py`
-* Facebook Messenger: `python parse_messenger.py`
+You will need to specify your own name to the parsers. Use the exact same format as on you have on Messenger or Hangouts.
 
-This will generate pickle files in the `data` folder.
+* Google Hangouts: `python parse_hangouts.py -ownName "John Doe"`
+* Facebook Messenger: `python parse_messenger.py -ownName "John Doe"`
+
+This will generate pickle files in the `data` folder. For more options use the `-h` argument on the parsers.
 
 ### 3. Render the logs
 
-`python cloud.py -d data/hangouts.pkl data/messenger.pkl`
+#### Histograms
+
+Plot all messages with:
+
+`python analyse.py -data data/*`
+
+You can then filter the messages as needed:
+
+````
+  -filterConversation FILTERCONVERSATION
+                        only keep messages sent in a conversation with this
+                        sender
+  -filterSender FILTERSENDER
+                        only keep messages sent by this sender
+  -removeSender REMOVESENDER
+                        remove messages sent by this sender
+````
+
+Eg to see all the messages sent between you and Jane Doe: 
+
+`python analyse.py -data data/* -filterConversation "Jane Doe"`
+
+To see the messages sent to you by the top 15 people with whom you talk the most:
+
+`python analyse.py -data data/* -removeSender "Your Name" -n 15`
+
+
+#### The Cloud!
+
+You will need a mask file to render the word cloud. 
+
+`python cloud.py -data data/* -m img/mask_image.jpg`
+
+The white bits of the image will be left empty, the rest will be filled with words using the color of the image. [See the WordCloud library documentation](https://github.com/amueller/word_cloud) for more information.
+
+You can filter which messages to use using the same flags as with histograms.
 
 
 ## Improvement ideas

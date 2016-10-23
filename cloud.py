@@ -33,7 +33,7 @@ filterSender = args.filterSender
 removeSender = args.removeSender
 
 print 'Mask image:', maskImg
-print 'Will render', numWords, 'words'
+print 'Up to', numWords, 'words on the cloud'
 print 'Image dpi:', density
 
 # TODO factor w histo logic
