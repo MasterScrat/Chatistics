@@ -8,16 +8,14 @@ import datetime
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-ownId", dest='ownId', type=str, help="id of the owner of the chat logs, written as in the logs", required=True)
+parser.add_argument("-ownName", dest='ownName', type=str, help="name of the owner of the chat logs, written as in the logs", required=True)
 parser.add_argument('-f','-filePath', dest='filePath', help='Facebook chat log file (HTML file)', default='raw/Hangouts.json')
 parser.add_argument("-max", "-maxExportedMessages", dest='maxExportedMessages', type=int, default=1000000, help="maximum number of messages to export")
 args = parser.parse_args()
 
 maxExportedMessages = args.maxExportedMessages
-ownId = args.ownId
+ownName = args.ownName
 filePath = args.filePath
-
-#OWN_ID = "106758968942084595234"
 
 print 'Parsing JSON file...'
 archive = json.load(open(filePath))
@@ -67,11 +65,11 @@ for state in archive["conversation_state"]:
 
 			if len(participants) == 2:
 				for participant in participants:
-					if participant["gaia_id"] != ownId:
+					if idToName(participant["gaia_id"]) != ownName:
 						conversationWithId = participant["gaia_id"]
 
 				if idToName(senderId)!=None or idToName(conversationWithId)!=None:
-					if senderId != ownId and senderId != conversationWithId:
+					if idToName(senderId) != ownName and senderId != conversationWithId:
 						#print idToName(senderId), 'in conversation with', idToName(conversationWithId), '!'
 						print 'Parsing error, is your ownId correct?'
 						exit(0)

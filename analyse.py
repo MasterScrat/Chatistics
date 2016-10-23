@@ -63,7 +63,7 @@ merged = merged[['timestamp', 'conversationWithName', 'senderName']]
 
 # rendering
 if plotDensity == True:
-    plot = ggplot(aes(x='timestamp', color='conversationWithName', fill='conversationWithName'), data=merged) \
+    plot = ggplot(aes(x='timestamp', color='senderName', fill='senderName'), data=merged) \
     + geom_density(alpha=0.6) \
     + scale_x_date(labels='%b %Y') \
     + ggtitle("Conversation Densities") \
