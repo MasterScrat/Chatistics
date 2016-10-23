@@ -34,10 +34,12 @@ removeSender = args.removeSender
 # data loading
 df = pd.DataFrame()
 for dataPath in dataPaths:
-    print 'Loading', dataPath
+    print 'Loading', dataPath, '...'
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
 df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
+
+print 'Loaded', len(df), 'messages'
 
 # filtering
 if filterConversation != None:
