@@ -5,7 +5,6 @@ import json
 import pandas as pd
 import numpy as np
 import datetime
-import pprint
 
 OWN_ID = "106758968942084595234"
 MAX_EXPORTED_MSGS = 1000*1000
@@ -30,8 +29,6 @@ data = []
 conversationId = ""
 conversationWithId = ""
 conversationWithName = ""
-
-#pp = pprint.PrettyPrinter(indent=4)
 
 print 'Extracting messages...'
 for state in archive["conversation_state"]:

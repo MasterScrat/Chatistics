@@ -14,7 +14,7 @@ sys.setdefaultencoding('utf-8')
 
 # arguments parsing
 parser = argparse.ArgumentParser()
-parser.add_argument('-d','--data', dest='dataPaths', nargs='+', help='chat log data files (pickle files)', required=True)
+parser.add_argument('-d','-data', dest='dataPaths', nargs='+', help='chat log data files (pickle files)', required=True)
 parser.add_argument("-plotDensity", dest='density', action='store_true', help="plots the message densities (KDE) instead of their count")
 parser.add_argument("-n", "-numberSenders", dest='topN', type=int, default=10, help="number of different senders to consider, ordered by number of messages sent")
 parser.add_argument("-b", "-binWidth", dest='binWidth', type=int, default=25, help="bin width for histograms")
