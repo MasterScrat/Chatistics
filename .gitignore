@@ -1,7 +1,10 @@
 # Personal project files
 data/
+!data/.gitkeep
 raw/
+!raw/.gitkeep
 img/
+!img/.gitkeep
 
 
 # Byte-compiled / optimized / DLL files
