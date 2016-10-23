@@ -16,7 +16,7 @@ Use Google Takeout: https://accounts.google.com/ServiceLogin?service=backup
 
 Ask for an archive containing your chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of ChatShape.
 
-*Note that Google switched from "Google Talk" to "Google Hangouts" mid-2013. You will only get your Hangouts logs.*
+*Google switched from "Google Talk" to "Google Hangouts" mid-2013. You will only get your Hangouts logs.*
 
 #### Facebook Messenger
 
@@ -25,7 +25,7 @@ Ask for an archive containing your chat logs. Extract the file called `Hangouts.
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
 4. Once it is done download and extract the archive, move the file `messages.htm` in the `raw` folder of ChatShape.
 
-### 2. Parse the log to ChatShape format
+### 2. Parse the logs into ChatShape format
 
 * Google Hangouts: `python parse_hangouts.py`
 * Facebook Messenger: `python parse_messenger.py`

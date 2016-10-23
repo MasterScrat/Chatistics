@@ -8,15 +8,11 @@ from wordcloud import WordCloud, ImageColorGenerator
 from scipy.misc import imread
 import json
 import re
-import sys
 
-NUM_WORDS = 10001
-DENSITY = 1000
+NUM_WORDS = 10000
+DENSITY = 100
 NAME_SENDER = 'Timoklia Kousi'
-MASK_IMG = 'img/tim2-mask.jpg'
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
+MASK_IMG = 'img/tim.jpg'
 
 print 'Drawing messages from:', NAME_SENDER, 'mask:', MASK_IMG
 print NUM_WORDS, 'words, resolution:', DENSITY/100.0,'x'
@@ -24,7 +20,7 @@ print NUM_WORDS, 'words, resolution:', DENSITY/100.0,'x'
 df1 = pd.read_pickle('data/hangouts.pkl')
 df2 = pd.read_pickle('data/messenger.pkl')
 df = pd.concat([df1, df2])
-df.columns = ['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text']
+df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
 
 df = df[df['senderName'] == NAME_SENDER]
 

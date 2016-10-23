@@ -25,14 +25,14 @@ for element in archive.iter():
 	if tag == 'p':
 		text = content
 
-		# sometimes facebook fucks up and uses a "@facebook.com" id instead of the name :(
+		# sometimes facebook messes up and uses a "@facebook.com" id instead of the name :(
 		if conversationWithName != None and '@' not in senderName:
 			
 			if senderName != conversationWithName and senderName != OWN_NAME:
 				print 'Assuming', senderName, 'is', conversationWithName
 				senderName = conversationWithName
 
-			data += [[timestamp, conversationWithName, conversationWithName, senderName, senderName, text]]
+			data += [[timestamp, conversationWithName, senderName, text]]
 			#print("%s with %s (%s): %s" % (senderName, conversationWithName, timestamp, text))
 
 	elif tag == 'span':
@@ -57,7 +57,7 @@ for element in archive.iter():
 print len(data), 'messages parsed.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
 df = pd.DataFrame(data)
 
 print 'Saving to pickle file...'

@@ -1,23 +1,31 @@
 - parse Facebook Messenger data                                         OK
 - parse Google Chat data (https://github.com/coandco/gtalk_export/)     WONTDO                                              
-- handle alias
+- handle alias                                                          OK
 - proper arguments handling
     - stopwords lists
     - senderName/conversationWithName filters
     - dpi/number of words/mask file/max word size
-- fix Hangouts wrong conversationWithName                               CURRENT
-- make top-level script that parses and generates images?
+- fix Hangouts wrong conversationWithName                               OK
+- make top-level script that parses and generates images?               WONTDO
 - remove links (http://stackoverflow.com/a/11332580/318557)             OK
 - lowercase everything                                                  OK
 - filter "ca" from parsing step or fix                                  OK
-- why cant "time" be a stopword?!
-- WordCloud removes trailing -s! to fix
-- compute bigrams? for now "don't worry" shows only "worry"
+- why cant "time" be a stopword?!                                       WONTDO
+- WordCloud removes trailing -s! to fix                                 WONTDO
+- compute bigrams? for now "don't worry" shows only "worry"             WONTDO
 - push to GitHub                                                        OK
 - write proper README (https://jbt.github.io/markdown-editor)
     - examples
     - command line arguments
-    - directory structure
+    - explain how to get OWN_NAME
 - figure out OWN_NAME automatically                                     WONTDO
 - handle group chat                                                     WONTDO
-- remove references to "IDs"
+- remove references to "IDs" in pickled files                           OK
+- sentiment analysis?
+
+Posts:
+- https://www.reddit.com/r/dataisbeautiful/ link to imgur gallery, link to repo + basic explanation in comment
+- https://www.reddit.com/r/WordCloud same
+- HN link to repo "Show HN: render chat logs as word clouds and histograms"
+- Twitter
+- Fb

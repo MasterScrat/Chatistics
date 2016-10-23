@@ -24,7 +24,7 @@ def saveNameForId(name, id):
 	if not id in names:
 		names[id] = name
 	elif names[id] != name:
-		print names[id], 'assumed to be', name
+		print 'Assuming', name, 'is', names[id]
 
 data = []
 conversationId = ""
@@ -70,7 +70,7 @@ for state in archive["conversation_state"]:
 
 					# saves the message
 					timestamp = datetime.date.fromtimestamp(timestamp/1000000).toordinal()
-					data += [[timestamp, conversationWithId, idToName(conversationWithId), senderId, idToName(senderId), text]]
+					data += [[timestamp, idToName(conversationWithId), idToName(senderId), text]]
 
 				else:
 					# unknown sender
@@ -82,7 +82,7 @@ for state in archive["conversation_state"]:
 print len(data), 'messages parsed.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
 df = pd.DataFrame(data)
 
 print 'Saving to pickle file...'
