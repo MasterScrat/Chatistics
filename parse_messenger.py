@@ -1,52 +1,55 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-import json
-import pprint
-import operator
-import numpy as np
 import pandas as pd
-import datetime
-import pprint
+import numpy as np
 from lxml import etree
-import dateparser
-import time
 
 MAX_EXPORTED_MSGS = 1000*1000
-
-pp = pprint.PrettyPrinter(indent=4)
+OWN_NAME = 'Florian Laurent'
 
 print 'Parsing HTML file...'
 archive = etree.parse('raw/messages.htm')
 
 data = []
-
 timestamp = ''
 senderName = ''
+conversationWithName = ''
 text = ''
 
 for element in archive.iter():
 	tag = element.tag
 	content = element.text
+	className = element.get('class')
 
 	if tag == 'p':
 		text = content
-		#print("%s (%s): %s" % (senderName, timestamp, text))
 
-		# TODO conversationWithName!!
-		row = [timestamp, senderName, senderName, senderName, senderName, text]
-		data += [row]
+		# sometimes facebook fucks up and uses a "@facebook.com" id instead of the name :(
+		if conversationWithName != None and '@' not in senderName:
+			
+			if senderName != conversationWithName and senderName != OWN_NAME:
+				print 'Assuming', senderName, 'is', conversationWithName
+				senderName = conversationWithName
+
+			data += [[timestamp, conversationWithName, conversationWithName, senderName, senderName, text]]
+			#print("%s with %s (%s): %s" % (senderName, conversationWithName, timestamp, text))
 
 	elif tag == 'span':
-		className = element.get('class')
-
 		if className == 'user':
 			senderName = content
 		elif className == 'meta':
-			#dt = dateparser.parse(content[:-2])
-			#timestamp = int(time.mktime(dt.timetuple()))
-			#timestamp = datetime.date.fromtimestamp(timestamp).toordinal()
 			timestamp = pd.to_datetime(content[:-7], format='%A, %B %d, %Y at %H:%M%p').toordinal()
+
+	elif tag == 'div' and className == 'thread':
+		if content.count(',') > 1:
+			conversationWithName = None
+		elif '@' in content:
+			conversationWithName = None
+		else:
+			content = content.replace(', ' + OWN_NAME, '')
+			content = content.replace(OWN_NAME + ', ', '')
+			conversationWithName = content
 
 	if len(data) >= MAX_EXPORTED_MSGS:
 		break
@@ -54,7 +57,7 @@ for element in archive.iter():
 print len(data), 'messages parsed.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, 200000), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithId', 'conversationWithName','senderId', 'senderName', 'text'])
 df = pd.DataFrame(data)
 
 print 'Saving to pickle file...'

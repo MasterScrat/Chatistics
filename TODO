@@ -1,17 +1,22 @@
-
 - parse Facebook Messenger data
-- parse Google Chat data (https://github.com/coandco/gtalk_export/)                                                     
+- parse Google Chat data (https://github.com/coandco/gtalk_export/)     WONTDO                                              
 - handle alias
 - proper arguments handling
     - stopwords lists
     - senderName/conversationWithName filters
     - dpi/number of words/mask file/max word size
 - fix wrong conversationWithName
-- make top-level script that parses and generates image
+- make top-level script that parses and generates images?
 - remove links (http://stackoverflow.com/a/11332580/318557)             OK
 - lowercase everything                                                  OK
 - filter "ca" from parsing step or fix                                  OK
 - why cant "time" be a stopword?!
 - WordCloud removes trailing -s! to fix
 - compute bigrams? for now "don't worry" shows only "worry"
-- push to GitHub
+- push to GitHub                                                        OK
+- write proper README (https://jbt.github.io/markdown-editor)
+    - examples
+    - command line arguments
+    - directory structure
+- figure out OWN_NAME automatically                                     WONTDO
+- handle group chat                                                     WONTDO
