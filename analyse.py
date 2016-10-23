@@ -28,8 +28,8 @@ topN = args.topN;
 binWidth = args.binWidth
 filterConversation = args.filterConversation
 filterSender = args.filterSender
-plotDensity = args.density
 removeSender = args.removeSender
+plotDensity = args.density
 
 # data loading
 df = pd.DataFrame()
@@ -38,7 +38,6 @@ for dataPath in dataPaths:
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
 df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
-
 print 'Loaded', len(df), 'messages'
 
 # filtering

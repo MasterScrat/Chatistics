@@ -1,10 +1,10 @@
 - parse Facebook Messenger data                                         OK
 - parse Google Chat data (https://github.com/coandco/gtalk_export/)     WONTDO                                              
 - handle alias                                                          OK
-- proper arguments handling
-    - stopwords lists
-    - senderName/conversationWithName filters
-    - dpi/number of words/mask file/max word size
+- proper arguments handling                                             OK
+    - stopwords lists                                                   OK
+    - senderName/conversationWithName filters                           OK
+    - dpi/number of words/mask file/max word size                       OK
 - fix Hangouts wrong conversationWithName                               OK
 - make top-level script that parses and generates images?               WONTDO
 - remove links (http://stackoverflow.com/a/11332580/318557)             OK
@@ -17,11 +17,12 @@
 - write proper README (https://jbt.github.io/markdown-editor)
     - examples
     - command line arguments
-    - explain how to get OWN_NAME
+    - explain how to get OWN_NAME                                       WONTDO
 - figure out OWN_NAME automatically                                     WONTDO
 - handle group chat                                                     WONTDO
 - remove references to "IDs" in pickled files                           OK
-- sentiment analysis?
+- sentiment analysis?                                                   WONTDO
+- rename files!
 
 Posts:
 - https://www.reddit.com/r/dataisbeautiful/ link to imgur gallery, link to repo + basic explanation in comment
@@ -29,3 +30,7 @@ Posts:
 - HN link to repo "Show HN: render chat logs as word clouds and histograms"
 - Twitter
 - Fb
+
+Fix locale issues:
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
