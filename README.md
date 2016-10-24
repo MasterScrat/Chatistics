@@ -7,10 +7,6 @@
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud2.png" width="400" height="400">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud3.png" width="400" height="400">
-<br><br>
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
-<br><br>
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/histo.png" width="701" height="406">
 </p>
 
 ## How to use it?
@@ -65,9 +61,15 @@ Eg to see all the messages sent between you and Jane Doe:
 
 `python analyse.py -data data/* -filterConversation "Jane Doe"`
 
-To see the messages sent to you by the top 15 people with whom you talk the most:
+To see the messages sent to you by the top 10 people with whom you talk the most:
 
-`python analyse.py -data data/* -removeSender "Your Name" -n 15`
+`python analyse.py -data data/* -removeSender "Your Name" -n 10`
+
+<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/histo.png" width="701" height="406">
+
+You can also plot the conversation densities using the `-plotDensity` flag.
+
+<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
 
 
 #### The Cloud!
