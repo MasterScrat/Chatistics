@@ -4,13 +4,11 @@
 
 <p align="center">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
-<br>Word Cloud from 184K messages
+<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud2.png" width="400" height="400">
 <br><br>
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
-<br>Densities of conversation with my 3 most common interlocutors
 <br><br>
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/histo.png" width="701" height="406">
-<br>Breakdown of received messages
 </p>
 
 ## How to use it?

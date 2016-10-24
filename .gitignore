@@ -5,6 +5,8 @@ raw/
 !raw/.gitkeep
 img/
 !img/.gitkeep
+renders/
+!renders/.gitkeep
 
 
 # Byte-compiled / optimized / DLL files
