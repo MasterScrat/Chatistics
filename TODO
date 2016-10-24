@@ -22,15 +22,13 @@
 - handle group chat                                                     WONTDO
 - remove references to "IDs" in pickled files                           OK
 - sentiment analysis?                                                   WONTDO
-- rename files!
+- make file names more meaningful                                       WONTDO
 
 Posts:
 - https://www.reddit.com/r/dataisbeautiful/ link to imgur gallery, link to repo + basic explanation in comment
 - https://www.reddit.com/r/WordCloud same
+
 - HN link to repo "Show HN: render chat logs as word clouds and histograms"
+
 - Twitter
 - Fb
-
-Fix locale issues:
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8

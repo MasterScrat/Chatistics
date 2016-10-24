@@ -19,7 +19,7 @@ parser.add_argument("-filterConversation", dest='filterConversation', type=str, 
 parser.add_argument("-filterSender", dest='filterSender', type=str, default=None, help="only keep messages sent by this sender")
 parser.add_argument("-removeSender", dest='removeSender', type=str, default=None, help="remove messages sent by this sender")
 parser.add_argument("-n", "-numWords", dest='numWords', type=int, default=10000, help="bin width for histograms")
-parser.add_argument("-density", dest='density', type=int, default=100, help="rendered image DPI")
+parser.add_argument("-density", "-dpi", dest='density', type=int, default=100, help="rendered image DPI")
 args = parser.parse_args()
 
 numWords = args.numWords
