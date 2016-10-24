@@ -3,8 +3,10 @@
 **Python scripts to generate histograms and shaped word clouds from chat logs.** Currently supports Google Hangouts and Facebook Messenger log formats.
 
 <p align="center">
+<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud4.png" width="400" height="400">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud2.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud3.png" width="400" height="400">
 <br><br>
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
 <br><br>
