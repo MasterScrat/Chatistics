@@ -14,9 +14,9 @@
 - WordCloud removes trailing -s! to fix                                 WONTDO
 - compute bigrams? for now "don't worry" shows only "worry"             WONTDO
 - push to GitHub                                                        OK
-- write proper README (https://jbt.github.io/markdown-editor)
-    - examples
-    - command line arguments
+- write proper README (https://jbt.github.io/markdown-editor)           OK
+    - examples                                                          OK
+    - command line arguments                                            OK
     - explain how to get OWN_NAME                                       WONTDO
 - figure out OWN_NAME automatically                                     WONTDO
 - handle group chat                                                     WONTDO

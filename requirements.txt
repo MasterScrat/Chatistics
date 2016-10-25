@@ -5,3 +5,4 @@ numpy==1.10.4
 pandas==0.17.1
 scipy==0.18.1
 wordcloud==1.2.1
+Image>=1.1.7
