@@ -90,6 +90,7 @@ print len(data), 'messages parsed.'
 print 'Converting to DataFrame...'
 df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
 df = pd.DataFrame(data)
+df['platform'] = 'hangouts'
 
 print 'Saving to pickle file...'
 df.to_pickle('data/hangouts.pkl')

@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from lxml import etree
 import argparse
+from langdetect import *
+from random import randint
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-ownName", dest='ownName', type=str, help="name of the owner of the chat logs, written as in the logs", required=True)
@@ -78,9 +80,25 @@ print len(data), 'messages parsed.'
 print nbInvalidSender, 'messages discared because of bad ID.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)))
 df = pd.DataFrame(data)
+df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'messenger'
+df['language'] = 'unknown'
+
+
+print 'Detecting languages...'
+
+for name, group in df.groupby(df.conversationWithName):
+    sample = ''
+    df2 = df[df.conversationWithName == name].dropna()
+
+    if len(df2)>10:
+        for x in range(0, min(len(df2), 100)): 
+            sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
+
+    	print name, detect(sample)
+    	df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
 print 'Saving to pickle file...'
 df.to_pickle('data/messenger.pkl')
