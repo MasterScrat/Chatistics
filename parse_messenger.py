@@ -25,6 +25,9 @@ senderName = ''
 conversationWithName = ''
 text = ''
 
+warnedNameChanges = []
+nbInvalidSender = 0
+
 for element in archive.iter():
 	tag = element.tag
 	content = element.text
@@ -32,15 +35,20 @@ for element in archive.iter():
 
 	if tag == 'p':
 		text = content
-
-		# sometimes facebook messes up and uses a "@facebook.com" id instead of the name :(
-		if conversationWithName != None and '@' not in senderName:
+		
+		if conversationWithName != None:
 			
-			if senderName != conversationWithName and senderName != ownName:
-				print 'Assuming', senderName, 'is', conversationWithName
-				senderName = conversationWithName
+			# sometimes facebook uses a "@facebook.com" id instead of the name :(
+			if '@' not in senderName:
+				if (senderName != conversationWithName) and (senderName != ownName) and (senderName not in warnedNameChanges):
+					print 'Assuming', senderName, 'is', conversationWithName
+					warnedNameChanges.append(senderName)
+					senderName = conversationWithName
 
-			data += [[timestamp, conversationWithName, senderName, text]]
+				data += [[timestamp, conversationWithName, senderName, text]]
+
+			else:
+				nbInvalidSender = nbInvalidSender + 1
 
 	elif tag == 'span':
 		if className == 'user':
@@ -67,10 +75,12 @@ for element in archive.iter():
 		break
 
 print len(data), 'messages parsed.'
+print nbInvalidSender, 'messages discared because of bad ID.'
 
 print 'Converting to DataFrame...'
 df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
 df = pd.DataFrame(data)
+df['platform'] = 'messenger'
 
 print 'Saving to pickle file...'
 df.to_pickle('data/messenger.pkl')
