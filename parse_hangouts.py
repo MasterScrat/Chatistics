@@ -75,7 +75,7 @@ for state in archive["conversation_state"]:
 						exit(0)
 
 					# saves the message
-					timestamp = datetime.date.fromtimestamp(timestamp/1000000).toordinal()
+					timestamp = timestamp/1000000
 					data += [[timestamp, idToName(conversationWithId), idToName(senderId), text]]
 
 				else:
@@ -88,9 +88,17 @@ for state in archive["conversation_state"]:
 print len(data), 'messages parsed.'
 
 print 'Converting to DataFrame...'
-df = pd.DataFrame(index=np.arange(0, len(data)), columns=['timestamp', 'conversationWithName', 'senderName', 'text'])
+df = pd.DataFrame(index=np.arange(0, len(data)))
 df = pd.DataFrame(data)
+df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'hangouts'
+
+# TODO factor from messenger
+df['language'] = 'unknown' 
+
+print 'Computing dates...'
+df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
+print df.head()
 
 print 'Saving to pickle file...'
 df.to_pickle('data/hangouts.pkl')

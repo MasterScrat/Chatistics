@@ -37,7 +37,7 @@ for dataPath in dataPaths:
     print 'Loading', dataPath, '...'
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
-df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
+df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text', 'platform', 'language', 'datetime']
 print 'Loaded', len(df), 'messages'
 
 # filtering
@@ -58,11 +58,11 @@ mf = df.groupby(['conversationWithName'], as_index=False) \
         .to_frame()
 
 merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
-merged = merged[['timestamp', 'conversationWithName', 'senderName']]
+merged = merged[['datetime', 'conversationWithName', 'senderName']]
 
 # rendering
 if plotDensity == True:
-    plot = ggplot(aes(x='timestamp', color='senderName', fill='senderName'), data=merged) \
+    plot = ggplot(aes(x='datetime', color='senderName', fill='senderName'), data=merged) \
     + geom_density(alpha=0.6) \
     + scale_x_date(labels='%b %Y') \
     + ggtitle("Conversation Densities") \
@@ -70,7 +70,7 @@ if plotDensity == True:
     + xlab("Date")
     #+ labs(color = "Interlocutor")
 else:
-    plot = ggplot(aes(x='timestamp', color='senderName', fill='senderName'), data=merged) \
+    plot = ggplot(aes(x='datetime', color='senderName', fill='senderName'), data=merged) \
     + geom_histogram(alpha=0.6, binwidth=binWidth) \
     + scale_x_date(labels='%b %Y', breaks='6 months') \
     + ggtitle("Message Breakdown") \

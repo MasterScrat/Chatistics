@@ -7,6 +7,7 @@ from lxml import etree
 import argparse
 from langdetect import *
 from random import randint
+import datetime
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-ownName", dest='ownName', type=str, help="name of the owner of the chat logs, written as in the logs", required=True)
@@ -43,7 +44,7 @@ for element in archive.iter():
 			# sometimes facebook uses a "@facebook.com" id instead of the name :(
 			if '@' not in senderName:
 				if (senderName != conversationWithName) and (senderName != ownName) and (senderName not in warnedNameChanges):
-					print 'Assuming', senderName, 'is', conversationWithName
+					print '\t', 'Assuming', senderName, 'is', conversationWithName
 					warnedNameChanges.append(senderName)
 					senderName = conversationWithName
 
@@ -56,7 +57,7 @@ for element in archive.iter():
 		if className == 'user':
 			senderName = content
 		elif className == 'meta':
-			timestamp = pd.to_datetime(content[:-7], format='%A, %B %d, %Y at %H:%M%p').toordinal()
+			timestamp = pd.to_datetime(content[:-7], format='%A, %B %d, %Y at %H:%M%p').strftime("%s")
 
 	elif tag == 'div' and className == 'thread':
 		if content.count(',') > 1:
@@ -84,11 +85,9 @@ df = pd.DataFrame(index=np.arange(0, len(data)))
 df = pd.DataFrame(data)
 df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'messenger'
-df['language'] = 'unknown'
-
 
 print 'Detecting languages...'
-
+df['language'] = 'unknown'
 for name, group in df.groupby(df.conversationWithName):
     sample = ''
     df2 = df[df.conversationWithName == name].dropna()
@@ -97,8 +96,11 @@ for name, group in df.groupby(df.conversationWithName):
         for x in range(0, min(len(df2), 100)): 
             sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
 
-    	print name, detect(sample)
+    	print '\t', name, detect(sample)
     	df.loc[df.conversationWithName == name, 'language'] = detect(sample)
+
+print 'Computing dates...'
+df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
 
 print 'Saving to pickle file...'
 df.to_pickle('data/messenger.pkl')
