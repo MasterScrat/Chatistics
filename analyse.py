@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
+from ggplot import *
 import pandas as pd
 import numpy as np
-from ggplot import *
 from matplotlib import pyplot as plt
 import sys
 import argparse
@@ -24,7 +24,7 @@ parser.add_argument("-removeSender", dest='removeSender', type=str, default=None
 args = parser.parse_args()
 
 dataPaths = args.dataPaths
-topN = args.topN;
+topN = args.topN
 binWidth = args.binWidth
 filterConversation = args.filterConversation
 filterSender = args.filterSender
@@ -37,7 +37,7 @@ for dataPath in dataPaths:
     print 'Loading', dataPath, '...'
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
-df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text', 'platform', 'language', 'datetime']
+df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'platform', 'language', 'datetime']
 print 'Loaded', len(df), 'messages'
 
 # filtering
@@ -50,32 +50,36 @@ if filterSender != None:
 if removeSender != None:
     df = df[df['senderName'] != removeSender]
 
+#print df.groupby(['conversationId'], as_index=False).agg(lambda x:len(x)).sort_values('timestamp', ascending=False).head(topN-1).to_frame()
+#exit(0)
+
 # keep only topN interlocutors
 mf = df.groupby(['conversationWithName'], as_index=False) \
-        .agg(lambda x:len(x))\
+        .agg(lambda x: len(x))\
         .sort_values('timestamp', ascending=False)['conversationWithName']\
-        .head(topN-1)\
-        .to_frame()
+        .head(topN).to_frame()
+
+print mf
 
 merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
 merged = merged[['datetime', 'conversationWithName', 'senderName']]
 
+#print merged.head()
+
 # rendering
 if plotDensity == True:
-    plot = ggplot(aes(x='datetime', color='senderName', fill='senderName'), data=merged) \
+    plot = ggplot(aes(x='datetime', color='conversationWithName'), data=merged) \
     + geom_density(alpha=0.6) \
     + scale_x_date(labels='%b %Y') \
     + ggtitle("Conversation Densities") \
     + ylab("Density")\
     + xlab("Date")
-    #+ labs(color = "Interlocutor")
 else:
-    plot = ggplot(aes(x='datetime', color='senderName', fill='senderName'), data=merged) \
+    plot = ggplot(aes(x='datetime', fill='conversationWithName'), data=merged) \
     + geom_histogram(alpha=0.6, binwidth=binWidth) \
     + scale_x_date(labels='%b %Y', breaks='6 months') \
     + ggtitle("Message Breakdown") \
     + ylab("Number of Messages")\
     + xlab("Date")
-    #+ labs(color = "Sender Name")
 
 print plot

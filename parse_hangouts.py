@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 import datetime
 import argparse
+from random import randint
+from langdetect import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-ownName", dest='ownName', type=str, help="name of the owner of the chat logs, written as in the logs", required=True)
@@ -76,7 +78,7 @@ for state in archive["conversation_state"]:
 
 					# saves the message
 					timestamp = timestamp/1000000
-					data += [[timestamp, idToName(conversationWithId), idToName(senderId), text]]
+					data += [[timestamp, conversationId, idToName(conversationWithId), idToName(senderId), text]]
 
 				else:
 					# unknown sender
@@ -90,11 +92,21 @@ print len(data), 'messages parsed.'
 print 'Converting to DataFrame...'
 df = pd.DataFrame(index=np.arange(0, len(data)))
 df = pd.DataFrame(data)
-df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
+df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'hangouts'
 
-# TODO factor from messenger
-df['language'] = 'unknown' 
+print 'Detecting languages...'
+df['language'] = 'unknown'
+for name, group in df.groupby(df.conversationWithName):
+	sample = ''
+	df2 = df[df.conversationWithName == name].dropna()
+
+	if len(df2)>10:
+		for x in range(0, min(len(df2), 100)):
+			sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
+
+		print '\t', name, detect(sample)
+		df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
 print 'Computing dates...'
 df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())

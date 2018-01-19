@@ -1,38 +1,34 @@
+--- TASKS ---
+- rename from ChatShape to Chatistics                                   TODO
 - parse Facebook Messenger data                                         OK
-- parse Google Chat data (https://github.com/coandco/gtalk_export/)     WONTDO                                              
+- parse Google Hangouts data                                            OK
+- parse old Google Chat data                                            TODO  use https://github.com/coandco/gtalk_export/
 - handle alias                                                          OK
 - proper arguments handling                                             OK
     - stopwords lists                                                   OK
     - senderName/conversationWithName filters                           OK
     - dpi/number of words/mask file/max word size                       OK
 - fix Hangouts wrong conversationWithName                               OK
-- make top-level script that parses and generates images?               WONTDO
-- remove links (http://stackoverflow.com/a/11332580/318557)             OK
+- remove links                                                          OK      use http://stackoverflow.com/a/11332580/318557
 - lowercase everything                                                  OK
 - filter "ca" from parsing step or fix                                  OK
-- why cant "time" be a stopword?!                                       WONTDO
-- WordCloud removes trailing -s! to fix                                 WONTDO
-- compute bigrams? for now "don't worry" shows only "worry"             WONTDO
+- why cant "time" be a stopword?!                                       OK      check https://stackoverflow.com/questions/40208778/regular-expression-behaves-unexpectedly-when-using-some-specific-words
+- WordCloud removes trailing -s! to fix                                 OK      check https://github.com/amueller/word_cloud/issues/180
+- compute bigrams? for now "don't worry" shows only "worry"             OK
 - push to GitHub                                                        OK
-- write proper README (https://jbt.github.io/markdown-editor)           OK
+- write proper README                                                   OK      use https://jbt.github.io/markdown-editor
     - examples                                                          OK
     - command line arguments                                            OK
-    - explain how to get OWN_NAME                                       WONTDO
+    - explain how to get OWN_NAME                                       OK
 - figure out OWN_NAME automatically                                     WONTDO
-- handle group chat                                                     WONTDO
+- handle group chat                                                     TODO
 - remove references to "IDs" in pickled files                           OK
 - sentiment analysis?                                                   WONTDO
-- make file names more meaningful                                       WONTDO
+- fix histogram stacking!                                               TODO
+- add to WordCloud examples                                             TODO    https://github.com/amueller/word_cloud
+- generate animated GIFs?!                                              TODO
 
-Posts:
-- https://www.reddit.com/r/dataisbeautiful/ link to imgur gallery, link to repo + basic explanation in comment OK
-- https://www.reddit.com/r/WordCloud same
-
-- HN link to repo "Show HN: render chat logs as word clouds and histograms"
-
-- Twitter
-- Fb
-
-To fix encoding issues:
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+Post to:
+- https://www.reddit.com/r/dataisbeautiful/
+- https://www.reddit.com/r/WordCloud
+- HN
