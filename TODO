@@ -1,5 +1,5 @@
 --- TASKS ---
-- rename from ChatShape to Chatistics                                   TODO
+- rename from ChatShape to Chatistics                                   OK
 - parse Facebook Messenger data                                         OK
 - parse Google Hangouts data                                            OK
 - parse old Google Chat data                                            TODO  use https://github.com/coandco/gtalk_export/
@@ -21,10 +21,10 @@
     - command line arguments                                            OK
     - explain how to get OWN_NAME                                       OK
 - figure out OWN_NAME automatically                                     WONTDO
-- handle group chat                                                     TODO
+- handle group chat                                                     OK
 - remove references to "IDs" in pickled files                           OK
 - sentiment analysis?                                                   WONTDO
-- fix histogram stacking!                                               TODO
+- fix histogram stacking!                                               WONTDO
 - add to WordCloud examples                                             TODO    https://github.com/amueller/word_cloud
 - generate animated GIFs?!                                              TODO
 
