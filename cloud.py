@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
+# -*- coding: utf-8 -*-
+import numpy as np
 from os import path
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -42,18 +42,18 @@ for dataPath in dataPaths:
     print 'Loading messages from', dataPath, '...'
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
-df.columns = ['timestamp', 'conversationWithName', 'senderName', 'text']
+df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'platform', 'language', 'datetime']
 print 'Loaded', len(df), 'messages'
 
-if filterConversation != None:
+if filterConversation is not None:
     print 'Keeping only messages in conversations with', filterConversation
     df = df[df['conversationWithName'] == filterConversation]
 
-if filterSender != None:
+if filterSender is not None:
     print 'Keeping only messages sent by', filterSender
     df = df[df['senderName'] == filterSender]
 
-if removeSender != None:
+if removeSender is not None:
     print 'Removing messages sent by', removeSender
     df = df[df['senderName'] != removeSender]
 
@@ -69,29 +69,27 @@ for stopwordsPath in stopwordsPaths:
     stopwords = stopwords + json.load(open(stopwordsPath))
 
 stopwords = set(stopwords)
-#stopwords = [ re.escape(stopword) for stopword in stopwords ]
 print 'Stopwords:', len(stopwords), 'words'
 
+# pre-compiled regex is faster than going through a list
 stopwords = '|'.join(stopwords)
 regex = re.compile(r'\b('+stopwords+r')\b', re.UNICODE)
 
 print 'Cleaning up...'
-text = []
-for msg in df['text']:
-    if msg != None:
-        msg = msg.lower()
-        msg = re.sub(r'^https?:\/\/.*[\r\n]*', '', msg)
-        msg = regex.sub('', msg)
-        text.append(msg)
+text = df['text'] \
+    .replace(to_replace='None', value=np.nan).dropna() \
+    .str.lower() \
+    .apply(lambda w: re.sub(r'^https?:\/\/.*[\r\n]*', '', w)) \
+    .apply(lambda w: regex.sub('', w))
 
-text = ' '.join(text)
+text  = ' '.join(text)
 
 print 'Rendering...'
 d = path.dirname(__file__)
 mask = imread(path.join(d, maskImg))
 
 # https://amueller.github.io/word_cloud/generated/wordcloud.WordCloud.html#wordcloud.WordCloud
-wc = WordCloud(background_color="white", mask=mask, max_words=numWords, stopwords=None).generate(text)
+wc = WordCloud(background_color="white", mask=mask, max_words=numWords, stopwords=None, normalize_plurals=False, collocations=True).generate(text)
 
 image_colors = ImageColorGenerator(mask)
 wc = wc.recolor(color_func=image_colors)
