@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
+from __future__ import print_function
 import argparse
 import datetime
 import os
@@ -54,7 +55,7 @@ for filename in os.listdir(filePath):
                 # handles when the interlocutor's name changed at some point
                 if (senderName != conversationWithName) and (senderName != ownName) and (senderName not in warnedNameChanges) and (not groupConversation):
                     if senderName not in warnedNameChanges:
-                        print '\t', 'Assuming', senderName, 'is', conversationWithName
+                        print('\t', 'Assuming', senderName, 'is', conversationWithName)
                         warnedNameChanges.append(senderName)
 
                     senderName = conversationWithName
@@ -77,32 +78,32 @@ for filename in os.listdir(filePath):
 
         elif tag == 'h3':
             if conversationWithName is not None:
-                print 'Something is wrong. File format changed? (multiple conversation hearder in a single file)'
+                print('Something is wrong. File format changed? (multiple conversation hearder in a single file)')
                 exit(0)
             else:
                 content = content.replace('Conversation with ', '')
                 conversationWithName = content
 
-            print conversationId, conversationWithName, "(group?", groupConversation, ")"
+            print(conversationId, conversationWithName, "(group?", groupConversation, ")")
 
         if len(data) >= maxExportedMessages:
             break
 
-print len(data), 'messages parsed.'
+print(len(data), 'messages parsed.')
 
 if nbInvalidSender > 0:
-    print nbInvalidSender, 'messages discarded because of bad ID.'
+    print(nbInvalidSender, 'messages discarded because of bad ID.')
 
 if len(data) < 1:
-    print 'Nothing to save.'
+    print('Nothing to save.')
     exit(0)
 
-print 'Converting to DataFrame...'
+print('Converting to DataFrame...')
 df = pd.DataFrame(data)
 df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'messenger'
 
-print 'Detecting languages...'
+print('Detecting languages...')
 df['language'] = 'unknown'
 for name, group in df.groupby(df.conversationWithName):
     sample = ''
@@ -112,15 +113,15 @@ for name, group in df.groupby(df.conversationWithName):
         for x in range(0, min(len(df2), 100)):
             sample = sample + df2.iloc[randint(0, len(df2) - 1)]['text']
 
-        print '\t', name, detect(sample), "(", len(df2), "msgs)"
+        print('\t', name, detect(sample), "(", len(df2), "msgs)")
         df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
-print 'Computing dates...'
+print('Computing dates...')
 df['datetime'] = df[df["timestamp"] != ""]['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
 
-print df.head()
+print(df.head())
 
-print 'Saving to pickle file...'
+print('Saving to pickle file...')
 df.to_pickle('data/messenger.pkl')
 
-print 'Done.'
+print('Done.')

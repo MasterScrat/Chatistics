@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import numpy as np
 from os import path
 import matplotlib.pyplot as plt
@@ -32,50 +33,50 @@ filterConversation = args.filterConversation
 filterSender = args.filterSender
 removeSender = args.removeSender
 
-print 'Mask image:', maskImg
-print 'Up to', numWords, 'words on the cloud'
-print 'Image dpi:', density
+print('Mask image:', maskImg)
+print('Up to', numWords, 'words on the cloud')
+print('Image dpi:', density)
 
 # TODO factor w histo logic
 df = pd.DataFrame()
 for dataPath in dataPaths:
-    print 'Loading messages from', dataPath, '...'
+    print('Loading messages from', dataPath, '...')
     df = pd.concat([df, pd.read_pickle(dataPath)])
 
 df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'platform', 'language', 'datetime']
-print 'Loaded', len(df), 'messages'
+print('Loaded', len(df), 'messages')
 
 if filterConversation is not None:
-    print 'Keeping only messages in conversations with', filterConversation
+    print('Keeping only messages in conversations with', filterConversation)
     df = df[df['conversationWithName'] == filterConversation]
 
 if filterSender is not None:
-    print 'Keeping only messages sent by', filterSender
+    print('Keeping only messages sent by', filterSender)
     df = df[df['senderName'] == filterSender]
 
 if removeSender is not None:
-    print 'Removing messages sent by', removeSender
+    print('Removing messages sent by', removeSender)
     df = df[df['senderName'] != removeSender]
 
 if len(df['text'])==0:
-    print 'No messages left! review your filter options'
+    print('No messages left! review your filter options')
     exit(0)
 
-print 'Final corpus:', len(df['text'])/1000, 'K messages'
+print('Final corpus:', len(df['text'])/1000, 'K messages')
 
 stopwords = []
 for stopwordsPath in stopwordsPaths:
-    print 'Loading stopwords from', stopwordsPath, '...'
+    print('Loading stopwords from', stopwordsPath, '...')
     stopwords = stopwords + json.load(open(stopwordsPath))
 
 stopwords = set(stopwords)
-print 'Stopwords:', len(stopwords), 'words'
+print('Stopwords:', len(stopwords), 'words')
 
 # pre-compiled regex is faster than going through a list
 stopwords = '|'.join(stopwords)
 regex = re.compile(r'\b('+stopwords+r')\b', re.UNICODE)
 
-print 'Cleaning up...'
+print('Cleaning up...')
 text = df['text'] \
     .replace(to_replace='None', value=np.nan).dropna() \
     .str.lower() \
@@ -84,7 +85,7 @@ text = df['text'] \
 
 text  = ' '.join(text)
 
-print 'Rendering...'
+print('Rendering...')
 d = path.dirname(__file__)
 mask = imread(path.join(d, maskImg))
 
@@ -98,5 +99,5 @@ plt.imshow(wc)
 plt.axis("off")
 
 path = 'renders/' + str(int(time.time()*1000)) + '.png'
-print 'Saving to', path, '...'
+print('Saving to', path, '...')
 plt.savefig(path, dpi = density)
