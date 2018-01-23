@@ -68,7 +68,7 @@ for filename in os.listdir(filePath):
             if className == 'user':
                 senderName = content
             elif className == 'meta':
-                timestamp = pd.to_datetime(content[:-7], format='%A, %B %d, %Y at %H:%M%p').strftime("%s")
+                timestamp = pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).strftime("%s")
 
         elif tag == 'div' and className == 'thread':
             nbParticipants = str(element.xpath("text()")).count(', ') + 1
