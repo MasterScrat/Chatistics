@@ -28,6 +28,9 @@ data = []
 warnedNameChanges = []
 nbInvalidSender = 0
 
+# make sure we don't crash if chat logs contain exotic characters
+etree.set_default_parser(etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
+
 for filename in os.listdir(filePath):
 
     if not filename.endswith('.html'):
@@ -53,7 +56,8 @@ for filename in os.listdir(filePath):
             if conversationWithName is not "" and senderName is not "":
 
                 # handles when the interlocutor's name changed at some point
-                if (senderName != conversationWithName) and (senderName != ownName) and (senderName not in warnedNameChanges) and (not groupConversation):
+                if (senderName != conversationWithName) and (senderName != ownName) and (
+                    senderName not in warnedNameChanges) and (not groupConversation):
                     if senderName not in warnedNameChanges:
                         print('\t', 'Assuming', senderName, 'is', conversationWithName)
                         warnedNameChanges.append(senderName)
@@ -117,7 +121,8 @@ for name, group in df.groupby(df.conversationWithName):
         df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
 print('Computing dates...')
-df['datetime'] = df[df["timestamp"] != ""]['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
+df['datetime'] = df[df["timestamp"] != ""]['timestamp'].apply(
+    lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
 
 print(df.head())
 
