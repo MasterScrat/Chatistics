@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
+from __future__ import print_function
 import json
 import pandas as pd
 import numpy as np
@@ -19,7 +20,7 @@ maxExportedMessages = args.maxExportedMessages
 ownName = args.ownName
 filePath = args.filePath
 
-print 'Parsing JSON file...'
+print('Parsing JSON file...')
 archive = json.load(open(filePath))
 
 names = {}
@@ -33,14 +34,14 @@ def saveNameForId(name, id):
 	if not id in names:
 		names[id] = name
 	elif names[id] != name:
-		print 'Assuming', name, 'is', names[id]
+		print('Assuming', name, 'is', names[id])
 
 data = []
 conversationId = ""
 conversationWithId = ""
 conversationWithName = ""
 
-print 'Extracting messages...'
+print('Extracting messages...')
 for state in archive["conversation_state"]:
 
 	if "conversation_id" in state:
@@ -73,7 +74,7 @@ for state in archive["conversation_state"]:
 				if idToName(senderId)!=None or idToName(conversationWithId)!=None:
 					if idToName(senderId) != ownName and senderId != conversationWithId:
 						#print idToName(senderId), 'in conversation with', idToName(conversationWithId), '!'
-						print 'Parsing error, is your ownId correct?'
+						print('Parsing error, is your ownId correct?')
 						exit(0)
 
 					# saves the message
@@ -82,20 +83,20 @@ for state in archive["conversation_state"]:
 
 				else:
 					# unknown sender
-					print "No senderName for either senderId", senderId, conversationWithId
+					print("No senderName for either senderId", senderId, conversationWithId)
 
 				if len(data) >= maxExportedMessages:
 					break
 
-print len(data), 'messages parsed.'
+print(len(data), 'messages parsed.')
 
-print 'Converting to DataFrame...'
+print('Converting to DataFrame...')
 df = pd.DataFrame(index=np.arange(0, len(data)))
 df = pd.DataFrame(data)
 df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
 df['platform'] = 'hangouts'
 
-print 'Detecting languages...'
+print('Detecting languages...')
 df['language'] = 'unknown'
 for name, group in df.groupby(df.conversationWithName):
 	sample = ''
@@ -105,12 +106,12 @@ for name, group in df.groupby(df.conversationWithName):
 		for x in range(0, min(len(df2), 100)):
 			sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
 
-		print '\t', name, detect(sample)
+		print('\t', name, detect(sample))
 		df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
-print 'Computing dates...'
+print('Computing dates...')
 df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
-print df.head()
+print(df.head())
 
-print 'Saving to pickle file...'
+print('Saving to pickle file...')
 df.to_pickle('data/hangouts.pkl')
