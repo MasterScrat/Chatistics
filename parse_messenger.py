@@ -8,6 +8,7 @@ import os
 from random import randint
 
 import pandas as pd
+import time
 from langdetect import *
 from lxml import etree
 
@@ -74,7 +75,7 @@ for filename in os.listdir(filePath):
                 senderName = content
             elif className == 'meta':
                 # TODO recognize the date format and use the appropriate regexp. infer_datetime_format is suuuper slow.
-                timestamp = pd.to_datetime(content, infer_datetime_format=True).strftime("%s")
+                timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
 
         elif tag == 'div' and className == 'thread':
             nbParticipants = str(element.xpath("text()")).count(', ') + 1
@@ -122,8 +123,8 @@ for name, group in df.groupby(df.conversationWithName):
         df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
 print('Computing dates...')
-df['datetime'] = df[df["timestamp"] != ""]['timestamp'].apply(
-    lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
+ordinate = lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal()
+df['datetime'] = df['timestamp'].apply(ordinate)
 
 print(df.head())
 
