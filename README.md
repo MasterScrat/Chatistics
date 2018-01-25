@@ -8,6 +8,26 @@ Can also generate ggplot histograms and word clouds from chat logs.
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud3.png" width="400" height="400">
 </p>
 
+## Support Matrix
+
+|      Platform      	| Direct Chat 	| Group Chat 	|
+|:------------------:	|:-----------:	|:----------:	|
+| Facebook Messenger 	|     ✔     	|     ✔     	|
+| Google Hangouts    	|     ✔      	|     ✘     	|
+| Whatsapp           	|     ✘     	|     ✘     	|
+
+## Exported data
+
+|          ID          |                                        Content                                       |
+|:--------------------:|:------------------------------------------------------------------------------------:|
+| timestamp            | UNIX timestamp                                                                       |
+| conversationId       | A conversation ID, unique by platform                                               |
+| conversationWithName | Name of the other people in a direct conversation, **or** name of the group conversation |
+| senderName           | Name of the sender                                                                   |
+| text                 | Text of the message                                                        |
+| language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect)                               |
+| datetime             | The proleptic Gregorian ordinal (= number of days since 01/01/0001)                  |
+
 ## How to use it?
 
 ### 1. Download your chat logs
