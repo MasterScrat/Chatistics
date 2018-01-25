@@ -1,7 +1,7 @@
 # Chatistics
 
 **Python scripts to convert chat logs from Facebook Messenger and Google Hangouts into Panda DataFrames.**
-Can also generate ggplot histograms and word clouds from chat logs.
+Can also generate ggplot histograms and word clouds from said chat logs.
 
 <p align="center">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
@@ -18,7 +18,9 @@ Can also generate ggplot histograms and word clouds from chat logs.
 
 ## Exported data
 
-|          ID          |                                        Content                                       |
+Data exported for each message regardless of the platform:
+
+|          Column          |                                        Content                                       |
 |:--------------------:|:------------------------------------------------------------------------------------:|
 | timestamp            | UNIX timestamp                                                                       |
 | conversationId       | A conversation ID, unique by platform                                               |
@@ -57,7 +59,8 @@ source Chatistics/bin/activate
 pip install -r requirements.txt
 ````
 
-You will need to specify your own name to the parsers. Use the exact same format as you have on Messenger or Hangouts.
+You will need to give your own name to the parsers so it can make sense of the conversations. 
+Use the exact same format as you have on Messenger or Hangouts.
 
 * Google Hangouts: `python parse_hangouts.py -ownName "John Doe"`
 * Facebook Messenger: `python parse_messenger.py -ownName "John Doe"`
