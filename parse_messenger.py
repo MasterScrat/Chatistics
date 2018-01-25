@@ -25,6 +25,7 @@ maxExportedMessages = args.maxExportedMessages
 ownName = args.ownName
 filePath = args.filePath
 
+fallbackDateParsing = False
 data = []
 warnedNameChanges = []
 nbInvalidSender = 0
@@ -74,8 +75,20 @@ for filename in os.listdir(filePath):
             if className == 'user':
                 senderName = content
             elif className == 'meta':
-                # TODO recognize the date format and use the appropriate regexp. infer_datetime_format is suuuper slow.
-                timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
+                try:
+                    if not fallbackDateParsing:
+                        timestamp = time.mktime(pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
+                    else:
+                        timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
+
+                except ValueError:
+                    if not fallbackDateParsing:
+                        print("Unexpected date format. Falling back to infer_datetime_format, parsing will be slower.")
+                        timestamp = time.mktime(pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
+                        fallbackDateParsing = True
+                    else:
+                        raise
+
 
         elif tag == 'div' and className == 'thread':
             nbParticipants = str(element.xpath("text()")).count(', ') + 1
