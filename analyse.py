@@ -10,24 +10,24 @@ from ggplot import *
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '-data', dest='dataPaths', nargs='+', help='chat log data files (pickle files)',
+    parser.add_argument('-d', '--data', dest='data_paths', nargs='+', help='chat log data files (pickle files)',
                         required=True)
-    parser.add_argument("-plotDensity", dest='density', action='store_true',
-                        help="plots the message densities (KDE) instead of their count")
-    parser.add_argument("-n", "-numberSenders", dest='topN', type=int, default=10,
-                        help="number of different senders to consider, ordered by number of messages sent")
-    parser.add_argument("-b", "-binWidth", dest='binWidth', type=int, default=25, help="bin width for histograms")
-    parser.add_argument("-filterConversation", dest='filterConversation', type=str, default=None,
-                        help="only keep messages sent in a conversation with this sender")
-    parser.add_argument("-filterSender", dest='filterSender', type=str, default=None,
-                        help="only keep messages sent by this sender")
-    parser.add_argument("-removeSender", dest='removeSender', type=str, default=None,
-                        help="remove messages sent by this sender")
+    parser.add_argument('--plot-density', dest='density', action='store_true',
+                        help='plots the message densities (KDE) instead of their count')
+    parser.add_argument('-n', '--number-senders', dest='top_n', type=int, default=10,
+                        help='number of different senders to consider, ordered by number of messages sent')
+    parser.add_argument('-b', '--bin-width', dest='bin_width', type=int, default=25, help='bin width for histograms')
+    parser.add_argument('--filter-conversation', dest='filter_conversation', type=str, default=None,
+                        help='only keep messages sent in a conversation with this sender')
+    parser.add_argument('--filter-sender', dest='filter_sender', type=str, default=None,
+                        help='only keep messages sent by this sender')
+    parser.add_argument('--remove-sender', dest='remove_sender', type=str, default=None,
+                        help='remove messages sent by this sender')
     args = parser.parse_args()
     return args
 
 
-def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_sender=None, top_n=None):
+def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_sender=None, top_n=10):
     # data loading
     df = pd.DataFrame()
     for dataPath in data_paths:
