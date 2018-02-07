@@ -62,8 +62,8 @@ pip install -r requirements.txt
 You will need to give your own name to the parsers so it can make sense of the conversations. 
 Use the exact same format as you have on Messenger or Hangouts.
 
-* Google Hangouts: `python parse_hangouts.py -ownName "John Doe"`
-* Facebook Messenger: `python parse_messenger.py -ownName "John Doe"`
+* Google Hangouts: `python parsers/hangouts.py -ownName "John Doe"`
+* Facebook Messenger: `python parsers/messenger.py -ownName "John Doe"`
 
 The pickle files will now be ready for analysis in the `data` folder! 
 
