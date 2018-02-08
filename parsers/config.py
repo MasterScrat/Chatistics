@@ -3,7 +3,9 @@ import os
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 
-ALL_COLUMNS = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'language', 'datetime']
+ALL_COLUMNS = [
+    'timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'language', 'platform', 'datetime'
+]
 DATAFRAME_COLUMNS = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
 MAX_EXPORTED_MESSAGES = 1000000
 

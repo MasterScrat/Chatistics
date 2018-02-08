@@ -4,8 +4,7 @@ from telethon import TelegramClient
 from telethon.tl.types import PeerUser, PeerChannel, PeerChat
 
 from parsers import log
-from parsers import utils
-from parsers import config_local as config
+from parsers import utils, config
 
 
 def list_dialogs(client):
@@ -45,7 +44,7 @@ def process_dialog_with_user(client, item):
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
-        result.append([timestamp, user_id, conversation_with_name, '', text, 'unknown', ordinal_date])
+        result.append([timestamp, user_id, conversation_with_name, '', text, 'unknown', '', ordinal_date])
     return result
 
 
@@ -57,7 +56,7 @@ def main():
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
     df.columns = config.ALL_COLUMNS
-
+    # import pdb; pdb.set_trace()
     df['platform'] = 'telegram'
     own_name = '{} {}'.format(me.first_name, me.last_name).strip()
     df['senderName'] = own_name

@@ -4,6 +4,8 @@ import argparse
 import pandas as pd
 from ggplot import *
 
+from parsers import config
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -31,8 +33,7 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
         print('Loading', dataPath, '...')
         df = pd.concat([df, pd.read_pickle(dataPath)])
 
-    df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text', 'platform', 'language',
-                  'datetime']
+    df.columns = config.ALL_COLUMNS
     print('Loaded', len(df), 'messages')
 
     # filtering
@@ -56,7 +57,7 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
     merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
     merged = merged[['datetime', 'conversationWithName', 'senderName']]
 
-    print("Number to render:", len(merged))
+    print('Number to render:', len(merged))
     print(merged.head())
     return merged
 
@@ -66,16 +67,16 @@ def render(data, bin_width, plot_density=False):
         plot = ggplot(data, aes(x='datetime', color='conversationWithName')) \
                + geom_density() \
                + scale_x_date(labels='%b %Y') \
-               + ggtitle("Conversation Densities") \
-               + ylab("Density") \
-               + xlab("Date")
+               + ggtitle('Conversation Densities') \
+               + ylab('Density') \
+               + xlab('Date')
     else:
         plot = ggplot(data, aes(x='datetime', fill='conversationWithName')) \
                + geom_histogram(alpha=0.6, binwidth=bin_width) \
                + scale_x_date(labels='%b %Y', breaks='6 months') \
-               + ggtitle("Message Breakdown") \
-               + ylab("Number of Messages") \
-               + xlab("Date")
+               + ggtitle('Message Breakdown') \
+               + ylab('Number of Messages') \
+               + xlab('Date')
 
     print(plot)
 
