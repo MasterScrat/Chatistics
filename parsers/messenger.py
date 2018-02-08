@@ -140,8 +140,7 @@ def main():
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
     print('Computing dates...')
-    ordinate = lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal()
-    df['datetime'] = df['timestamp'].apply(ordinate)
+    df['datetime'] = df['timestamp'].apply(utils.timestamp_to_ordinal)
 
     print(df.head())
     utils.export_dataframe(df, 'messenger.pkl')

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json
 import pandas as pd
-import datetime
 import argparse
 from random import randint
 from langdetect import *
@@ -108,9 +107,11 @@ def main():
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
     print('Computing dates...')
-    df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
+    df['datetime'] = df['timestamp'].apply(utils.timestamp_to_ordinal)
+
     print(df.head())
     utils.export_dataframe(df, 'hangouts.pkl')
+    print('Done.')
 
 
 if __name__ == '__main__':
