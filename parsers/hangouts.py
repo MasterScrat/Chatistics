@@ -9,7 +9,8 @@ import argparse
 from random import randint
 from langdetect import *
 
-from parsers import config, utils
+import utils
+import config
 
 
 def parse_arguments():

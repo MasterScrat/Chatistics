@@ -12,7 +12,8 @@ import time
 from langdetect import *
 from lxml import etree
 
-from parsers import config, utils
+import utils
+import config
 
 
 def parse_arguments():

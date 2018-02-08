@@ -47,7 +47,7 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 1. Go to the "Settings" page: https://www.facebook.com/settings
 2. Click on "Download a copy of your Facebook data" at the bottom of the General section.
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
-4. Once it is done download and extract the archive, then move the `messages` folder in the `raw` folder of ChatShape.
+4. Once it is done download and extract the archive, then move the `messages` folder in the `raw` folder of Chatistics.
 
 ### 2. Parse the logs into DataFrames
 
