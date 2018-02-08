@@ -30,7 +30,8 @@ def main():
     own_name = args.own_name
 
     print('Parsing JSON file...')
-    archive = json.loads(args.file_path)
+    with open(args.file_path) as f:
+        archive = json.loads(f.read())
 
     names = {}
 
