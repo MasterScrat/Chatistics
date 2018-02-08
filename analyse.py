@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-from __future__ import print_function
+#!/usr/bin/env python3
 import argparse
-import sys
 
 import pandas as pd
 from ggplot import *
@@ -84,9 +81,6 @@ def render(data, bin_width, plot_density=False):
 
 
 def main():
-    # avoids unicode errors
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
     args = parse_arguments()
     data = load_data(
         data_paths=args.data_paths,

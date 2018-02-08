@@ -70,7 +70,11 @@ Use the exact same format as you have on Messenger or Hangouts.
 `python parsers/messenger.py --own-name "John Doe"`
 
 #### Telegram
-
+1. Create your Telegram application to access chat logs ([instructions](https://core.telegram.org/api/obtaining_api_id)).
+You will need `api_id` and `api_hash`.
+2. Paste these values to `downloaders/config.py` into corresponding variables.
+3. Grab your message history data
+`python downloaders/telegram.py`
 
 The pickle files will now be ready for analysis in the `data` folder! 
 

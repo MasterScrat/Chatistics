@@ -1,14 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
-from __future__ import print_function
+#!/usr/bin/env python3
+import os
+import time
+import random
 import argparse
 import datetime
-import os
-from random import randint
 
 import pandas as pd
-import time
 from langdetect import *
 from lxml import etree
 
@@ -138,7 +135,7 @@ def main():
 
         if len(df2) > 10:
             for x in range(0, min(len(df2), 100)):
-                sample = sample + df2.iloc[randint(0, len(df2) - 1)]['text']
+                sample = sample + df2.iloc[random.randint(0, len(df2) - 1)]['text']
 
             print('\t', name, detect(sample), "(", len(df2), "msgs)")
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)

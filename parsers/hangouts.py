@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
-from __future__ import print_function
+#!/usr/bin/env python3
 import json
 import pandas as pd
 import datetime
