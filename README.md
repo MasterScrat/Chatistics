@@ -62,8 +62,8 @@ pip install -r requirements.txt
 You will need to give your own name to the parsers so it can make sense of the conversations. 
 Use the exact same format as you have on Messenger or Hangouts.
 
-* Google Hangouts: `python parsers/hangouts.py -ownName "John Doe"`
-* Facebook Messenger: `python parsers/messenger.py -ownName "John Doe"`
+* Google Hangouts: `python parsers/hangouts.py --own-name "John Doe"`
+* Facebook Messenger: `python parsers/messenger.py --own-name "John Doe"`
 
 The pickle files will now be ready for analysis in the `data` folder! 
 
@@ -78,30 +78,30 @@ It can also generate word clouds based on word density and a base image.
 
 Plot all messages with:
 
-`python analyse.py -data data/*`
+`python analyse.py --data data/*`
 
 You can filter messages as needed:
 
 ````
-  -filterConversation FILTERCONVERSATION
+  --filter-conversation FILTERCONVERSATION
                         only keep messages sent in a conversation with this sender
-  -filterSender FILTERSENDER
+  --filter-sender FILTERSENDER
                         only keep messages sent by this sender
-  -removeSender REMOVESENDER
+  --remove-sender REMOVESENDER
                         remove messages sent by this sender
 ````
 
 Eg to see all the messages sent between you and Jane Doe: 
 
-`python analyse.py -data data/* -filterConversation "Jane Doe"`
+`python analyse.py --data data/* --filter-conversation "Jane Doe"`
 
 To see the messages sent to you by the top 10 people with whom you talk the most:
 
-`python analyse.py -data data/* -removeSender "Your Name" -n 10`
+`python analyse.py --data data/* --remove-sender "Your Name" -n 10`
 
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/histo.png" width="701" height="406">
 
-You can also plot the conversation densities using the `-plotDensity` flag.
+You can also plot the conversation densities using the `--plot-density` flag.
 
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
 
@@ -110,7 +110,7 @@ You can also plot the conversation densities using the `-plotDensity` flag.
 
 You will need a mask file to render the word cloud. The white bits of the image will be left empty, the rest will be filled with words using the color of the image. [See the WordCloud library documentation](https://github.com/amueller/word_cloud) for more information.
 
-`python cloud.py -data data/* -m img/mask_image.jpg`
+`python cloud.py --data data/* -m img/mask_image.jpg`
 
 You can filter which messages to use using the same flags as with histograms.
 
