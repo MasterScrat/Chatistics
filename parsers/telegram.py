@@ -1,46 +1,26 @@
 #!/usr/bin/env python3
-import argparse
-import logging
-
 import pandas as pd
 from telethon import TelegramClient
 from telethon.tl.types import PeerUser, PeerChannel, PeerChat
 
-from parsers import utils, config
-
-
-def parse_arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--own-name', dest='own_name', type=str,
-                        help='name of the owner of the chat logs, written as in the logs', required=True)
-    parser.add_argument('-f', '--file-path', dest='file_path', help='Facebook chat log file (HTML file)',
-                        default='raw/messages')
-    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
-                        default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
-    args = parser.parse_args()
-    return args
-
-
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-handler = logging.StreamHandler()
-handler.setFormatter(fmt=logging.Formatter(fmt=logging.BASIC_FORMAT))
-log.addHandler(handler)
+from parsers import log
+from parsers import utils
+from parsers import config_local as config
 
 
 def list_dialogs(client):
     dialogs = client.get_dialogs()
+    result = []
     for item in dialogs:
         dialog = item.dialog
         if isinstance(dialog.peer, PeerUser):
-            process_dialog_with_user(client, dialog)
+            result.extend(process_dialog_with_user(client, item))
         elif isinstance(dialog.peer, (PeerChannel, PeerChat)):
             log.debug('Dialogs in chats/channels are not supported yet')
         else:
             log.warning('Unknown dialog type %s', dialog)
 
-    return []
+    return result
 
 
 def sign_in(client):
@@ -54,20 +34,19 @@ def sign_in(client):
     return me
 
 
-def process_dialog_with_user(client, dialog):
+def process_dialog_with_user(client, item):
+    conversation_with_name = item.name
+    dialog = item.dialog
     user_id = dialog.peer.user_id
     limit = config.TELEGRAM_USER_DIALOG_MESSAGES_LIMIT
-    import pdb; pdb.set_trace()
     result = []
-    messages = client.get_message_history(user_id, limit=limit)
+    messages = client.get_message_history(user_id, limit=20)
     for message in messages:
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
         conversation_id = 1
-        conversation_with_name = 'Unknown'
-        sender_name = 'Me'
-        result.append([timestamp, ordinal_date, text, conversation_id, conversation_with_name, sender_name, text])
+        result.append([timestamp, conversation_id, conversation_with_name, '', text, 'unknown', ordinal_date])
     return result
 
 
@@ -77,9 +56,16 @@ def main():
     me = sign_in(client)
     data = list_dialogs(client)
     print('Converting to DataFrame...')
+    import pdb; pdb.set_trace()
     df = pd.DataFrame(data)
-    df.columns = config.DATAFRAME_COLUMNS
+    df.columns = config.ALL_COLUMNS
+
     df['platform'] = 'telegram'
+    own_name = '{} {}'.format(me.first_name, me.last_name).strip()
+    df['senderName'] = own_name
+
+    print('Detecting languages...')
+    df['language'] = 'unknown'
 
     utils.export_dataframe(df, 'telegram.pkl')
     print('Done.')
