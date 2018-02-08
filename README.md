@@ -10,11 +10,11 @@ Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 ## Support Matrix
 
-|      Platform      	| Direct Chat 	| Group Chat 	|
-|:------------------:	|:-----------:	|:----------:	|
-| Facebook Messenger 	|     ✔     	|     ✔     	|
-| Google Hangouts    	|     ✔      	|     ✘     	|
-| Whatsapp           	|     ✘     	|     ✘     	|
+|      Platform         | Direct Chat   | Group Chat    |
+|:------------------:   |:-----------:  |:----------:   |
+| Facebook Messenger    |     ✔         |     ✔         |
+| Google Hangouts       |     ✔         |     ✘         |
+| Whatsapp              |     ✘         |     ✘         |
 | Telegram              |     ✔         |     ✘         |
 
 ## Exported data
