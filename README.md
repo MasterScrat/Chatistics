@@ -130,7 +130,7 @@ You can filter which messages to use using the same flags as with histograms.
 
 * Parsers for more chat platforms: WhatsApp? Pidgin? ...
 * Figure out OWN_NAME automatically.
-* Handle group c    ✘   hats.
+* Handle group chats.
 * See [TODO file](https://github.com/MasterScrat/ChatShape/blob/master/TODO) for more.
 
 Pull requests are welcome!
