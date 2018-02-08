@@ -3,12 +3,12 @@ import os
 import time
 import random
 import argparse
-import datetime
 
 import pandas as pd
 from langdetect import *
 from lxml import etree
 
+from parsers import log
 from parsers import utils, config
 
 
@@ -121,12 +121,12 @@ def main():
         print('Nothing to save.')
         exit(0)
 
-    print('Converting to DataFrame...')
+    log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
     df.columns = config.DATAFRAME_COLUMNS
     df['platform'] = 'messenger'
 
-    print('Detecting languages...')
+    log.info('Detecting languages...')
     df['language'] = 'unknown'
     for name, group in df.groupby(df.conversationWithName):
         sample = ''
@@ -139,12 +139,12 @@ def main():
             print('\t', name, detect(sample), "(", len(df2), "msgs)")
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
-    print('Computing dates...')
+    log.info('Computing dates...')
     df['datetime'] = df['timestamp'].apply(utils.timestamp_to_ordinal)
 
     print(df.head())
     utils.export_dataframe(df, 'messenger.pkl')
-    print('Done.')
+    log.info('Done.')
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ import argparse
 from random import randint
 from langdetect import *
 
+from parsers import log
 from parsers import utils, config
 
 
@@ -86,32 +87,32 @@ def main():
                     if len(data) >= args.max_exported_messages:
                         break
 
-    print(len(data), 'messages parsed.')
+    log.debug(len(data), 'messages parsed.')
 
-    print('Converting to DataFrame...')
+    log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
     df.columns = config.DATAFRAME_COLUMNS
     df['platform'] = 'hangouts'
 
-    print('Detecting languages...')
+    log.info('Detecting languages...')
     df['language'] = 'unknown'
     for name, group in df.groupby(df.conversationWithName):
         sample = ''
         df2 = df[df.conversationWithName == name].dropna()
 
-        if len(df2)>10:
+        if len(df2) > 10:
             for x in range(0, min(len(df2), 100)):
                 sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
 
             print('\t', name, detect(sample))
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)
 
-    print('Computing dates...')
+    log.info('Computing dates...')
     df['datetime'] = df['timestamp'].apply(utils.timestamp_to_ordinal)
 
     print(df.head())
     utils.export_dataframe(df, 'hangouts.pkl')
-    print('Done.')
+    log.info('Done.')
 
 
 if __name__ == '__main__':

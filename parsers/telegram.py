@@ -40,7 +40,7 @@ def process_dialog_with_user(client, item):
     user_id = dialog.peer.user_id
     limit = config.TELEGRAM_USER_DIALOG_MESSAGES_LIMIT
     result = []
-    messages = client.get_message_history(user_id, limit=20)
+    messages = client.get_message_history(user_id, limit=limit)
     for message in messages:
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()

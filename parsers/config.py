@@ -21,4 +21,4 @@ TELEGRAM_API_ID = '<paste api_id here>'
 TELEGRAM_API_HASH = '<paste api_hash here>'
 TELEGRAM_PHONE = '<paste your phone number here>'
 
-TELEGRAM_USER_DIALOG_MESSAGES_LIMIT = None
+TELEGRAM_USER_DIALOG_MESSAGES_LIMIT = 1000
