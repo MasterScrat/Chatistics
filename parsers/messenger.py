@@ -9,8 +9,7 @@ import pandas as pd
 from langdetect import *
 from lxml import etree
 
-import utils
-import config
+from parsers import utils, config
 
 
 def parse_arguments():

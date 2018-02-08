@@ -1,6 +1,6 @@
 # Chatistics
 
-**Python 2 scripts to convert chat logs from various messenger platforms into Panda DataFrames.**
+**Python 3 scripts to convert chat logs from various messenger platforms into Panda DataFrames.**
 Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 <p align="center">
