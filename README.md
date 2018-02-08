@@ -1,7 +1,7 @@
 # Chatistics
 
-**Python scripts to convert chat logs from Facebook Messenger and Google Hangouts into Panda DataFrames.**
-Can also generate ggplot histograms and word clouds from said chat logs.
+**Python 2 scripts to convert chat logs from various messenger platforms into Panda DataFrames.**
+Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 <p align="center">
 <img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
@@ -15,6 +15,7 @@ Can also generate ggplot histograms and word clouds from said chat logs.
 | Facebook Messenger 	|     ✔     	|     ✔     	|
 | Google Hangouts    	|     ✔      	|     ✘     	|
 | Whatsapp           	|     ✘     	|     ✘     	|
+| Telegram              |     ✔         |     ✘         |
 
 ## Exported data
 
@@ -53,17 +54,23 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 
 Install the required Python packages:
 
-````
+```
 virtualenv Chatistics
 source Chatistics/bin/activate
 pip install -r requirements.txt
-````
+```
 
 You will need to give your own name to the parsers so it can make sense of the conversations. 
 Use the exact same format as you have on Messenger or Hangouts.
 
-* Google Hangouts: `python parsers/hangouts.py --own-name "John Doe"`
-* Facebook Messenger: `python parsers/messenger.py --own-name "John Doe"`
+#### Google Hangouts
+`python parsers/hangouts.py --own-name "John Doe"`
+
+#### Facebook Messenger
+`python parsers/messenger.py --own-name "John Doe"`
+
+#### Telegram
+
 
 The pickle files will now be ready for analysis in the `data` folder! 
 
@@ -82,14 +89,14 @@ Plot all messages with:
 
 You can filter messages as needed:
 
-````
+```
   --filter-conversation FILTERCONVERSATION
                         only keep messages sent in a conversation with this sender
   --filter-sender FILTERSENDER
                         only keep messages sent by this sender
   --remove-sender REMOVESENDER
                         remove messages sent by this sender
-````
+```
 
 Eg to see all the messages sent between you and Jane Doe: 
 
@@ -119,7 +126,7 @@ You can filter which messages to use using the same flags as with histograms.
 
 * Parsers for more chat platforms: WhatsApp? Pidgin? ...
 * Figure out OWN_NAME automatically.
-* Handle group chats.
+* Handle group c    ✘   hats.
 * See [TODO file](https://github.com/MasterScrat/ChatShape/blob/master/TODO) for more.
 
 Pull requests are welcome!
