@@ -9,6 +9,8 @@ import argparse
 from random import randint
 from langdetect import *
 
+from parsers import config, utils
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -16,15 +18,10 @@ def parse_arguments():
                         help='name of the owner of the chat logs, written as in the logs', required=True)
     parser.add_argument('-f','--file-path', dest='file_path', help='Hangouts chat log file',
                         default='raw/Hangouts.json')
-    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int, default=1000000,
-                        help='maximum number of messages to export')
+    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
+                        default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
     args = parser.parse_args()
     return args
-
-
-def export_dataframe(df):
-    print('Saving to pickle file...')
-    df.to_pickle('data/hangouts.pkl')
 
 
 def main():
@@ -96,7 +93,7 @@ def main():
 
     print('Converting to DataFrame...')
     df = pd.DataFrame(data)
-    df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
+    df.columns = config.DATAFRAME_COLUMNS
     df['platform'] = 'hangouts'
 
     print('Detecting languages...')
@@ -115,7 +112,7 @@ def main():
     print('Computing dates...')
     df['datetime'] = df['timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal())
     print(df.head())
-    export_dataframe(df)
+    utils.export_dataframe(df, 'hangouts.pkl')
 
 
 if __name__ == '__main__':

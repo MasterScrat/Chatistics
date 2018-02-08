@@ -12,6 +12,8 @@ import time
 from langdetect import *
 from lxml import etree
 
+from parsers import config, utils
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -19,15 +21,10 @@ def parse_arguments():
                         help='name of the owner of the chat logs, written as in the logs', required=True)
     parser.add_argument('-f', '--file-path', dest='file_path', help='Facebook chat log file (HTML file)',
                         default='raw/messages')
-    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int, default=1000000,
-                        help='maximum number of messages to export')
+    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
+                        default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
     args = parser.parse_args()
     return args
-
-
-def export_dataframe(df):
-    print('Saving to pickle file...')
-    df.to_pickle('data/messenger.pkl')
 
 
 def main():
@@ -63,7 +60,7 @@ def main():
             if tag == 'p':
                 text = content
 
-                if conversationWithName is not "" and senderName is not "":
+                if conversationWithName != '' and senderName != '':
 
                     # handles when the interlocutor's name changed at some point
                     if (senderName != conversationWithName) and (senderName != args.own_name) and \
@@ -129,7 +126,7 @@ def main():
 
     print('Converting to DataFrame...')
     df = pd.DataFrame(data)
-    df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
+    df.columns = config.DATAFRAME_COLUMNS
     df['platform'] = 'messenger'
 
     print('Detecting languages...')
@@ -150,7 +147,7 @@ def main():
     df['datetime'] = df['timestamp'].apply(ordinate)
 
     print(df.head())
-    export_dataframe(df)
+    utils.export_dataframe(df, 'messenger.pkl')
     print('Done.')
 
 
