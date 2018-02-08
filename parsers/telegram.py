@@ -45,8 +45,7 @@ def process_dialog_with_user(client, item):
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
-        conversation_id = 1
-        result.append([timestamp, conversation_id, conversation_with_name, '', text, 'unknown', ordinal_date])
+        result.append([timestamp, user_id, conversation_with_name, '', text, 'unknown', ordinal_date])
     return result
 
 
@@ -55,8 +54,7 @@ def main():
     client.connect()
     me = sign_in(client)
     data = list_dialogs(client)
-    print('Converting to DataFrame...')
-    import pdb; pdb.set_trace()
+    log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
     df.columns = config.ALL_COLUMNS
 
@@ -64,11 +62,11 @@ def main():
     own_name = '{} {}'.format(me.first_name, me.last_name).strip()
     df['senderName'] = own_name
 
-    print('Detecting languages...')
+    log.info('Detecting languages...')
     df['language'] = 'unknown'
 
     utils.export_dataframe(df, 'telegram.pkl')
-    print('Done.')
+    log.info('Done.')
 
 
 if __name__ == '__main__':
