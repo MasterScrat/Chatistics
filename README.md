@@ -38,7 +38,7 @@ Data exported for each message regardless of the platform:
 
 Use Google Takeout: https://takeout.google.com/settings/takeout
 
-Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of ChatShape.
+Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of Chatistics.
 
 *Google switched from "Google Talk" to "Google Hangouts" mid-2013. Sadly you will only get your Hangouts logs using Takeout.*
 
@@ -47,7 +47,7 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 1. Go to the "Settings" page: https://www.facebook.com/settings
 2. Click on "Download a copy of your Facebook data" at the bottom of the General section.
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
-4. Once it is done download and extract the archive, then move the `messages` folder in the `raw` folder of ChatShape.
+4. Once it is done download and extract the archive, then move the `messages` folder in the `raw` folder of Chatistics.
 
 ### 2. Parse the logs into DataFrames
 
