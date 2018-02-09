@@ -13,7 +13,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--own-name', dest='own_name', type=str,
                         help='name of the owner of the chat logs, written as in the logs', required=True)
-    parser.add_argument('-f','--file-path', dest='file_path', help='Hangouts chat log file',
+    parser.add_argument('-f', '--file-path', dest='file_path', help='Hangouts chat log file',
                         default=config.DEFAULT_HANGOUTS_RAW_FILE)
     parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
                         default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
@@ -26,7 +26,7 @@ def main():
     own_name = args.own_name
 
     print('Parsing JSON file...')
-    with open(args.file_path) as f:
+    with open(args.file_path, encoding='utf-8') as f:
         archive = json.loads(f.read())
 
     names = {}
@@ -77,7 +77,7 @@ def main():
                             exit(0)
 
                         # saves the message
-                        timestamp = timestamp/1000000
+                        timestamp = timestamp / 1000000
                         data += [[timestamp, conversationId, idToName(conversationWithId), idToName(senderId), text]]
 
                     else:
@@ -102,7 +102,7 @@ def main():
 
         if len(df2) > 10:
             for x in range(0, min(len(df2), 100)):
-                sample = sample + df2.iloc[randint(0, len(df2)-1)]['text']
+                sample = sample + df2.iloc[randint(0, len(df2) - 1)]['text']
 
             print('\t', name, detect(sample))
             df.loc[df.conversationWithName == name, 'language'] = detect(sample)
