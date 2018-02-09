@@ -88,8 +88,7 @@ def main():
                         if not fallbackDateParsing:
                             print('Unexpected date format. '
                                   'Falling back to infer_datetime_format, parsing will be slower.')
-                            timestamp = time.mktime(
-                                pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
+                            timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
                             fallbackDateParsing = True
                         else:
                             raise
