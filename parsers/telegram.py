@@ -54,7 +54,6 @@ def process_dialog_with_user(client, item):
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
-        print(timestamp, user_id, conversation_with_name, '', text, 'unknown', '', ordinal_date)
         result.append([timestamp, user_id, conversation_with_name, '', text, 'unknown', '', ordinal_date])
     return result
 
