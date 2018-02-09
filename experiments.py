@@ -1,4 +1,3 @@
-from __future__ import print_function
 import pandas as pd
 import numpy as np
 from ggplot import *
@@ -6,8 +5,6 @@ import sys
 from random import randint
 import datetime
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 df = pd.DataFrame()
 df = pd.concat([df, pd.read_pickle('data/hangouts.pkl')])

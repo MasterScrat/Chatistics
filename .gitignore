@@ -99,3 +99,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Telegram session
+*.session

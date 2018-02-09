@@ -1,147 +1,151 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
-from __future__ import print_function
-import argparse
-import datetime
+#!/usr/bin/env python3
 import os
-from random import randint
+import time
+import random
+import argparse
 
 import pandas as pd
-import time
 from langdetect import *
 from lxml import etree
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-ownName", dest='ownName', type=str,
-                    help="name of the owner of the chat logs, written as in the logs", required=True)
-parser.add_argument('-f', '-filePath', dest='filePath', help='Facebook chat log file (HTML file)',
-                    default='raw/messages')
-parser.add_argument("-max", "-maxExportedMessages", dest='maxExportedMessages', type=int, default=1000000,
-                    help="maximum number of messages to export")
-args = parser.parse_args()
-
-maxExportedMessages = args.maxExportedMessages
-ownName = args.ownName
-filePath = args.filePath
-
-fallbackDateParsing = False
-data = []
-warnedNameChanges = []
-nbInvalidSender = 0
-
-# make sure we don't crash if chat logs contain exotic characters
-etree.set_default_parser(etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
-
-for filename in os.listdir(filePath):
-
-    if not filename.endswith('.html'):
-        continue
-
-    archive = etree.parse(filePath + "/" + filename)
-
-    conversationId = filename.replace('.html', '')
-    groupConversation = False
-    timestamp = ''
-    senderName = ''
-    conversationWithName = None
-    text = ''
-
-    for element in archive.iter():
-        tag = element.tag
-        className = element.get('class')
-        content = element.text
-
-        if tag == 'p':
-            text = content
-
-            if conversationWithName is not "" and senderName is not "":
-
-                # handles when the interlocutor's name changed at some point
-                if (senderName != conversationWithName) and (senderName != ownName) and (
-                    senderName not in warnedNameChanges) and (not groupConversation):
-                    if senderName not in warnedNameChanges:
-                        print('\t', 'Assuming', senderName, 'is', conversationWithName)
-                        warnedNameChanges.append(senderName)
-
-                    senderName = conversationWithName
-
-                data += [[timestamp, conversationId, conversationWithName, senderName, text]]
-
-            else:
-                nbInvalidSender = nbInvalidSender + 1
-
-        elif tag == 'span':
-            if className == 'user':
-                senderName = content
-            elif className == 'meta':
-                try:
-                    if not fallbackDateParsing:
-                        timestamp = time.mktime(pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
-                    else:
-                        timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
-
-                except ValueError:
-                    if not fallbackDateParsing:
-                        print("Unexpected date format. Falling back to infer_datetime_format, parsing will be slower.")
-                        timestamp = time.mktime(pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
-                        fallbackDateParsing = True
-                    else:
-                        raise
+from parsers import log
+from parsers import utils, config
 
 
-        elif tag == 'div' and className == 'thread':
-            nbParticipants = str(element.xpath("text()")).count(', ') + 1
-            if nbParticipants > 1:
-                groupConversation = True
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--own-name', dest='own_name', type=str,
+                        help='name of the owner of the chat logs, written as in the logs', required=True)
+    parser.add_argument('-f', '--file-path', dest='file_path', help='Facebook chat log file (HTML file)',
+                        default=config.DEFAULT_MESSENGER_RAW_FILE)
+    parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
+                        default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
+    args = parser.parse_args()
+    return args
 
-        elif tag == 'h3':
-            if conversationWithName is not None:
-                print('Something is wrong. File format changed? (multiple conversation hearder in a single file)')
-                exit(0)
-            else:
-                content = content.replace('Conversation with ', '')
-                conversationWithName = content
 
-            print(conversationId, conversationWithName, "(group?", groupConversation, ")")
+def main():
+    args = parse_arguments()
 
-        if len(data) >= maxExportedMessages:
-            break
+    fallbackDateParsing = False
+    data = []
+    warnedNameChanges = []
+    nbInvalidSender = 0
 
-print(len(data), 'messages parsed.')
+    # make sure we don't crash if chat logs contain exotic characters
+    etree.set_default_parser(etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
 
-if nbInvalidSender > 0:
-    print(nbInvalidSender, 'messages discarded because of bad ID.')
+    for filename in os.listdir(args.file_path):
 
-if len(data) < 1:
-    print('Nothing to save.')
-    exit(0)
+        if not filename.endswith('.html'):
+            continue
 
-print('Converting to DataFrame...')
-df = pd.DataFrame(data)
-df.columns = ['timestamp', 'conversationId', 'conversationWithName', 'senderName', 'text']
-df['platform'] = 'messenger'
+        document = os.path.join(args.file_path, filename)
+        archive = etree.parse(document)
 
-print('Detecting languages...')
-df['language'] = 'unknown'
-for name, group in df.groupby(df.conversationWithName):
-    sample = ''
-    df2 = df[df.conversationWithName == name].dropna()
+        conversationId = filename.replace('.html', '')
+        groupConversation = False
+        timestamp = ''
+        senderName = ''
+        conversationWithName = None
 
-    if len(df2) > 10:
-        for x in range(0, min(len(df2), 100)):
-            sample = sample + df2.iloc[randint(0, len(df2) - 1)]['text']
+        for element in archive.iter():
+            tag = element.tag
+            className = element.get('class')
+            content = element.text
 
-        print('\t', name, detect(sample), "(", len(df2), "msgs)")
-        df.loc[df.conversationWithName == name, 'language'] = detect(sample)
+            if tag == 'p':
+                text = content
 
-print('Computing dates...')
-ordinate = lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal()
-df['datetime'] = df['timestamp'].apply(ordinate)
+                if conversationWithName != '' and senderName != '':
 
-print(df.head())
+                    # handles when the interlocutor's name changed at some point
+                    if (senderName != conversationWithName) and (senderName != args.own_name) and \
+                            (senderName not in warnedNameChanges) and (not groupConversation):
+                        if senderName not in warnedNameChanges:
+                            print('\t', 'Assuming', senderName, 'is', conversationWithName)
+                            warnedNameChanges.append(senderName)
 
-print('Saving to pickle file...')
-df.to_pickle('data/messenger.pkl')
+                        senderName = conversationWithName
 
-print('Done.')
+                    data += [[timestamp, conversationId, conversationWithName, senderName, text]]
+
+                else:
+                    nbInvalidSender = nbInvalidSender + 1
+
+            elif tag == 'span':
+                if className == 'user':
+                    senderName = content
+                elif className == 'meta':
+                    try:
+                        if not fallbackDateParsing:
+                            timestamp = time.mktime(
+                                pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
+                        else:
+                            timestamp = time.mktime(pd.to_datetime(content, infer_datetime_format=True).timetuple())
+
+                    except ValueError:
+                        if not fallbackDateParsing:
+                            print('Unexpected date format. '
+                                  'Falling back to infer_datetime_format, parsing will be slower.')
+                            timestamp = time.mktime(
+                                pd.to_datetime(content, format='%A, %B %d, %Y at %H:%M%p', exact=False).timetuple())
+                            fallbackDateParsing = True
+                        else:
+                            raise
+
+            elif tag == 'div' and className == 'thread':
+                nbParticipants = str(element.xpath("text()")).count(', ') + 1
+                if nbParticipants > 1:
+                    groupConversation = True
+
+            elif tag == 'h3':
+                if conversationWithName is not None:
+                    print('Something is wrong. File format changed? (multiple conversation hearder in a single file)')
+                    exit(0)
+                else:
+                    content = content.replace('Conversation with ', '')
+                    conversationWithName = content
+
+                print(conversationId, conversationWithName, "(group?", groupConversation, ")")
+
+            if len(data) >= args.max_exported_messages:
+                break
+
+    print(len(data), 'messages parsed.')
+
+    if nbInvalidSender > 0:
+        print(nbInvalidSender, 'messages discarded because of bad ID.')
+
+    if len(data) < 1:
+        print('Nothing to save.')
+        exit(0)
+
+    log.info('Converting to DataFrame...')
+    df = pd.DataFrame(data)
+    df.columns = config.DATAFRAME_COLUMNS
+    df['platform'] = 'messenger'
+
+    log.info('Detecting languages...')
+    df['language'] = 'unknown'
+    for name, group in df.groupby(df.conversationWithName):
+        sample = ''
+        df2 = df[df.conversationWithName == name].dropna()
+
+        if len(df2) > 10:
+            for x in range(0, min(len(df2), 100)):
+                sample = sample + df2.iloc[random.randint(0, len(df2) - 1)]['text']
+
+            print('\t', name, detect(sample), "(", len(df2), "msgs)")
+            df.loc[df.conversationWithName == name, 'language'] = detect(sample)
+
+    log.info('Computing dates...')
+    df['datetime'] = df['timestamp'].apply(utils.timestamp_to_ordinal)
+
+    print(df.head())
+    utils.export_dataframe(df, 'messenger.pkl')
+    log.info('Done.')
+
+
+if __name__ == '__main__':
+    main()
