@@ -87,7 +87,7 @@ def main():
                     if len(data) >= args.max_exported_messages:
                         break
 
-    log.debug(len(data), 'messages parsed.')
+    log.debug('{} messages parsed.'.format(len(data)))
 
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
