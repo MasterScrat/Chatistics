@@ -4,8 +4,8 @@
 Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 <p align="center">
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud.png" width="400" height="400">
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/cloud3.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud3.png" width="400" height="400">
 </p>
 
 ## Support Matrix
@@ -14,8 +14,8 @@ Can also generate ggplot histograms and word clouds from fetched chat logs.
 |:------------------:   |:-----------:  |:----------:   |
 | Facebook Messenger    |     ✔         |     ✔         |
 | Google Hangouts       |     ✔         |     ✘         |
-| Whatsapp              |     ✘         |     ✘         |
 | Telegram              |     ✔         |     ✘         |
+| Whatsapp              |     ✘         |     ✘         |
 
 ## Exported data
 
@@ -39,7 +39,7 @@ Data exported for each message regardless of the platform:
 
 Use Google Takeout: https://takeout.google.com/settings/takeout
 
-Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of ChatShape.
+Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of Chatistics.
 
 *Google switched from "Google Talk" to "Google Hangouts" mid-2013. Sadly you will only get your Hangouts logs using Takeout.*
 
@@ -110,11 +110,11 @@ To see the messages sent to you by the top 10 people with whom you talk the most
 
 `python analyse.py --data data/* --remove-sender "Your Name" -n 10`
 
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/histo.png" width="701" height="406">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/histo.png" width="701" height="406">
 
 You can also plot the conversation densities using the `--plot-density` flag.
 
-<img src="https://github.com/MasterScrat/ChatShape/raw/master/screenshots/densities.png" width="705" height="418">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/densities.png" width="705" height="418">
 
 
 #### Word Cloud
@@ -131,7 +131,7 @@ You can filter which messages to use using the same flags as with histograms.
 * Parsers for more chat platforms: WhatsApp? Pidgin? ...
 * Figure out OWN_NAME automatically.
 * Handle group chats.
-* See [TODO file](https://github.com/MasterScrat/ChatShape/blob/master/TODO) for more.
+* See [TODO file](https://github.com/MasterScrat/Chatistics/blob/master/TODO) for more.
 
 Pull requests are welcome!
 
