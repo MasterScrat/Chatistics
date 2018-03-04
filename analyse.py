@@ -57,6 +57,7 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
     merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
     merged = merged[['datetime', 'conversationWithName', 'senderName']]
 
+
     print('Number to render:', len(merged))
     print(merged.head())
     return merged
@@ -64,6 +65,10 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
 
 def render(data, bin_width, plot_density=False):
     if plot_density:
+        # filter out conversationWithName with only one timestamp (which breaks density plot)
+        for name in data.conversationWithName.unique():
+            if len(data[data.conversationWithName == name].datetime.unique()) == 1:
+                data = data[data.conversationWithName != name]
         plot = ggplot(data, aes(x='datetime', color='conversationWithName')) \
                + geom_density() \
                + scale_x_date(labels='%b %Y') \
