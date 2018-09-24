@@ -8,8 +8,9 @@ import pandas as pd
 from langdetect import *
 from lxml import etree
 
-from parsers import log
-from parsers import utils, config
+from __init__ import log
+from . import utils
+from config import *
 
 
 def parse_arguments():
@@ -17,9 +18,9 @@ def parse_arguments():
     parser.add_argument('--own-name', dest='own_name', type=str,
                         help='name of the owner of the chat logs, written as in the logs', required=True)
     parser.add_argument('-f', '--file-path', dest='file_path', help='Facebook chat log file (HTML file)',
-                        default=config.DEFAULT_MESSENGER_RAW_FILE)
+                        default=DEFAULT_MESSENGER_RAW_FILE)
     parser.add_argument('--max', '--max-exported-messages', dest='max_exported_messages', type=int,
-                        default=config.MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
+                        default=MAX_EXPORTED_MESSAGES, help='maximum number of messages to export')
     args = parser.parse_args()
     return args
 
@@ -122,7 +123,7 @@ def main():
 
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
-    df.columns = config.DATAFRAME_COLUMNS
+    df.columns = DATAFRAME_COLUMNS
     df['platform'] = 'messenger'
 
     log.info('Detecting languages...')
