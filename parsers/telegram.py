@@ -9,8 +9,9 @@ import pandas as pd
 from telethon import TelegramClient
 from telethon.tl.types import PeerUser, PeerChannel, PeerChat
 
-from parsers import log
-from parsers import utils, config
+from __init__ import log
+from . import utils
+from config import *
 
 
 def list_dialogs(client):
@@ -29,9 +30,9 @@ def list_dialogs(client):
 
 
 def sign_in(client):
-    print('Logging into account {}...'.format(config.TELEGRAM_PHONE))
+    print('Logging into account {}...'.format(TELEGRAM_PHONE))
     if not client.is_user_authorized():
-        client.send_code_request(config.TELEGRAM_PHONE)
+        client.send_code_request(TELEGRAM_PHONE)
         code = input('Enter code received: ')
         me = client.sign_in(code=code)
     else:
@@ -48,7 +49,7 @@ def process_dialog_with_user(client, item):
 
     dialog = item.dialog
     user_id = dialog.peer.user_id
-    limit = config.TELEGRAM_USER_DIALOG_MESSAGES_LIMIT
+    limit = TELEGRAM_USER_DIALOG_MESSAGES_LIMIT
     messages = client.get_message_history(user_id, limit=limit)
     for message in messages:
         timestamp = message.date.timestamp()
@@ -59,13 +60,13 @@ def process_dialog_with_user(client, item):
 
 
 def main():
-    client = TelegramClient('session_name', config.TELEGRAM_API_ID, config.TELEGRAM_API_HASH)
+    client = TelegramClient('session_name', TELEGRAM_API_ID, TELEGRAM_API_HASH)
     client.connect()
     me = sign_in(client)
     data = list_dialogs(client)
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data)
-    df.columns = config.ALL_COLUMNS
+    df.columns = ALL_COLUMNS
     # import pdb; pdb.set_trace()
     df['platform'] = 'telegram'
     own_name = '{} {}'.format(me.first_name, me.last_name).strip()
