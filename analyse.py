@@ -17,11 +17,11 @@ def parse_arguments():
                         help='number of different senders to consider, ordered by number of messages sent')
     parser.add_argument('-b', '--bin-width', dest='bin_width', type=int, default=25, help='bin width for histograms')
     parser.add_argument('--filter-conversation', dest='filter_conversation', type=str, default=None,
-                        help='only keep messages sent in a conversation with this sender')
+                        help='only keep messages sent in a conversation with these senders, separated by comma')
     parser.add_argument('--filter-sender', dest='filter_sender', type=str, default=None,
-                        help='only keep messages sent by this sender')
+                        help='only keep messages sent by these senders, separated by comma')
     parser.add_argument('--remove-sender', dest='remove_sender', type=str, default=None,
-                        help='remove messages sent by this sender')
+                        help='remove messages sent by these senders,separated by comma')
     args = parser.parse_args()
     return args
 
@@ -38,13 +38,16 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
 
     # filtering
     if filter_conversation is not None:
-        df = df[df['conversationWithName'] == filter_conversation]
+        filter_conversation = filter_conversation.split(',')
+        df = df[df['conversationWithName'].isin(filter_conversation)]
 
     if filter_sender is not None:
-        df = df[df['senderName'] == filter_sender]
+        filter_sender = filter_sender.split(',')
+        df = df[df['senderName'].isin(filter_sender)]
 
     if remove_sender is not None:
-        df = df[df['senderName'] != remove_sender]
+        remove_sender = remove_sender.split(',')
+        df = df[~df['senderName'].isin(remove_sender)]
 
     # keep only topN interlocutors
     mf = df.groupby(['conversationWithName'], as_index=False) \
@@ -57,6 +60,7 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
     merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
     merged = merged[['datetime', 'conversationWithName', 'senderName']]
 
+
     print('Number to render:', len(merged))
     print(merged.head())
     return merged
@@ -64,6 +68,10 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
 
 def render(data, bin_width, plot_density=False):
     if plot_density:
+        # filter out conversationWithName with only one timestamp (which breaks density plot)
+        for name in data.conversationWithName.unique():
+            if len(data[data.conversationWithName == name].datetime.unique()) == 1:
+                data = data[data.conversationWithName != name]
         plot = ggplot(data, aes(x='datetime', color='conversationWithName')) \
                + geom_density() \
                + scale_x_date(labels='%b %Y') \
