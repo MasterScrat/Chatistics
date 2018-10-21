@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 import argparse
+import warnings
+import matplotlib.cbook
 
 import pandas as pd
 from ggplot import *
 
 from parsers import config
+
+# Hides warning from ggplot==0.6.8
+# Unfortunately newer versions are too buggy
+warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 
 
 def parse_arguments():
@@ -49,7 +55,7 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
         remove_sender = remove_sender.split(',')
         df = df[~df['senderName'].isin(remove_sender)]
 
-    # keep only topN interlocutors
+    # find top_n interlocutors
     mf = df.groupby(['conversationWithName'], as_index=False) \
         .agg(lambda x: len(x)) \
         .sort_values('timestamp', ascending=False)['conversationWithName'] \
@@ -57,9 +63,9 @@ def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_s
 
     print(mf)
 
+    # keep only messages from these top_n interlocutors
     merged = pd.merge(df, mf, on=['conversationWithName'], how='inner')
     merged = merged[['datetime', 'conversationWithName', 'senderName']]
-
 
     print('Number to render:', len(merged))
     print(merged.head())
@@ -72,6 +78,7 @@ def render(data, bin_width, plot_density=False):
         for name in data.conversationWithName.unique():
             if len(data[data.conversationWithName == name].datetime.unique()) == 1:
                 data = data[data.conversationWithName != name]
+
         plot = ggplot(data, aes(x='datetime', color='conversationWithName')) \
                + geom_density() \
                + scale_x_date(labels='%b %Y') \
