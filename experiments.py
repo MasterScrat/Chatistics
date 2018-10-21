@@ -66,7 +66,7 @@ print(ggplot(aes(x='deltaTimestamp', fill='senderName'), data=df2[df2.deltaTimes
 # plots AWL density
 print(ggplot(aes(x='awlength', fill='conversationWithName'), data=df2) + geom_density(alpha=0.7) + xlim(0, 10))
 
-# doesnt work?! to check!
+# doesn't work?! to check!
 #df2 = df[(df['senderName']=='Florian Laurent') | (df['senderName']=='Nicolas Blanc')] 
 
 # language histogram

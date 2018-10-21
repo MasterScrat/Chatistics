@@ -12,7 +12,7 @@
 - remove links                                                          OK      use http://stackoverflow.com/a/11332580/318557
 - lowercase everything                                                  OK
 - filter "ca" from parsing step or fix                                  OK
-- why cant "time" be a stopword?!                                       OK      check https://stackoverflow.com/questions/40208778/regular-expression-behaves-unexpectedly-when-using-some-specific-words
+- why can't "time" be a stopword?!                                       OK      check https://stackoverflow.com/questions/40208778/regular-expression-behaves-unexpectedly-when-using-some-specific-words
 - WordCloud removes trailing -s! to fix                                 OK      check https://github.com/amueller/word_cloud/issues/180
 - compute bigrams? for now "don't worry" shows only "worry"             OK
 - push to GitHub                                                        OK
