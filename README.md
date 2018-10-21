@@ -1,12 +1,20 @@
 # Chatistics
 
-**Python 3 scripts to convert chat logs from various messenger platforms into Panda DataFrames.**
+**Python 3 scripts to convert chat logs from various messaging platforms into Panda DataFrames.**
 Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 <p align="center">
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud.png" width="400" height="400">
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud3.png" width="400" height="400">
 </p>
+
+## Changelog
+
+**21 Oct 2018:** Updated Facebook Messenger and Google Hangouts parsers to make them work with the new exported file formats.
+
+**9 Feb 2018:** Telegram support added thanks to @bmwant.
+
+**24 Oct 2016:** Initial release supporting Facebook Messenger and Google Hangouts.
 
 ## Support Matrix
 
@@ -129,9 +137,8 @@ You can filter which messages to use using the same flags as with histograms.
 ## Improvement ideas
 
 * Parsers for more chat platforms: WhatsApp? Pidgin? ...
-* Figure out OWN_NAME automatically.
-* Handle group chats.
-* See [TODO file](https://github.com/MasterScrat/Chatistics/blob/master/TODO) for more.
+* Handle group chats on more platforms.
+* Figure out `OWN_NAME` automatically.
 
 Pull requests are welcome!
 
