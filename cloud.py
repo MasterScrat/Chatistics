@@ -58,6 +58,7 @@ def main():
                   'datetime']
     print('Loaded', len(df), 'messages')
 
+    # TODO filtering should be in a package-wide function!
     if filter_conversation is not None:
         filter_conversation = filter_conversation.split(',')
         print('Keeping only messages in conversations with', filter_conversation)

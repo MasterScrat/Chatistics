@@ -1,9 +1,12 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 import argparse
 import warnings
 import matplotlib.cbook
+import os
 
 import pandas as pd
+import sys
 from ggplot import *
 
 from parsers import config
@@ -13,21 +16,73 @@ from parsers import config
 warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 
 
+def data_check():
+    """
+    Ensure that there's literally anyting in the /raw/ directory besides .gitkeep.
+
+    Prompt the user with a friendly reminder if there isn't.
+    """
+
+    repo_root = os.path.abspath('.')
+    data_dir = os.path.join(repo_root, '', 'raw')
+
+    if len(os.listdir(data_dir)) < 2:
+        sys.exit(
+            "No messages found. Please copy your messages into the 'raw' directory."
+        )
+
+        # now that that check is here we don't need to make data a required argument.
+        # we know for a fact that there are files in the correct directory, and so we'll parse everything in there.
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--data', dest='data_paths', nargs='+', help='chat log data files (pickle files)',
-                        required=True)
-    parser.add_argument('--plot-density', dest='density', action='store_true',
-                        help='plots the message densities (KDE) instead of their count')
-    parser.add_argument('-n', '--number-senders', dest='top_n', type=int, default=10,
-                        help='number of different senders to consider, ordered by number of messages sent')
-    parser.add_argument('-b', '--bin-width', dest='bin_width', type=int, default=25, help='bin width for histograms')
-    parser.add_argument('--filter-conversation', dest='filter_conversation', type=str, default=None,
-                        help='only keep messages sent in a conversation with these senders, separated by comma')
-    parser.add_argument('--filter-sender', dest='filter_sender', type=str, default=None,
-                        help='only keep messages sent by these senders, separated by comma')
-    parser.add_argument('--remove-sender', dest='remove_sender', type=str, default=None,
-                        help='remove messages sent by these senders,separated by comma')
+    parser.add_argument(
+        '-d',
+        '--data',
+        dest='data_paths',
+        nargs='+',
+        help='chat log data files (pickle files)',
+    )
+    parser.add_argument(
+        '--plot-density',
+        dest='density',
+        action='store_true',
+        help='plots the message densities (KDE) instead of their count')
+    parser.add_argument(
+        '-n',
+        '--number-senders',
+        dest='top_n',
+        type=int,
+        default=10,
+        help=
+        'number of different senders to consider, ordered by number of messages sent'
+    )
+    parser.add_argument(
+        '-b',
+        '--bin-width',
+        dest='bin_width',
+        type=int,
+        default=25,
+        help='bin width for histograms')
+    parser.add_argument(
+        '--filter-conversation',
+        dest='filter_conversation',
+        type=str,
+        default=None,
+        help='only keep messages sent in a conversation with these senders, separated by comma')
+    parser.add_argument(
+        '--filter-sender',
+        dest='filter_sender',
+        type=str,
+        default=None,
+        help='only keep messages sent by these senders, separated by comma')
+    parser.add_argument(
+        '--remove-sender',
+        dest='remove_sender',
+        type=str,
+        default=None,
+        help='remove messages sent by these senders, separated by comma')
     args = parser.parse_args()
     return args
 
@@ -35,9 +90,9 @@ def parse_arguments():
 def load_data(data_paths, filter_conversation=None, filter_sender=None, remove_sender=None, top_n=10):
     # data loading
     df = pd.DataFrame()
-    for dataPath in data_paths:
-        print('Loading', dataPath, '...')
-        df = pd.concat([df, pd.read_pickle(dataPath)])
+    for data_path in data_paths:
+        print('Loading', data_path, '...')
+        df = pd.concat([df, pd.read_pickle(data_path)])
 
     df.columns = config.ALL_COLUMNS
     print('Loaded', len(df), 'messages')
@@ -97,6 +152,7 @@ def render(data, bin_width, plot_density=False):
 
 
 def main():
+    data_check()
     args = parse_arguments()
     data = load_data(
         data_paths=args.data_paths,
