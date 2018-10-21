@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import config
 import json
-import locale
 import os
+
+import config
 import pandas as pd
 import utils
 
@@ -38,28 +38,10 @@ def parse_arguments():
     return args
 
 
-def sys_checks():
-    """
-    Ensure that we have the correct locale and version of Python before we start.
-    """
-    if locale.getpreferredencoding() == 'UTF-8':
-        pass
-    else:
-        sys.exit("We've detected an encoding of: {0}. Unfortunately Chatistics only supports UTF-8 currently.".format(locale.getpreferredencoding()))
-
-    vers = sys.version_info
-    if vers < (3, 5):
-        sys.exit("Chatistics requires Python3.5 and up.")
-
-
 def main():
-    sys_checks()
     args = parse_arguments()
 
-    fallbackDateParsing = False
     data = []
-    warnedNameChanges = []
-    nbInvalidSender = 0
 
     # make sure we don't crash if chat logs contain exotic characters
     for root, dirs, files in os.walk(args.file_path):
@@ -67,31 +49,45 @@ def main():
             if not filename.endswith('.json'):
                 continue
 
+            conversation_id = root.split('/')[-1]
+            conversation_with_name = None
+
             document = os.path.join(root, filename)
             with open(document) as f:
                 json_data = json.load(f)
 
                 if "messages" not in json_data or "participants" not in json_data:
-                    print("Missing messages or participants.")
+                    print("Missing messages or participant list in conversation {}".format(conversation_id))
                     continue
 
-                if len(json_data["participants"]) > 2:
-                    # Ignore group chats
-                    # print("Group chat :-(")
+                participants = json_data["participants"]
+
+                if len(participants) < 2:
+                    print("User with id {} left Facebook, we don't know what their name was.".format(conversation_id))
+
+                if len(participants) > 2:
+                    # TODO handle group chats
                     continue
+
+                for participant in participants:
+                    if participant['name'] != args.own_name:
+                        conversation_with_name = participant['name']
+
+                if conversation_with_name is None: conversation_with_name = conversation_id
 
                 for message in json_data["messages"]:
                     timestamp = message["timestamp_ms"]
                     if "content" in message and "sender_name" in message:
                         content = message["content"]
-                        sender_name = message["sender_name"]
-                        if sender_name != args.own_name:
-                            data += [[timestamp, sender_name, sender_name, sender_name, content]]
+
+                        if "sender_name" in message:
+                            sender_name = message["sender_name"]
+                        else:
+                            sender_name = conversation_id
+
+                        data += [[timestamp, conversation_id, conversation_with_name, sender_name, content]]
 
     print(len(data), 'messages parsed.')
-
-    if nbInvalidSender > 0:
-        print(nbInvalidSender, 'messages discarded because of bad ID.')
 
     if len(data) < 1:
         print('Nothing to save.')
@@ -106,7 +102,7 @@ def main():
     df['language'] = 'unknown'
 
     log.info('Computing dates...')
-    df['datetime'] = df['timestamp'].apply(lambda x: x/1000).apply(utils.timestamp_to_ordinal)
+    df['datetime'] = df['timestamp'].apply(lambda x: x / 1000).apply(utils.timestamp_to_ordinal)
 
     print(df.head())
     utils.export_dataframe(df, 'messenger.pkl')
