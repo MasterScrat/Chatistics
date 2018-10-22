@@ -21,11 +21,11 @@ def parse_arguments():
     parser.add_argument('-m', '--mask-image', dest='mask_image', type=str, default=None,
                         help='image to use as mask', required=True)
     parser.add_argument('--filter-conversation', dest='filter_conversation', type=str, default=None,
-                        help='only keep messages sent in a conversation with this sender')
+                        help='only keep messages sent in a conversation with these senders, separated by comma')
     parser.add_argument('--filter-sender', dest='filter_sender', type=str, default=None,
-                        help='only keep messages sent by this sender')
+                        help='only keep messages sent by these senders, separated by comma')
     parser.add_argument('--remove-sender', dest='remove_sender', type=str, default=None,
-                        help='remove messages sent by this sender')
+                        help='remove messages sent by these senders, separated by comma')
     parser.add_argument('-n', '--num-words', dest='num_words', type=int, default=10000, help='bin width for histograms')
     parser.add_argument('--density', '--dpi', dest='density', type=int, default=100, help='rendered image DPI')
     args = parser.parse_args()
@@ -58,17 +58,21 @@ def main():
                   'datetime']
     print('Loaded', len(df), 'messages')
 
+    # TODO filtering should be in a package-wide function!
     if filter_conversation is not None:
+        filter_conversation = filter_conversation.split(',')
         print('Keeping only messages in conversations with', filter_conversation)
-        df = df[df['conversationWithName'] == filter_conversation]
+        df = df[df['conversationWithName'].isin(filter_conversation)]
 
     if filter_sender is not None:
+        filter_sender = filter_sender.split(',')
         print('Keeping only messages sent by', filter_sender)
-        df = df[df['senderName'] == filter_sender]
+        df = df[df['senderName'].isin(filter_sender)]
 
     if remove_sender is not None:
         print('Removing messages sent by', remove_sender)
-        df = df[df['senderName'] != remove_sender]
+        remove_sender = remove_sender.split(',')
+        df = df[~df['senderName'].isin(remove_sender)]
 
     if len(df['text']) == 0:
         print('No messages left! review your filter options')

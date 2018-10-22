@@ -7,8 +7,16 @@ img/
 !img/.gitkeep
 renders/
 !renders/.gitkeep
-.idea/
 
+# Personal experiments
+experiments.py
+
+# IDE
+.idea/
+*.iml
+
+#  Plugins
+.mypy_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

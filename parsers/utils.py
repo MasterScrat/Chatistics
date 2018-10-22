@@ -10,5 +10,3 @@ def export_dataframe(df, filename='exported.pkl'):
 
 def timestamp_to_ordinal(value):
     return datetime.datetime.fromtimestamp(float(value)).toordinal()
-    ordinate = lambda x: datetime.datetime.fromtimestamp(float(x)).toordinal()
-    df['datetime'] = df['timestamp'].apply(ordinate)

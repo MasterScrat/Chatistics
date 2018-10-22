@@ -32,58 +32,58 @@ def main():
 
     names = {}
 
-    def idToName(id):
+    def id_to_name(id):
         if id in names:
             return names[id]
         else:
             return None
 
-    def saveNameForId(name, id):
+    def save_name_for_id(name, id):
         if not id in names:
             names[id] = name
         elif names[id] != name:
             print('Assuming', name, 'is', names[id])
 
     data = []
-    conversationWithId = ''
+    conversation_with_id = ''
     conversationWithName = ''
 
     print('Extracting messages...')
-    for state in archive["conversation_state"]:
-        if "conversation" in state["conversation_state"]:
-            for participant in state["conversation_state"]["conversation"]["participant_data"]:
+    for conversation in archive["conversations"]:
+        if "conversation" in conversation["conversation"]:
+            for participant in conversation["conversation"]["conversation"]["participant_data"]:
                 if "fallback_name" in participant:
-                    saveNameForId(participant["fallback_name"], participant["id"]["gaia_id"])
+                    save_name_for_id(participant["fallback_name"], participant["id"]["gaia_id"])
 
-        for event in state["conversation_state"]["event"]:
+        for event in conversation["events"]:
             timestamp = int(event["timestamp"])
 
             if "chat_message" in event and "segment" in event["chat_message"]["message_content"]:
                 content = event["chat_message"]["message_content"]
                 text = content["segment"][0]["text"]
                 conversationId = event["conversation_id"]["id"]
-                senderId = event["sender_id"]["chat_id"]
+                sender_id = event["sender_id"]["chat_id"]
 
-                participants = state["conversation_state"]["conversation"]["current_participant"]
+                participants = conversation["conversation"]["conversation"]["current_participant"]
 
                 if len(participants) == 2:
                     for participant in participants:
-                        if idToName(participant["gaia_id"]) != own_name:
-                            conversationWithId = participant["gaia_id"]
+                        if id_to_name(participant["gaia_id"]) != own_name:
+                            conversation_with_id = participant["gaia_id"]
 
-                    if idToName(senderId) is not None or idToName(conversationWithId) is not None:
-                        if idToName(senderId) != own_name and senderId != conversationWithId:
+                    if id_to_name(sender_id) is not None or id_to_name(conversation_with_id) is not None:
+                        if id_to_name(sender_id) != own_name and sender_id != conversation_with_id:
                             # print idToName(senderId), 'in conversation with', idToName(conversationWithId), '!'
                             print('Parsing error, is your ownId correct?')
                             exit(0)
 
                         # saves the message
                         timestamp = timestamp / 1000000
-                        data += [[timestamp, conversationId, idToName(conversationWithId), idToName(senderId), text]]
+                        data += [[timestamp, conversationId, id_to_name(conversation_with_id), id_to_name(sender_id), text]]
 
                     else:
                         # unknown sender
-                        print("No senderName for either senderId", senderId, conversationWithId)
+                        print("No senderName for either senderId", sender_id, conversation_with_id)
 
                     if len(data) >= args.max_exported_messages:
                         break
