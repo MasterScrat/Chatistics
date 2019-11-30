@@ -1,0 +1,16 @@
+MAX_EXPORTED_MESSAGES: 1000000
+ALL_COLUMNS:
+  - timestamp
+  - conversationId
+  - conversationWithName
+  - senderName
+  - text
+  - language
+  - platform
+  - datetime
+hangouts:
+  DEFAULT_RAW_FILE: 'raw/Hangouts.json'
+facebook:
+  DEFAULT_RAW_FILE: 'raw/messages'
+telegram:
+  USER_DIALOG_MESSAGES_LIMIT: 1000
