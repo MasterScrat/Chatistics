@@ -110,3 +110,18 @@ ENV/
 
 # Telegram session
 *.session
+
+# secrets files
+secrets.yml
+
+# MacOS
+.DS_Store
+
+# Vim
+**/*.swp
+**/*.swo
+/.tags
+/.tags_sorted_by_file
+
+# Other
+.ignore
