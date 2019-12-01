@@ -5,8 +5,8 @@ from parsers.utils import export_dataframe
 from parsers.config import config
 import logging
 
-
 log = logging.getLogger(__name__)
+
 async def list_dialogs(client):
     result = []
     async for item in client.iter_dialogs():
@@ -53,7 +53,7 @@ async def _main_loop(client):
     log.info('Done.')
 
 def main():
-    with TelegramClient('session_name', config['telegram']['TELEGRAM_API_ID'], config['telegram']['TELEGRAM_API_HASH']) as client:
+    with TelegramClient('session_name', config['TELEGRAM_API_ID'], config['TELEGRAM_API_HASH']) as client:
         client.loop.run_until_complete(_main_loop(client))
 
 if __name__ == "__main__":

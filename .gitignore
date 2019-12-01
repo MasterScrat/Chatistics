@@ -113,6 +113,7 @@ ENV/
 
 # secrets files
 secrets.yml
+secrets.sh
 
 # MacOS
 .DS_Store
