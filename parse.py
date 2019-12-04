@@ -43,7 +43,7 @@ class ArgParse():
         from parsers.hangouts import main
         parser = ArgParseDefault(description='Parse message logs from Google Hangouts')
         parser.add_argument('--own-name', dest='own_name', type=str, default=None, help='Name of the owner of the chat logs, written as in the logs', required=False)
-        parser.add_argument('-f', '--file-path', dest='file_path', default=config['hangouts']['DEFAULT_RAW_FILE'], help='Hangouts chat log file')
+        parser.add_argument('-f', '--file-path', dest='file_path', default=config['hangouts']['DEFAULT_RAW_LOCATION'], help='Path to Hangouts chat log file (json file)')
         parser.add_argument('--max', '--max-exported-messages', dest='max', type=int, default=config['MAX_EXPORTED_MESSAGES'], help='Maximum number of messages to export')
         args = parser.parse_args(sys.argv[2:])
         main(args.own_name, args.file_path, args.max)
@@ -52,7 +52,16 @@ class ArgParse():
         from parsers.messenger import main
         parser = ArgParseDefault(description='Parse message logs from Facebook Messenger')
         parser.add_argument('--own-name', dest='own_name', type=str, default=None, help='Name of the owner of the chat logs, written as in the logs', required=False)
-        parser.add_argument('-f', '--file-path', dest='file_path', default=config['messenger']['DEFAULT_RAW_FILE'], help='Path to Facebook messenger chat log folder')
+        parser.add_argument('-f', '--file-path', dest='file_path', default=config['messenger']['DEFAULT_RAW_LOCATION'], help='Path to Facebook messenger chat log folder')
+        parser.add_argument('--max', '--max-exported-messages', dest='max', type=int, default=config['MAX_EXPORTED_MESSAGES'], help='Maximum number of messages to export')
+        args = parser.parse_args(sys.argv[2:])
+        main(args.own_name, args.file_path, args.max)
+
+    def whatsapp(self):
+        from parsers.whatsapp import main
+        parser = ArgParseDefault(description='Parse message logs from Whatsapp')
+        parser.add_argument('--own-name', dest='own_name', type=str, default=None, help='Name of the owner of the chat logs, written as in the logs', required=False)
+        parser.add_argument('-f', '--file-path', dest='file_path', default=config['whatsapp']['DEFAULT_RAW_LOCATION'], help='Path to Facebook messenger chat log folder')
         parser.add_argument('--max', '--max-exported-messages', dest='max', type=int, default=config['MAX_EXPORTED_MESSAGES'], help='Maximum number of messages to export')
         args = parser.parse_args(sys.argv[2:])
         main(args.own_name, args.file_path, args.max)

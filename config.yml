@@ -9,10 +9,13 @@ ALL_COLUMNS:
   - language
   - platform
   - datetime
+
 hangouts:
-  DEFAULT_RAW_FILE: 'raw/Hangouts.json'
+  DEFAULT_RAW_LOCATION: 'raw/hangouts/Hangouts.json'
 messenger:
-  DEFAULT_RAW_FILE: 'raw/messages'
+  DEFAULT_RAW_LOCATION: 'raw/messenger'
 telegram:
   USER_DIALOG_MESSAGES_LIMIT: 1000
+whatsapp:
+  DEFAULT_RAW_LOCATION: 'raw/whatsapp'
 
