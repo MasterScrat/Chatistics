@@ -1,10 +1,11 @@
 import os
 import datetime
 
+log = logging.getLogger(__name__)
 
 def export_dataframe(df, filename='exported.pkl'):
     filepath = os.path.join('data', filename)
-    print('Saving to pickle file %s...' % filepath)
+    log.info(f'Saving to pickle file {filepath}...')
     df.to_pickle(filepath)
 
 

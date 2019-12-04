@@ -10,6 +10,8 @@ log = logging.getLogger(__name__)
 async def list_dialogs(client, own_name):
     result = []
     async for item in client.iter_dialogs():
+        if len(result) > MAX_EXPORTED_MESSAGES:
+            return result
         dialog = item.dialog
         if isinstance(dialog.peer, PeerUser):
             _r = await process_dialog_with_user(client, item, own_name)
@@ -29,8 +31,7 @@ async def process_dialog_with_user(client, item, own_name):
 
     dialog = item.dialog
     user_id = dialog.peer.user_id
-    limit = config['telegram']['USER_DIALOG_MESSAGES_LIMIT']
-    async for message in client.iter_messages(user_id, limit=limit):
+    async for message in client.iter_messages(user_id, limit=USER_DIALOG_MESSAGES_LIMIT):
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
@@ -59,9 +60,10 @@ async def _main_loop(client):
     export_dataframe(df, 'telegram.pkl')
     log.info('Done.')
 
-def main():
+def main(max_exported_messages=10000, user_dialog_messages_limit=1000):
+    global MAX_EXPORTED_MESSAGES
+    global USER_DIALOG_MESSAGES_LIMIT
+    MAX_EXPORTED_MESSAGES = max_exported_messages
+    USER_DIALOG_MESSAGES_LIMIT = user_dialog_messages_limit
     with TelegramClient('session_name', config['TELEGRAM_API_ID'], config['TELEGRAM_API_HASH']) as client:
         client.loop.run_until_complete(_main_loop(client))
-
-if __name__ == "__main__":
-    main()
