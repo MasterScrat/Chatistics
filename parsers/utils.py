@@ -18,7 +18,7 @@ def timestamp_to_ordinal(value):
 def detect_language(df, min_token_count=5):
     """Detects language of input text"""
     for name, group in df.groupby(df.conversationWithName):
-        text = ' '.join(group['text'].values[:100])
+        text = ' '.join(group['text'].dropna().values[:100])
         if len(text.split()) >= min_token_count:
             lang = detect(text)
         else:

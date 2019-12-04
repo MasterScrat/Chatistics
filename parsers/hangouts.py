@@ -9,21 +9,27 @@ import logging
 
 log = logging.getLogger(__name__)
 
-
-def read_archive(file_path):
-    log.info(f'Reading archive file {file_path}...')
-    with open(file_path, encoding='utf-8') as f:
-        archive = json.loads(f.read())
-    return archive
-
-
 def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
-
-    names = {}
+    log.info('Parsing Google Hangouts data...')
     archive = read_archive(file_path)
+    if own_name is None:
+        own_name = infer_own_name(archive)
+    data = parse_messages(archive, own_name)
+    log.info('{:,} messages parsed.'.format(len(data)))
+    log.info('Converting to DataFrame...')
+    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
+    df['platform'] = 'hangouts'
+    log.info('Detecting languages...')
+    df = detect_language(df)
+    log.info('Converting dates...')
+    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
+    # Export
+    export_dataframe(df, 'hangouts.pkl')
+    log.info('Done.')
 
+def parse_messages(archive, own_name):
     def id_to_name(_id):
         if _id in names:
             return names[_id]
@@ -35,7 +41,7 @@ def main(own_name, file_path, max_exported_messages):
             names[_id] = name
         elif names[_id] != name:
             log.info(f'Assuming {name} is {names[_id]}')
-
+    names = {}
     data = []
     log.info('Extracting messages...')
     for conversation in archive["conversations"]:
@@ -73,16 +79,31 @@ def main(own_name, file_path, max_exported_messages):
                         # unknown sender
                         log.error(f"No senderName could be found for either senderId ({sender_id}) or ConversationWithId ({conversation_with_id})")
                     if len(data) >= MAX_EXPORTED_MESSAGES:
-                        break
-    log.info('{:,} messages parsed.'.format(len(data)))
-    log.info('Converting to DataFrame...')
-    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
-    df['platform'] = 'hangouts'
-    log.info('Detecting languages...')
-    df = detect_language(df)
-    log.info('Converting dates...')
-    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
+                        log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
+                        return data
+    return data
 
-    # Export
-    export_dataframe(df, 'hangouts.pkl')
-    log.info('Done.')
+
+def read_archive(file_path):
+    log.info(f'Reading archive file {file_path}...')
+    with open(file_path, encoding='utf-8') as f:
+        archive = json.loads(f.read())
+    return archive
+
+def infer_own_name(archive, min_conversations=2):
+    """Infers own name from multiple conversations"""
+    conversation_participants = []
+    for conversation in archive["conversations"]:
+        conversation_with_id = ''
+        conversationWithName = ''
+        if "conversation" in conversation["conversation"]:
+            participants = conversation["conversation"]["conversation"]["participant_data"]
+            participants = [p['fallback_name'] for p in participants if 'fallback_name' in p]
+            conversation_participants.append(set(participants))
+            if len(conversation_participants) >= min_conversations:
+                own_name = set.intersection(*conversation_participants)
+                if len(own_name) == 1:
+                    own_name = list(own_name)[0]
+                    log.info(f'Successfully inferred own-name to be {own_name}')
+                    return own_name
+    raise Exception('Could not infer own name from existing converstations. Please provide your username manually with the --own-name argument')
