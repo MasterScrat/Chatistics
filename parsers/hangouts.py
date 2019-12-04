@@ -24,30 +24,30 @@ def main(own_name, file_path, max_exported_messages):
     names = {}
     archive = read_archive(file_path)
 
-    def id_to_name(id):
-        if id in names:
-            return names[id]
+    def id_to_name(_id):
+        if _id in names:
+            return names[_id]
         else:
             return None
 
-    def save_name_for_id(name, id):
-        if not id in names:
-            names[id] = name
-        elif names[id] != name:
-            print('Assuming', name, 'is', names[id])
+    def save_name_for_id(name, _id):
+        if not _id in names:
+            names[_id] = name
+        elif names[_id] != name:
+            log.info(f'Assuming {name} is {names[_id]}')
 
     data = []
-    conversation_with_id = ''
-    conversationWithName = ''
     log.info('Extracting messages...')
     for conversation in archive["conversations"]:
+        conversation_with_id = ''
+        conversationWithName = ''
         if "conversation" in conversation["conversation"]:
             for participant in conversation["conversation"]["conversation"]["participant_data"]:
                 if "fallback_name" in participant:
-                    save_name_for_id(participant["fallback_name"], participant["id"]["gaia_id"])
+                    save_name_for_id(participant["fallback_name"], participant["id"]["chat_id"])
         for event in conversation["events"]:
-            timestamp = int(event["timestamp"])
             if "chat_message" in event and "segment" in event["chat_message"]["message_content"]:
+                timestamp = int(event["timestamp"])
                 content = event["chat_message"]["message_content"]
                 text = content["segment"][0]["text"]
                 conversationId = event["conversation_id"]["id"]
@@ -55,15 +55,18 @@ def main(own_name, file_path, max_exported_messages):
                 participants = conversation["conversation"]["conversation"]["current_participant"]
                 if len(participants) == 2:
                     for participant in participants:
-                        if id_to_name(participant["gaia_id"]) != own_name:
-                            conversation_with_id = participant["gaia_id"]
-                    if id_to_name(sender_id) is not None or id_to_name(conversation_with_id) is not None:
-                        if id_to_name(sender_id) != own_name and sender_id != conversation_with_id:
+                        if id_to_name(participant["chat_id"]) != own_name:
+                            conversation_with_id = participant["chat_id"]
+                    sender_name = id_to_name(sender_id)
+                    conversation_with_name = id_to_name(conversation_with_id)
+                    if sender_name is not None or conversation_with_name is not None:
+                        if sender_name != own_name and sender_id != conversation_with_id:
                             log.error(f'Parsing error. Is your own_name {own_name} correct?')
                             exit(0)
                         # saves the message
                         timestamp = timestamp / 1000000
-                        data += [[timestamp, conversationId, id_to_name(conversation_with_id), id_to_name(sender_id), text]]
+                        outgoing = sender_name == own_name
+                        data += [[timestamp, conversationId, conversation_with_name, sender_name, outgoing, text, '', '', '']]
                     else:
                         # unknown sender
                         log.error(f"No senderName could be found for either senderId ({sender_id}) or ConversationWithId ({conversation_with_id})")
@@ -71,7 +74,7 @@ def main(own_name, file_path, max_exported_messages):
                         break
     log.info('{:,} messages parsed.'.format(len(data)))
     log.info('Converting to DataFrame...')
-    df = pd.DataFrame(data, columns=config['DATAFRAME_COLUMNS'])
+    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'hangouts'
     log.info('Detecting languages...')
     df['language'] = 'unknown'

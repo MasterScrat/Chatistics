@@ -4,7 +4,6 @@ import argparse
 import json
 import os
 import pandas as pd
-import utils
 import logging
 
 log = logging.getLogger(__name__)
@@ -46,13 +45,14 @@ def main(own_name, file_path, max_exported_messages):
                             sender_name = message["sender_name"]
                         else:
                             sender_name = conversation_id
-                        data += [[timestamp, conversation_id, conversation_with_name, sender_name, content]]
+                        outgoing = sender_name == own_name
+                        data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, content, '', '', '']]
     log.info('{:,} messages parsed.'.format(len(data)))
     if len(data) < 1:
         log.info('Nothing to save.')
         exit(0)
     log.info('Converting to DataFrame...')
-    df = pd.DataFrame(data, columns=config['DATAFRAME_COLUMNS'])
+    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'messenger'
     log.info('Detecting languages...')
     df['language'] = 'unknown'

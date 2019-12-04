@@ -1,6 +1,7 @@
 certifi==2019.9.11
 cycler==0.10.0
 kiwisolver==1.1.0
+langdetect==1.0.7
 matplotlib==3.1.1
 numpy==1.17.2
 pandas==0.25.1
