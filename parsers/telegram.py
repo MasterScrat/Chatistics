@@ -7,12 +7,12 @@ import logging
 
 log = logging.getLogger(__name__)
 
-async def list_dialogs(client):
+async def list_dialogs(client, own_name):
     result = []
     async for item in client.iter_dialogs():
         dialog = item.dialog
         if isinstance(dialog.peer, PeerUser):
-            _r = await process_dialog_with_user(client, item)
+            _r = await process_dialog_with_user(client, item, own_name)
             result.extend(_r)
         elif isinstance(dialog.peer, (PeerChannel, PeerChat)):
             log.info('Dialogs in chats/channels are not supported yet')
@@ -20,7 +20,7 @@ async def list_dialogs(client):
             log.warning('Unknown dialog type %s', dialog)
     return result
 
-async def process_dialog_with_user(client, item):
+async def process_dialog_with_user(client, item, own_name):
     result = []
     conversation_with_name = item.name
 
@@ -34,19 +34,26 @@ async def process_dialog_with_user(client, item):
         timestamp = message.date.timestamp()
         ordinal_date = message.date.toordinal()
         text = message.message
-        result.append([timestamp, user_id, conversation_with_name, '', text, 'unknown', '', ordinal_date])
+        if message.out:
+            sender_name = own_name
+        else:
+            sender_name = conversation_with_name
+        result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, 'unknown', '', ordinal_date])
     return result
 
 async def _main_loop(client):
     me = await client.get_me()
-    data = await list_dialogs(client)
+    first_name = ''
+    last_name = ''
+    if me.first_name is not None:
+        first_name = me.first_name
+    if me.last_name is not None:
+        last_name = me.last_name
+    own_name = '{} {}'.format(first_name, last_name).strip()
+    data = await list_dialogs(client, own_name)
     log.info('Converting to DataFrame...')
-    df = pd.DataFrame(data)
-    df.columns = config['ALL_COLUMNS']
-    limit = config['telegram']['USER_DIALOG_MESSAGES_LIMIT']
+    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'telegram'
-    own_name = '{} {}'.format(me.first_name, me.last_name).strip()
-    df['senderName'] = own_name
     log.info('Detecting languages...')
     df['language'] = 'unknown'
     export_dataframe(df, 'telegram.pkl')

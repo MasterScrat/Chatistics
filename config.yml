@@ -4,6 +4,7 @@ ALL_COLUMNS:
   - conversationId
   - conversationWithName
   - senderName
+  - outgoing
   - text
   - language
   - platform
