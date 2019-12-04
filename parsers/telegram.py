@@ -1,7 +1,7 @@
 import pandas as pd
 from telethon import TelegramClient
 from telethon.tl.types import PeerUser, PeerChannel, PeerChat
-from parsers.utils import export_dataframe
+from parsers.utils import export_dataframe, detect_language, timestamp_to_ordinal
 from parsers.config import config
 import logging
 
@@ -33,13 +33,12 @@ async def process_dialog_with_user(client, item, own_name):
     user_id = dialog.peer.user_id
     async for message in client.iter_messages(user_id, limit=USER_DIALOG_MESSAGES_LIMIT):
         timestamp = message.date.timestamp()
-        ordinal_date = message.date.toordinal()
         text = message.message
         if message.out:
             sender_name = own_name
         else:
             sender_name = conversation_with_name
-        result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, 'unknown', '', ordinal_date])
+        result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, '', '', ''])
     return result
 
 async def _main_loop(client):
@@ -56,7 +55,9 @@ async def _main_loop(client):
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'telegram'
     log.info('Detecting languages...')
-    df['language'] = 'unknown'
+    df = detect_language(df)
+    log.info('Converting dates...')
+    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     export_dataframe(df, 'telegram.pkl')
     log.info('Done.')
 

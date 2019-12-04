@@ -1,5 +1,5 @@
 from parsers.config import config
-from parsers.utils import export_dataframe, timestamp_to_ordinal
+from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
 import json
 import pandas as pd
 import argparse
@@ -66,6 +66,8 @@ def main(own_name, file_path, max_exported_messages):
                         # saves the message
                         timestamp = timestamp / 1000000
                         outgoing = sender_name == own_name
+                        conversation_with_name = conversation_with_name if conversation_with_name is not None else ''
+                        sender_name = sender_name if sender_name is not None else ''
                         data += [[timestamp, conversationId, conversation_with_name, sender_name, outgoing, text, '', '', '']]
                     else:
                         # unknown sender
@@ -77,15 +79,7 @@ def main(own_name, file_path, max_exported_messages):
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'hangouts'
     log.info('Detecting languages...')
-    df['language'] = 'unknown'
-    for name, group in df.groupby(df.conversationWithName):
-        sample = ''
-        df2 = df[df.conversationWithName == name].dropna()
-        if len(df2) > 10:
-            for x in range(0, min(len(df2), 100)):
-                sample = sample + df2.iloc[randint(0, len(df2) - 1)]['text']
-            print('\t', name, detect(sample))
-            df.loc[df.conversationWithName == name, 'language'] = detect(sample)
+    df = detect_language(df)
     log.info('Converting dates...')
     df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
 

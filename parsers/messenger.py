@@ -1,5 +1,5 @@
 from parsers.config import config
-from parsers.utils import export_dataframe, timestamp_to_ordinal
+from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
 import argparse
 import json
 import os
@@ -55,7 +55,7 @@ def main(own_name, file_path, max_exported_messages):
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'messenger'
     log.info('Detecting languages...')
-    df['language'] = 'unknown'
+    df = detect_language(df)
     log.info('Computing dates...')
     df['datetime'] = df['timestamp'].apply(lambda x: x / 1000).apply(timestamp_to_ordinal)
     export_dataframe(df, 'messenger.pkl')
