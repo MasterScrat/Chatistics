@@ -18,25 +18,26 @@ Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 ## Support Matrix
 
-|      Platform         | Direct Chat   | Group Chat    |
-|:------------------:   |:-----------:  |:----------:   |
-| Facebook Messenger    |     ✔         |     ✔         |
-| Google Hangouts       |     ✔         |     ✘         |
-| Telegram              |     ✔         |     ✘         |
-| Whatsapp              |     ✘         |     ✘         |
+|      Platform      | Direct Chat  | Group Chat |
+|:------------------:|:-----------: |:----------:|
+| Facebook Messenger |     ✔        |     ✘      |
+| Google Hangouts    |     ✔        |     ✘      |
+| Telegram           |     ✔        |     ✘      |
+| Whatsapp           |     ✔        |     ✔      |
 
 ## Exported data
 
 Data exported for each message regardless of the platform:
 
-|          Column          |                                        Content                                       |
+|          Column      |                                        Content                                       |
 |:--------------------:|:------------------------------------------------------------------------------------:|
 | timestamp            | UNIX timestamp                                                                       |
-| conversationId       | A conversation ID, unique by platform                                               |
+| conversationId       | A conversation ID, unique by platform                                                |
 | conversationWithName | Name of the other people in a direct conversation, **or** name of the group conversation |
 | senderName           | Name of the sender                                                                   |
-| text                 | Text of the message                                                        |
-| language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect)                               |
+| outgoing             | Boolean value whether the message is outgoing/coming from owner                      |
+| text                 | Text of the message                                                                  |
+| language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect) |
 | datetime             | The proleptic Gregorian ordinal (= number of days since 01/01/0001)                  |
 
 ## How to use it?
@@ -47,7 +48,7 @@ Data exported for each message regardless of the platform:
 
 Use Google Takeout: https://takeout.google.com/settings/takeout
 
-Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `raw` folder of Chatistics.
+Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `./raw/hangouts/` folder of Chatistics.
 
 *Google switched from "Google Talk" to "Google Hangouts" mid-2013. Sadly you will only get your Hangouts logs using Takeout.*
 
@@ -56,7 +57,17 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 1. Go to the "Settings" page: https://www.facebook.com/settings
 2. Click on "Download a copy of your Facebook data" at the bottom of the General section.
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
-4. Once it is done download and extract the archive, then move the `messages` folder in the `raw` folder of Chatistics.
+4. Once it is done download and extract the archive, then move the contents of the `messages` folder into `./raw/messenger/` folder of Chatistics.
+
+#### Whatsapp
+
+[See instructions here](https://faq.whatsapp.com/en/wp/22548236) 
+
+1. Open the chat you wish to export.
+2. Tap on ⋮ > More > Export chat
+3. Choose "without media"
+4. Send chat via Email
+5. Add the individual txt files to the folder `./raw/whatsapp/`.
 
 ### 2. Parse the logs into DataFrames
 
@@ -67,26 +78,29 @@ virtualenv Chatistics
 source Chatistics/bin/activate
 pip install -r requirements.txt
 ```
+You can parse the messages by using the command `python parse.py <platform> <arguments>`.
 
-You will need to give your own name to the parsers so it can make sense of the conversations. 
-Use the exact same format as you have on Messenger or Hangouts.
+By default the parsers will try to infer your own name (i.e. your username) from the data. If this fails you can provide your own name to the parser by providing the `--own-name` argument. The name should match your name exactly as used on that chat platform.
 
 #### Google Hangouts
-`python parsers/hangouts.py --own-name "John Doe"`
+`python parse.py hangouts`
 
 #### Facebook Messenger
-`python parsers/messenger.py --own-name "John Doe"`
+`python parse.py messenger`
+
+#### Whatsapp
+`python parse.py whatsapp`
 
 #### Telegram
 1. Create your Telegram application to access chat logs ([instructions](https://core.telegram.org/api/obtaining_api_id)).
-You will need `api_id` and `api_hash`.
-2. Paste these values to `parsers/config.py` into corresponding variables.
-3. Grab your message history data
-`python parsers/telegram.py`
+You will need `api_id` and `api_hash` which we will now set as environment variables.
+2. Run `cp secrets.sh.example secrets.sh` and fill in the values for the environment variables `TELEGRAM_API_ID`, `TELEGRAMP_API_HASH` and `TELEGRAM_PHONE` (your phone number including country code).
+3. Run `source secrets.sh`
+4. Execute the parser script using `python parse.py telegram`
 
 The pickle files will now be ready for analysis in the `data` folder! 
 
-For more options use the `-h` argument on the parsers.
+For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram --help`).
 
 ### 3. Visualise
 
@@ -136,9 +150,8 @@ You can filter which messages to use using the same flags as with histograms.
 
 ## Improvement ideas
 
-* Parsers for more chat platforms: WhatsApp? Pidgin? ...
+* Parsers for more chat platforms: Signal? Pidgin? ...
 * Handle group chats on more platforms.
-* Figure out `OWN_NAME` automatically.
 
 Pull requests are welcome!
 
@@ -164,14 +177,6 @@ ImportError: dlopen(/Users/flaurent/Sites/Chatistics/Chatistics/lib/python2.7/si
 
 This will fix it: https://stackoverflow.com/a/31607751/318557
 
-
-### ModuleNotFoundError: No module named 'parsers'
-
-Fix with: 
-
-```
-export PYTHONPATH=$(pwd)
-```
 
 ## Misc
 
