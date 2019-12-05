@@ -45,6 +45,9 @@ async def _main_loop(client):
     own_name = await get_own_name(client)
     data = await list_dialogs(client, own_name)
     log.info('{:,} messages parsed.'.format(len(data)))
+    if len(data) < 1:
+        log.info('Nothing to save.')
+        exit(0)
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'telegram'

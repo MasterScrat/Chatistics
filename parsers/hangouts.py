@@ -16,6 +16,9 @@ def main(own_name, file_path, max_exported_messages):
         own_name = infer_own_name(archive)
     data = parse_messages(archive, own_name)
     log.info('{:,} messages parsed.'.format(len(data)))
+    if len(data) < 1:
+        log.info('Nothing to save.')
+        exit(0)
     log.info('Converting to DataFrame...')
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'hangouts'

@@ -21,6 +21,9 @@ def main(own_name, file_path, max_exported_messages):
         own_name = infer_own_name(files)
     data = parse_messages(files, own_name)
     log.info('{:,} messages parsed.'.format(len(data)))
+    if len(data) < 1:
+        log.info('Nothing to save.')
+        exit(0)
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df['platform'] = 'whatsapp'
     log.info('Detecting languages...')
@@ -36,8 +39,9 @@ def parse_messages(files, own_name):
     for f_path in files:
         text = None
         f_name = os.path.basename(f_path)
-        conversation_with_name = f_name.split('.')[0][19:]
         conversation_id = uuid.uuid4().hex
+        participants = set()
+        conversation_data = []
         with open(f_path, 'r') as f:
             for line in f:
                 matches = regex_message.search(line)
@@ -47,10 +51,11 @@ def parse_messages(files, own_name):
                     continue
                 elif matches and text is not None:
                     # dump previous entry
-                    data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, text, '', '', '']]
+                    conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
                     text = None
-                    if len(data) >= MAX_EXPORTED_MESSAGES:
+                    if len(data) + len(conversation_data) >= MAX_EXPORTED_MESSAGES:
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
+                        # dismiss current conversation data
                         return data
                 elif not matches and text is None:
                     # we are not parsing a multi-line message and we have no matches
@@ -66,12 +71,27 @@ def parse_messages(files, own_name):
                     continue
                 # check if sender present
                 sender_name = groups[1]
+                if sender_name != own_name:
+                    participants.add(sender_name)
                 outgoing = sender_name == own_name
                 text = groups[2].strip()
-            if text is not None:
+            if text is not None and sender_name is not None:
                 # dump last line
-                data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, text, '', '', '']]
+                conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
+        # fill conversation_with
+        if len(participants) == 0:
+            conversation_with_name = ''
+        elif len(participants) == 1:
+            conversation_with_name = str(list(participants)[0])
+        else:
+            # case of group chats
+            conversation_with_name = '-'.join(sorted(list(participants)))
+        for i in range(len(conversation_data)):
+            conversation_data[i][2] = conversation_with_name
+        # add to existing data
+        data.extend(conversation_data)
     return data
+
 
 def infer_own_name(files, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
