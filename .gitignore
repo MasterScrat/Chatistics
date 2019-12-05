@@ -1,16 +1,3 @@
-# Personal project files
-data/
-!data/.gitkeep
-raw/
-!raw/.gitkeep
-!raw/whatsapp/.gitkeep
-!raw/hangouts/.gitkeep
-!raw/messenger/.gitkeep
-img/
-!img/.gitkeep
-renders/
-!renders/.gitkeep
-
 # Personal experiments
 experiments.py
 
