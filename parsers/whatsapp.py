@@ -7,6 +7,7 @@ import os
 import re
 from datetime import datetime
 import uuid
+from collections import defaultdict
 
 log = logging.getLogger(__name__)
 regex_message = re.compile(r'^(\d{1,2}/\d{1,2}/\d{1,2}, \d{2}:\d{2}) - ([^:]+):([\w\W]+)')
@@ -73,10 +74,12 @@ def parse_messages(files, own_name):
     return data
 
 def infer_own_name(files, min_conversations=2):
-    """Infers own name from multiple conversations"""
+    """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
     if len(files) <= min_conversations:
         raise Exception(f'Cannot infer own-name from less than {min_conversations}. Please provide your username manually with the --own-name argument.')
-    conversation_participants = []
+    participants_conversation_count = defaultdict(int)
+    num_conversations = 0
+    log.info('Trying to infer own_name from data...')
     for f_path in files:
         participants = set()
         with open(f_path, 'r') as f:
@@ -85,13 +88,12 @@ def infer_own_name(files, min_conversations=2):
                 if not matches or len(matches.groups()) != 3:
                     continue
                 participants.add(matches.group(2))
-                if len(participants) > 1:
-                    conversation_participants.append(participants)
-                    break
-        if len(conversation_participants) >= min_conversations:
-            own_name = set.intersection(*conversation_participants)
-            if len(own_name) == 1:
-                own_name = list(own_name)[0]
-                log.info(f'Successfully inferred own-name to be {own_name}')
-                return own_name
+        if len(participants) > 1:
+            num_conversations += 1
+            for p in participants:
+                participants_conversation_count[p] += 1
+    if num_conversations >= min_conversations and len(participants_conversation_count.keys()) >= 2:
+        own_name = max(participants_conversation_count, key=participants_conversation_count.get)
+        log.info(f'Successfully inferred own-name to be {own_name}')
+        return own_name
     raise Exception('Could not infer own name from existing converstations. Please provide your username manually with the --own-name argument')

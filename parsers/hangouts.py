@@ -2,10 +2,8 @@ from parsers.config import config
 from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
 import json
 import pandas as pd
-import argparse
-from random import randint
-from langdetect import *
 import logging
+from collections import defaultdict
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +23,6 @@ def main(own_name, file_path, max_exported_messages):
     df = detect_language(df)
     log.info('Converting dates...')
     df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
-    # Export
     export_dataframe(df, 'hangouts.pkl')
     log.info('Done.')
 
@@ -91,19 +88,22 @@ def read_archive(file_path):
     return archive
 
 def infer_own_name(archive, min_conversations=2):
-    """Infers own name from multiple conversations"""
-    conversation_participants = []
+    """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
+    participants_conversation_count = defaultdict(int)
+    num_conversations = 0
+    log.info('Trying to infer own_name from data...')
     for conversation in archive["conversations"]:
         conversation_with_id = ''
         conversationWithName = ''
         if "conversation" in conversation["conversation"]:
             participants = conversation["conversation"]["conversation"]["participant_data"]
             participants = [p['fallback_name'] for p in participants if 'fallback_name' in p]
-            conversation_participants.append(set(participants))
-            if len(conversation_participants) >= min_conversations:
-                own_name = set.intersection(*conversation_participants)
-                if len(own_name) == 1:
-                    own_name = list(own_name)[0]
-                    log.info(f'Successfully inferred own-name to be {own_name}')
-                    return own_name
+            if len(participants) >= 2:
+                num_conversations += 1
+                for p in participants:
+                    participants_conversation_count[p] += 1
+    if num_conversations >= min_conversations and len(participants_conversation_count.keys()) >= 2:
+        own_name = max(participants_conversation_count, key=participants_conversation_count.get)
+        log.info(f'Successfully inferred own-name to be {own_name}')
+        return own_name
     raise Exception('Could not infer own name from existing converstations. Please provide your username manually with the --own-name argument')

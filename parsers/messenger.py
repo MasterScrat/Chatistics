@@ -1,10 +1,10 @@
 from parsers.config import config
 from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
-import argparse
 import json
 import os
 import pandas as pd
 import logging
+from collections import defaultdict
 
 log = logging.getLogger(__name__)
 
@@ -71,8 +71,10 @@ def parse_messages(file_path, own_name):
 
 
 def infer_own_name(file_path, min_conversations=2):
-    """Infers own name from multiple conversations"""
-    conversation_participants = []
+    """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
+    participants_conversation_count = defaultdict(int)
+    num_conversations = 0
+    log.info('Trying to infer own_name from data...')
     for root, dirs, files in os.walk(file_path):
         for filename in files:
             if not filename.endswith('.json'):
@@ -84,11 +86,12 @@ def infer_own_name(file_path, min_conversations=2):
                 continue
             participants = json_data['participants']
             # only consider conversations between two participants
-            conversation_participants.append(set([p['name'] for p in participants]))
-            if len(conversation_participants) >= min_conversations:
-                own_name = set.intersection(*conversation_participants)
-                if len(own_name) == 1:
-                    own_name = list(own_name)[0]
-                    log.info(f'Successfully inferred own-name to be {own_name}')
-                    return own_name
+            if len(participants) >= 2:
+                num_conversations += 1
+                for p in participants:
+                    participants_conversation_count[p['name']] += 1
+    if num_conversations >= min_conversations and len(participants_conversation_count.keys()) >= 2:
+        own_name = max(participants_conversation_count, key=participants_conversation_count.get)
+        log.info(f'Successfully inferred own-name to be {own_name}')
+        return own_name
     raise Exception('Could not infer own name from existing converstations. Please provide your username manually with the --own-name argument')
