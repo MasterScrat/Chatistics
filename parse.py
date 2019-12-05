@@ -8,6 +8,9 @@ python parse.py <command> [<args>]
 
 Available commands:
   telegram         Parse logs from telegram
+  hangouts         Parse logs from hangouts
+  messenger        Parse logs from messenger
+  whatsapp         Parse logs from whatsapp
 """
 
 
