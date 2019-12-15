@@ -1,0 +1,12 @@
+name: chatistics
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pyyaml==5.2
+  - tqdm==4.40.2
+  - pandas==0.25.3
+  - python=3.6
+  - langdetect==1.0.7
+  - pip:
+    - telethon==1.10.9
