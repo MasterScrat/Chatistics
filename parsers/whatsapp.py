@@ -17,6 +17,9 @@ def main(own_name, file_path, max_exported_messages):
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Whatsapp data...')
     files = glob.glob(os.path.join(file_path, '*.txt'))
+    if len(files) == 0:
+        log.error(f'No input files found under {file_path}')
+        exit(0)
     if own_name is None:
         own_name = infer_own_name(files)
     data = parse_messages(files, own_name)
@@ -31,7 +34,7 @@ def main(own_name, file_path, max_exported_messages):
     log.info('Converting dates...')
     df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     # Export
-    export_dataframe(df, 'whatsapp.pkl')
+    export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
 def parse_messages(files, own_name):
@@ -46,7 +49,7 @@ def parse_messages(files, own_name):
             for line in f:
                 matches = regex_message.search(line)
                 if not matches and text is not None:
-                    # We are parsing a multi-line message 
+                    # We are parsing a multi-line message
                     text += '\n' + line
                     continue
                 elif matches and text is not None:

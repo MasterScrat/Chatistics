@@ -55,7 +55,7 @@ async def _main_loop(client):
     df = detect_language(df)
     log.info('Converting dates...')
     df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
-    export_dataframe(df, 'telegram.pkl')
+    export_dataframe(df, config['telegram']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
 async def get_own_name(client):

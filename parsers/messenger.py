@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import logging
 from collections import defaultdict
+import glob
 
 log = logging.getLogger(__name__)
 
@@ -12,6 +13,9 @@ def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Facebook messenger data...')
+    if len(glob.glob(os.path.join(file_path, '**', '*.json'))) == 0:
+        log.error(f'No input files found under {file_path}')
+        exit(0)
     if own_name is None:
         own_name = infer_own_name(file_path)
     data = parse_messages(file_path, own_name)
@@ -26,7 +30,7 @@ def main(own_name, file_path, max_exported_messages):
     df = detect_language(df)
     log.info('Computing dates...')
     df['datetime'] = df['timestamp'].apply(lambda x: x / 1000).apply(timestamp_to_ordinal)
-    export_dataframe(df, 'messenger.pkl')
+    export_dataframe(df, config['messenger']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
 

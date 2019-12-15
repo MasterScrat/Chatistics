@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import logging
 from collections import defaultdict
+import os
 
 log = logging.getLogger(__name__)
 
@@ -11,6 +12,9 @@ def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Google Hangouts data...')
+    if not os.path.isfile(file_path):
+        log.error(f'No input file under {file_path}')
+        exit(0)
     archive = read_archive(file_path)
     if own_name is None:
         own_name = infer_own_name(archive)
@@ -26,7 +30,7 @@ def main(own_name, file_path, max_exported_messages):
     df = detect_language(df)
     log.info('Converting dates...')
     df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
-    export_dataframe(df, 'hangouts.pkl')
+    export_dataframe(df, config['hangouts']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
 def parse_messages(archive, own_name):
