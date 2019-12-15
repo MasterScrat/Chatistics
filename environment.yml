@@ -8,5 +8,6 @@ dependencies:
   - pandas==0.25.3
   - python=3.6
   - langdetect==1.0.7
+  - pip==19.3.1
   - pip:
     - telethon==1.10.9
