@@ -111,30 +111,32 @@ It can also generate word clouds based on word density and a base image.
 
 Plot all messages with:
 
-`python analyse.py --data data/*`
+`python visualize.py breakdown`
 
-You can filter messages as needed:
+Among other options you can filter messages as needed (also see `python visualize.py breakdown --help`):
 
 ```
-  --filter-conversation FILTERCONVERSATION
-                        only keep messages sent in a conversation with this sender
-  --filter-sender FILTERSENDER
-                        only keep messages sent by this sender
-  --remove-sender REMOVESENDER
-                        remove messages sent by this sender
+  --platforms {telegram,whatsapp,messenger,hangouts}
+                        Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts'])
+  --filter-conversation
+                        Limit by conversations with this person/group (default: [])
+  --remove-conversation
+                        Remove messages by these senders/groups (default: [])
+  --remove-sender
+                        Remove all messages by this sender (default: [])
 ```
 
 Eg to see all the messages sent between you and Jane Doe:
 
-`python analyse.py --data data/* --filter-conversation "Jane Doe"`
+`python visualize.py breakdown --filter-conversation "Jane Doe"`
 
 To see the messages sent to you by the top 10 people with whom you talk the most:
 
-`python analyse.py --data data/* --remove-sender "Your Name" -n 10`
+`python visualize.py breakdown --remove-sender "Your Name" -n 10`
 
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/histo.png" width="701" height="406">
 
-You can also plot the conversation densities using the `--plot-density` flag.
+You can also plot the conversation densities using the `--as-density` flag.
 
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/densities.png" width="705" height="418">
 
@@ -143,7 +145,7 @@ You can also plot the conversation densities using the `--plot-density` flag.
 
 You will need a mask file to render the word cloud. The white bits of the image will be left empty, the rest will be filled with words using the color of the image. [See the WordCloud library documentation](https://github.com/amueller/word_cloud) for more information.
 
-`python cloud.py --data data/* -m img/mask_image.jpg`
+`python visualize.py -m raw_outlines/users.jpg`
 
 You can filter which messages to use using the same flags as with histograms.
 
