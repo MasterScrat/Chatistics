@@ -4,8 +4,8 @@
 Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 <p align="center">
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud.png" width="400" height="400">
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/cloud3.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud3.png" width="400" height="400">
 </p>
 
 ## Changelog
@@ -48,7 +48,7 @@ Data exported for each message regardless of the platform:
 
 Use Google Takeout: https://takeout.google.com/settings/takeout
 
-Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `./raw/hangouts/` folder of Chatistics.
+Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `./raw_data/hangouts/` folder of Chatistics.
 
 *Google switched from "Google Talk" to "Google Hangouts" mid-2013. Sadly you will only get your Hangouts logs using Takeout.*
 
@@ -57,17 +57,17 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 1. Go to the "Settings" page: https://www.facebook.com/settings
 2. Click on "Download a copy of your Facebook data" at the bottom of the General section.
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
-4. Once it is done download and extract the archive, then move the contents of the `messages` folder into `./raw/messenger/` folder of Chatistics.
+4. Once it is done download and extract the archive, then move the contents of the `messages` folder into `./raw_data/messenger/` folder of Chatistics.
 
 #### Whatsapp
 
-[See instructions here](https://faq.whatsapp.com/en/wp/22548236) 
+[See instructions here](https://faq.whatsapp.com/en/wp/22548236)
 
 1. Open the chat you wish to export.
 2. Tap on ⋮ > More > Export chat
 3. Choose "without media"
 4. Send chat via Email
-5. Add the individual txt files to the folder `./raw/whatsapp/`.
+5. Add the individual txt files to the folder `./raw_data/whatsapp/`.
 
 ### 2. Parse the logs into DataFrames
 
@@ -98,13 +98,13 @@ You will need `api_id` and `api_hash` which we will now set as environment varia
 3. Run `source secrets.sh`
 4. Execute the parser script using `python parse.py telegram`
 
-The pickle files will now be ready for analysis in the `data` folder! 
+The pickle files will now be ready for analysis in the `data` folder!
 
 For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram --help`).
 
 ### 3. Visualise
 
-Chatistics can plot the chat logs as histograms, showing how many messages each interlocutor sent. 
+Chatistics can plot the chat logs as histograms, showing how many messages each interlocutor sent.
 It can also generate word clouds based on word density and a base image.
 
 #### Histograms
@@ -124,7 +124,7 @@ You can filter messages as needed:
                         remove messages sent by this sender
 ```
 
-Eg to see all the messages sent between you and Jane Doe: 
+Eg to see all the messages sent between you and Jane Doe:
 
 `python analyse.py --data data/* --filter-conversation "Jane Doe"`
 
@@ -132,11 +132,11 @@ To see the messages sent to you by the top 10 people with whom you talk the most
 
 `python analyse.py --data data/* --remove-sender "Your Name" -n 10`
 
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/histo.png" width="701" height="406">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/histo.png" width="701" height="406">
 
 You can also plot the conversation densities using the `--plot-density` flag.
 
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/screenshots/densities.png" width="705" height="418">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/densities.png" width="705" height="418">
 
 
 #### Word Cloud

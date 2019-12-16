@@ -11,14 +11,14 @@ ALL_COLUMNS:
   - datetime
 
 hangouts:
-  DEFAULT_RAW_LOCATION: 'raw/hangouts/Hangouts.json'
+  DEFAULT_RAW_LOCATION: 'raw_data/hangouts/Hangouts.json'
   OUTPUT_PICKLE_NAME: 'hangouts.pkl'
 messenger:
-  DEFAULT_RAW_LOCATION: 'raw/messenger'
+  DEFAULT_RAW_LOCATION: 'raw_data/messenger'
   OUTPUT_PICKLE_NAME: 'messenger.pkl'
 telegram:
   USER_DIALOG_MESSAGES_LIMIT: 1000
   OUTPUT_PICKLE_NAME: 'telegram.pkl'
 whatsapp:
-  DEFAULT_RAW_LOCATION: 'raw/whatsapp'
+  DEFAULT_RAW_LOCATION: 'raw_data/whatsapp'
   OUTPUT_PICKLE_NAME: 'whatsapp.pkl'
