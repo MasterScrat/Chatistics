@@ -22,4 +22,3 @@ telegram:
 whatsapp:
   DEFAULT_RAW_LOCATION: 'raw/whatsapp'
   OUTPUT_PICKLE_NAME: 'whatsapp.pkl'
-
