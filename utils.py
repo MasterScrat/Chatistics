@@ -22,7 +22,7 @@ def add_load_data_args(parser):
     parser.add_argument('--remove-sender', dest='remove_sender', nargs='+', default=[], help='Remove all messages by this sender')
     parser.add_argument('--outgoing-only', dest='outgoing_only', action='store_true', help='Limit by outgoing messages')
     parser.add_argument('--incoming-only', dest='incoming_only', action='store_true', help='Limit by incoming messages')
-    parser.add_argument('--contains-keyword', dest='contains_keyword', nargs='+', default=[], help='Limit by incoming messages')
+    parser.add_argument('--contains-keyword', dest='contains_keyword', nargs='+', default=[], help='Limit by messages which contain certain keywords (multiple keywords are used with OR logic)')
     return parser
 
 def load_data(args):
