@@ -124,6 +124,8 @@ Among other options you can filter messages as needed (also see `python visualiz
                         Remove messages by these senders/groups (default: [])
   --remove-sender
                         Remove all messages by this sender (default: [])
+  --contains-keyword
+                        Filter by messages which contain certain keywords
 ```
 
 Eg to see all the messages sent between you and Jane Doe:
@@ -148,6 +150,14 @@ You will need a mask file to render the word cloud. The white bits of the image 
 `python visualize.py -m raw_outlines/users.jpg`
 
 You can filter which messages to use using the same flags as with histograms.
+
+#### Print
+
+You can print the data to standard out by using the command
+```
+python print.py
+```
+You can use the same filter options as described above.
 
 
 ## Improvement ideas
