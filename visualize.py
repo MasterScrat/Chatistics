@@ -22,6 +22,7 @@ def add_load_data_args(parser):
     platforms = ['telegram', 'whatsapp', 'messenger', 'hangouts']
     parser.add_argument('-p', '--platforms', default=platforms, choices=platforms, nargs='+', help='Use data only from certain platforms')
     parser.add_argument('--filter-conversation', dest='filter_conversation', nargs='+', default=[], help='Limit by conversations with this person/group')
+    parser.add_argument('--filter-sender', dest='filter_sender', nargs='+', default=[], help='Limit by messages by this sender')
     parser.add_argument('--remove-conversation', dest='remove_conversation', nargs='+', default=[], help='Remove messages by these senders/groups')
     parser.add_argument('--remove-sender', dest='remove_sender', nargs='+', default=[], help='Remove all messages by this sender')
     return parser

@@ -46,7 +46,7 @@ def render_density(df, args):
     df['timestamp'] = pd.to_datetime(df.timestamp, unit='s')
     df['timestamp'] = df.timestamp.apply(lambda s: mdates.date2num(s))
     for name, g in df.groupby('conversationWithName'):
-        sns.distplot(g['timestamp'], ax=ax, hist=False, label=name)
+        sns.distplot(g['timestamp'], ax=ax, hist=False, label=name, kde_kws={"shade": True})
     ax.set_ylabel('Density')
     ax.set_xlabel('')
     ax.legend(loc='center left', bbox_to_anchor=(1, .5))

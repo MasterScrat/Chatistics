@@ -17,7 +17,7 @@ messenger:
   DEFAULT_RAW_LOCATION: 'raw_data/messenger'
   OUTPUT_PICKLE_NAME: 'messenger.pkl'
 telegram:
-  USER_DIALOG_MESSAGES_LIMIT: 1000
+  USER_DIALOG_MESSAGES_LIMIT: 100000
   OUTPUT_PICKLE_NAME: 'telegram.pkl'
 whatsapp:
   DEFAULT_RAW_LOCATION: 'raw_data/whatsapp'

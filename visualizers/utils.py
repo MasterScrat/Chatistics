@@ -35,15 +35,25 @@ def load_data(args):
     original_len = len(df)
     # filtering
     if len(args.filter_conversation) > 0:
+        log.info('Filtering by conversation(s) with {}'.format(', '.join(args.filter_conversation)))
         df = df[df['conversationWithName'].isin(args.filter_conversation)]
+    if len(args.filter_sender) > 0:
+        log.info('Filtering messages by sender(s) {}'.format(', '.join(args.filter_sender)))
+        df = df[df['senderName'].isin(args.filter_sender)]
     if len(args.remove_conversation) > 0:
+        log.info('Removing conversations with {}'.format(', '.join(args.remove_conversation)))
         df = df[~df['conversationWithName'].isin(args.remove_conversation)]
     if len(args.remove_sender) > 0:
+        log.info('Removing messages by {}'.format(', '.join(args.remove_sender)))
         df = df[~df['senderName'].isin(args.remove_sender)]
     if 'top_n' in args:
         # find top_n interlocutors
-        top_interlocutors = df.conversationWithName.value_counts().iloc[:args.top_n]
-        df = df[df['conversationWithName'].isin(top_interlocutors.index)]
+        top_interlocutors = df.conversationWithName.value_counts()
+        if len(top_interlocutors) <= args.top_n:
+            log.info(f'Tried to filter by top {args.top_n:,} but only {len(top_interlocutors):,} conversations present in data')
+        else:
+            log.info(f'Filtering top {args.top_n:,} conversations from a total of {len(top_interlocutors):,} conversations')
+            df = df[df['conversationWithName'].isin(top_interlocutors.iloc[:args.top_n].index)]
     if len(df) > 0:
         log.info(f'Loaded a total of {len(df):,} messages ({original_len-len(df):,} removed by filters)')
     else:

@@ -29,7 +29,7 @@ def main(own_name, file_path, max_exported_messages):
     log.info('Detecting languages...')
     df = detect_language(df)
     log.info('Computing dates...')
-    df['datetime'] = df['timestamp'].apply(lambda x: x / 1000).apply(timestamp_to_ordinal)
+    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     export_dataframe(df, config['messenger']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
@@ -59,7 +59,7 @@ def parse_messages(file_path, own_name):
                     conversation_with_name = participant['name']
             if conversation_with_name is None: conversation_with_name = conversation_id
             for message in json_data["messages"]:
-                timestamp = message["timestamp_ms"]
+                timestamp = message["timestamp_ms"]/1000
                 if "content" in message and "sender_name" in message:
                     content = message["content"]
                     if "sender_name" in message:

@@ -11,6 +11,7 @@ async def list_dialogs(client, own_name):
     result = []
     async for item in client.iter_dialogs():
         if len(result) > MAX_EXPORTED_MESSAGES:
+            log.warning(f'Reached MAX_EXPORTED_MESSAGES of {MAX_EXPORTED_MESSAGES:,}!')
             return result
         dialog = item.dialog
         if isinstance(dialog.peer, PeerUser):
@@ -39,6 +40,10 @@ async def process_dialog_with_user(client, item, own_name):
         else:
             sender_name = conversation_with_name
         result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, '', '', ''])
+        if len(result) % 1000 == 0:
+            log.info(f'Parsed {len(result):,} telegram messages in conversation {conversation_with_name}...')
+    if len(result) == USER_DIALOG_MESSAGES_LIMIT:
+        log.warning(f'Reached USER_DIALOG_LIMIT of {USER_DIALOG_MESSAGES_LIMIT:,} for conversation with {conversation_with_name}!')
     return result
 
 async def _main_loop(client):
