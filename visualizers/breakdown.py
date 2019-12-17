@@ -6,6 +6,7 @@ import logging
 import seaborn as sns
 import matplotlib.pyplot as plt
 from visualizers.utils import save_fig, load_data
+from utils import load_data
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 

@@ -1,6 +1,7 @@
 import argparse
 import sys
 import logging.config
+from utils import ArgParseDefault, add_load_data_args
 
 USAGE_DESC = """
 python visualize.py <command> [<args>]
@@ -10,22 +11,6 @@ Available commands:
   cloud            Visualize word clouds
 """
 
-
-class ArgParseDefault(argparse.ArgumentParser):
-    """Simple wrapper which shows defaults in help"""
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-
-def add_load_data_args(parser):
-    """Adds common data loader arguments to arg parser"""
-    platforms = ['telegram', 'whatsapp', 'messenger', 'hangouts']
-    parser.add_argument('-p', '--platforms', default=platforms, choices=platforms, nargs='+', help='Use data only from certain platforms')
-    parser.add_argument('--filter-conversation', dest='filter_conversation', nargs='+', default=[], help='Limit by conversations with this person/group')
-    parser.add_argument('--filter-sender', dest='filter_sender', nargs='+', default=[], help='Limit by messages by this sender')
-    parser.add_argument('--remove-conversation', dest='remove_conversation', nargs='+', default=[], help='Remove messages by these senders/groups')
-    parser.add_argument('--remove-sender', dest='remove_sender', nargs='+', default=[], help='Remove all messages by this sender')
-    return parser
 
 class ArgParse():
     def __init__(self):
