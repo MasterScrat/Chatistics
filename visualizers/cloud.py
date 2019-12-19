@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from wordcloud import WordCloud, ImageColorGenerator
 import logging
-from visualizers.utils import save_fig, load_data, get_stopwords
+from visualizers.utils import save_fig, get_stopwords
+from utils import load_data
 from PIL import Image
 
 

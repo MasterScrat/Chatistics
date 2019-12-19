@@ -147,7 +147,7 @@ You can also plot the conversation densities using the `--as-density` flag.
 
 You will need a mask file to render the word cloud. The white bits of the image will be left empty, the rest will be filled with words using the color of the image. [See the WordCloud library documentation](https://github.com/amueller/word_cloud) for more information.
 
-`python visualize.py -m raw_outlines/users.jpg`
+`python visualize.py cloud -m raw_outlines/users.jpg`
 
 You can filter which messages to use using the same flags as with histograms.
 

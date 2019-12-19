@@ -16,3 +16,4 @@ six==1.12.0
 Telethon==1.10.3
 tornado==6.0.3
 tqdm==4.40.0
+seaborn==0.9.0
