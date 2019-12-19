@@ -10,7 +10,7 @@ import uuid
 from collections import defaultdict
 
 log = logging.getLogger(__name__)
-regex_message = re.compile(r'^(\d{1,2}/\d{1,2}/\d{1,2}, \d{2}:\d{2}) - ([^:]+):([\w\W]+)')
+regex_message = re.compile(r'^\[([^\]]*)\] ([^:]+): ([\w\W]+)')
 
 def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
@@ -41,6 +41,7 @@ def parse_messages(files, own_name):
     data = []
     for f_path in files:
         text = None
+        log.info(f'Reading {f_path}')
         f_name = os.path.basename(f_path)
         conversation_id = uuid.uuid4().hex
         participants = set()
@@ -68,10 +69,11 @@ def parse_messages(files, own_name):
                     continue
                 # get timestamp
                 try:
-                    timestamp = datetime.strptime(groups[0], '%m/%d/%y, %H:%M').timestamp()
+                    timestamp = datetime.strptime(groups[0], '%d.%m.%y, %H:%M:%S').timestamp()
                 except ValueError:
-                    log.error('Could not parse datetime parse')
-                    continue
+                    log.error(f'Could not parse datetime {groups[0]}')
+                    # workaround for datetime strings that have different localization in chat export
+                    timestamp = datetime.now().timestamp()
                 # check if sender present
                 sender_name = groups[1]
                 if sender_name != own_name:
