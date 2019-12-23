@@ -23,7 +23,7 @@ Can also generate ggplot histograms and word clouds from fetched chat logs.
 | Facebook Messenger |     ✔        |     ✘      |
 | Google Hangouts    |     ✔        |     ✘      |
 | Telegram           |     ✔        |     ✘      |
-| Whatsapp           |     ✔        |     ✔      |
+| WhatsApp           |     ✔        |     ✔      |
 
 ## Exported data
 
@@ -59,37 +59,48 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 3. Click on "Start My Archive". It will take Facebook a while to generate it.
 4. Once it is done download and extract the archive, then move the contents of the `messages` folder into `./raw_data/messenger/` folder of Chatistics.
 
-#### Whatsapp
+#### WhatsApp
 
-[See instructions here](https://faq.whatsapp.com/en/wp/22548236)
+Unfortunately, WhatsApp only lets you export your conversations one by one. [See instructions here](https://faq.whatsapp.com/en/wp/22548236)
 
-1. Open the chat you wish to export.
-2. Tap on ⋮ > More > Export chat
-3. Choose "without media"
-4. Send chat via Email
-5. Add the individual txt files to the folder `./raw_data/whatsapp/`.
+1. Open the chat you wish to export
+2. On Android, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On iOS, tap on the interlocutor's name > <kbd>Export chat</kbd>
+3. Choose "Without Media"
+4. Send chat to yourself eg via Email
+5. Unpack the archive and add the individual txt files to the folder `./raw_data/whatsapp/`
 
 ### 2. Parse the logs into DataFrames
 
-Install the required Python packages:
+First, install the required Python packages:
+
+**Use conda (recommended)**
 
 ```
-virtualenv Chatistics
-source Chatistics/bin/activate
+conda env create -f environment.yml
+conda activate chatistics
+```
+
+**Or virtualenv**
+
+```
+virtualenv chatistics
+source chatistics/bin/activate
 pip install -r requirements.txt
 ```
-You can parse the messages by using the command `python parse.py <platform> <arguments>`.
+You can now parse the messages by using the command `python parse.py <platform> <arguments>`.
 
 By default the parsers will try to infer your own name (i.e. your username) from the data. If this fails you can provide your own name to the parser by providing the `--own-name` argument. The name should match your name exactly as used on that chat platform.
 
-#### Google Hangouts
-`python parse.py hangouts`
+```
+# Google Hangouts
+python parse.py hangouts
 
-#### Facebook Messenger
-`python parse.py messenger`
+# Facebook Messenger
+python parse.py messenger
 
-#### Whatsapp
-`python parse.py whatsapp`
+# WhatsApp
+python parse.py whatsapp
+```
 
 #### Telegram
 1. Create your Telegram application to access chat logs ([instructions](https://core.telegram.org/api/obtaining_api_id)).
@@ -154,6 +165,7 @@ You can filter which messages to use using the same flags as with histograms.
 #### Print
 
 You can print the data to standard out by using the command
+
 ```
 python print.py
 ```
