@@ -102,7 +102,7 @@ def parse_messages(files, own_name):
 
 def infer_own_name(files, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
-    if len(files) <= min_conversations:
+    if len(files) < min_conversations:
         raise Exception(
             f'Cannot infer own-name from less than {min_conversations} conversations. Please provide your username manually with the --own-name argument.')
     participants_conversation_count = defaultdict(int)
