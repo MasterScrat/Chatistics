@@ -12,6 +12,7 @@ from collections import defaultdict
 log = logging.getLogger(__name__)
 regex_message = re.compile(r'^\[([^\]]*)\] ([^:]+): ([\w\W]+)')
 
+
 def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
@@ -36,6 +37,7 @@ def main(own_name, file_path, max_exported_messages):
     # Export
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
+
 
 def parse_messages(files, own_name):
     data = []
@@ -101,7 +103,8 @@ def parse_messages(files, own_name):
 def infer_own_name(files, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
     if len(files) <= min_conversations:
-        raise Exception(f'Cannot infer own-name from less than {min_conversations}. Please provide your username manually with the --own-name argument.')
+        raise Exception(
+            f'Cannot infer own-name from less than {min_conversations} conversations. Please provide your username manually with the --own-name argument.')
     participants_conversation_count = defaultdict(int)
     num_conversations = 0
     log.info('Trying to infer own_name from data...')

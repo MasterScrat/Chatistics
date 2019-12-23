@@ -6,8 +6,10 @@ import argparse
 
 log = logging.getLogger(__name__)
 
+
 class ArgParseDefault(argparse.ArgumentParser):
     """Simple wrapper which shows defaults in help"""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -22,8 +24,10 @@ def add_load_data_args(parser):
     parser.add_argument('--remove-sender', dest='remove_sender', nargs='+', default=[], help='Remove all messages by this sender')
     parser.add_argument('--outgoing-only', dest='outgoing_only', action='store_true', help='Limit by outgoing messages')
     parser.add_argument('--incoming-only', dest='incoming_only', action='store_true', help='Limit by incoming messages')
-    parser.add_argument('--contains-keyword', dest='contains_keyword', nargs='+', default=[], help='Limit by messages which contain certain keywords (multiple keywords are used with OR logic)')
+    parser.add_argument('--contains-keyword', dest='contains_keyword', nargs='+', default=[],
+                        help='Limit by messages which contain certain keywords (multiple keywords are used with OR logic)')
     return parser
+
 
 def load_data(args):
     """Load chat log data based on arg parse filter options"""
@@ -74,9 +78,8 @@ def load_data(args):
             log.info(f'Filtering top {args.top_n:,} conversations from a total of {len(top_interlocutors):,} conversations')
             df = df[df['conversationWithName'].isin(top_interlocutors.iloc[:args.top_n].index)]
     if len(df) > 0:
-        log.info(f'Loaded a total of {len(df):,} messages ({original_len-len(df):,} removed by filters)')
+        log.info(f'Loaded a total of {len(df):,} messages ({original_len - len(df):,} removed by filters)')
     else:
         log.warning(f'With the given filters no messages could be found!')
         exit(-1)
     return df
-

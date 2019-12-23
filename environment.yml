@@ -12,4 +12,4 @@ dependencies:
   - seaborn==0.9.0
   - wordcloud==1.6.0
   - pip:
-    - telethon==1.10.9
+      - telethon==1.10.9

@@ -9,6 +9,7 @@ import glob
 
 log = logging.getLogger(__name__)
 
+
 def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
@@ -59,7 +60,7 @@ def parse_messages(file_path, own_name):
                     conversation_with_name = participant['name']
             if conversation_with_name is None: conversation_with_name = conversation_id
             for message in json_data["messages"]:
-                timestamp = message["timestamp_ms"]/1000
+                timestamp = message["timestamp_ms"] / 1000
                 if "content" in message and "sender_name" in message:
                     content = message["content"]
                     if "sender_name" in message:

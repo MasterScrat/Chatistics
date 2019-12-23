@@ -8,6 +8,7 @@ import os
 
 log = logging.getLogger(__name__)
 
+
 def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
@@ -33,6 +34,7 @@ def main(own_name, file_path, max_exported_messages):
     export_dataframe(df, config['hangouts']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
+
 def parse_messages(archive, own_name):
     def id_to_name(_id):
         if _id in names:
@@ -45,6 +47,7 @@ def parse_messages(archive, own_name):
             names[_id] = name
         elif names[_id] != name:
             log.info(f'Assuming {name} is {names[_id]}')
+
     names = {}
     data = []
     log.info('Extracting messages...')
@@ -93,6 +96,7 @@ def read_archive(file_path):
     with open(file_path, encoding='utf-8') as f:
         archive = json.loads(f.read())
     return archive
+
 
 def infer_own_name(archive, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""

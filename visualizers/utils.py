@@ -5,6 +5,7 @@ import json
 
 log = logging.getLogger(__name__)
 
+
 def save_fig(fig, name, output_formats=('png',), dpi=300):
     """Save figure with timestamps"""
     date = time.strftime('%Y%m%d')
@@ -13,6 +14,7 @@ def save_fig(fig, name, output_formats=('png',), dpi=300):
         save_name = os.path.join('plots', f'{name}_{ts}.{fmt}')
         log.info(f'Saving figure as {save_name}')
         fig.savefig(save_name, dpi=dpi)
+
 
 def get_stopwords(stopword_paths):
     """Load stopwords given a stopword path"""

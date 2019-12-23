@@ -11,7 +11,6 @@ from visualizers.utils import save_fig, get_stopwords
 from utils import load_data
 from PIL import Image
 
-
 log = logging.getLogger(__name__)
 
 
@@ -25,6 +24,7 @@ def main(args):
     # render word cloud
     render_wordcloud(args, text)
 
+
 def render_wordcloud(args, text):
     log.info('Rendering word cloud...')
     mask = np.array(Image.open(os.path.join(args.mask_image)))
@@ -36,10 +36,11 @@ def render_wordcloud(args, text):
     # save fig
     save_fig(plt.gcf(), 'cloud', dpi=args.dpi)
 
+
 def cleanup_text(text, stopwords):
     # pre-compiled regex is faster than going through a list
     stopwords = '|'.join(stopwords)
-    regex = re.compile(r'\b('+stopwords+r')\b', re.UNICODE)
+    regex = re.compile(r'\b(' + stopwords + r')\b', re.UNICODE)
     log.info('Cleaning up data...')
     text = text \
         .replace(to_replace='None', value=np.nan).dropna() \

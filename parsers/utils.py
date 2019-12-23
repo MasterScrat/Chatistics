@@ -5,6 +5,7 @@ from langdetect import detect
 
 log = logging.getLogger(__name__)
 
+
 def export_dataframe(df, filename):
     filepath = os.path.join('data', filename)
     log.info(f'Saving to pickle file {filepath}...')

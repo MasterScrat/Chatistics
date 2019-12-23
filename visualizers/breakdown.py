@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 def render_barplot(df, args):
     # create figure
     sns.set()
-    fig, ax = plt.subplots(1, 1, figsize=(20,10))
+    fig, ax = plt.subplots(1, 1, figsize=(20, 10))
     df['timestamp'] = pd.to_datetime(df.timestamp, unit='s')
     df['count'] = 0
     df = df.set_index('timestamp')
@@ -31,7 +31,7 @@ def render_barplot(df, args):
     # Legend
     ax.legend(loc='center left', bbox_to_anchor=(1, .5))
     # Make most of the ticklabels empty so the labels don't get too crowded
-    ticklabels = ['']*len(df.index)
+    ticklabels = [''] * len(df.index)
     # Every 4th ticklable shows the month and day
     ticklabels[::4] = [item.strftime('%b') for item in df.index[::4]]
     # Every 12th ticklabel includes the year
@@ -41,9 +41,10 @@ def render_barplot(df, args):
     plt.tight_layout()
     save_fig(fig, 'breakdown')
 
+
 def render_density(df, args):
     sns.set()
-    fig, ax = plt.subplots(1, 1, figsize=(20,10))
+    fig, ax = plt.subplots(1, 1, figsize=(20, 10))
     df['timestamp'] = pd.to_datetime(df.timestamp, unit='s')
     df['timestamp'] = df.timestamp.apply(lambda s: mdates.date2num(s))
     for name, g in df.groupby('conversationWithName'):

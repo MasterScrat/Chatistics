@@ -7,6 +7,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 async def list_dialogs(client, own_name):
     result = []
     async for item in client.iter_dialogs():
@@ -22,6 +23,7 @@ async def list_dialogs(client, own_name):
         else:
             log.warning('Unknown dialog type %s', dialog)
     return result
+
 
 async def process_dialog_with_user(client, item, own_name):
     result = []
@@ -46,6 +48,7 @@ async def process_dialog_with_user(client, item, own_name):
         log.warning(f'Reached USER_DIALOG_LIMIT of {USER_DIALOG_MESSAGES_LIMIT:,} for conversation with {conversation_with_name}!')
     return result
 
+
 async def _main_loop(client):
     own_name = await get_own_name(client)
     data = await list_dialogs(client, own_name)
@@ -63,6 +66,7 @@ async def _main_loop(client):
     export_dataframe(df, config['telegram']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
+
 async def get_own_name(client):
     if OWN_NAME is not None:
         return OWN_NAME
@@ -76,6 +80,7 @@ async def get_own_name(client):
     own_name = '{} {}'.format(first_name, last_name).strip()
     log.info(f'Successfully inferred own-name to be {own_name}')
     return own_name
+
 
 def main(own_name, max_exported_messages=10000, user_dialog_messages_limit=1000):
     global MAX_EXPORTED_MESSAGES
