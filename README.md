@@ -131,6 +131,8 @@ Among other options you can filter messages as needed (also see `python visualiz
                         Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts'])
   --filter-conversation
                         Limit by conversations with this person/group (default: [])
+  --filter-sender
+                        Limit to messages sent by this person/group (default: [])                      
   --remove-conversation
                         Remove messages by these senders/groups (default: [])
   --remove-sender
