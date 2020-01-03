@@ -42,7 +42,7 @@ def main(own_name, file_path, max_exported_messages):
 def parse_messages(files, own_name):
     data = []
     for f_path in files:
-        text = None
+        text = ""
         log.info(f'Reading {f_path}')
         f_name = os.path.basename(f_path)
         conversation_id = uuid.uuid4().hex
@@ -55,10 +55,10 @@ def parse_messages(files, own_name):
                     # We are parsing a multi-line message
                     text += '\n' + line.strip()
                     continue
-                elif matches and text is not None:
+                elif matches and text != "":
                     # dump previous entry
                     conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
-                    text = None
+                    text = ""
                     if len(data) + len(conversation_data) >= MAX_EXPORTED_MESSAGES:
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
                         # dismiss current conversation data
@@ -77,20 +77,20 @@ def parse_messages(files, own_name):
                     # workaround for datetime strings that have different localization in chat export
                     timestamp = datetime.now().timestamp()
                 # check if sender present
-                sender_name = str(groups[2])
-                if sender_name != own_name:
+                sender_name = groups[2]
+                if sender_name is not None and sender_name != own_name:
                     participants.add(sender_name)
                 outgoing = sender_name == own_name
-                text = groups[3]
-                text = text.strip() if text is not None else ""
-            if text is not None and sender_name is not None:
+                text = groups[3] or ""
+                text = text.strip()
+            if text != "" and sender_name is not None:
                 # dump last line
                 conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
         # fill conversation_with
         if len(participants) == 0:
             conversation_with_name = ''
         else:
-            conversation_with_name = '-'.join(sorted([p for p in participants if p is not None]))
+            conversation_with_name = '-'.join(sorted(list(participants)))
         for i in range(len(conversation_data)):
             conversation_data[i][2] = conversation_with_name
         # add to existing data
