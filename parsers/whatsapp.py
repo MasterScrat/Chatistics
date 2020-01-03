@@ -10,7 +10,7 @@ import uuid
 from collections import defaultdict
 
 log = logging.getLogger(__name__)
-regex_message = re.compile(r'^\[([^\]]*)\] ([^:]+): ([\w\W]+)')
+regex_message = re.compile(r'^[^0-9]?([0-9./\-]+,?[\sT][0-9:]+)[^0-9]?\s[\-]?\s?(([^:]+):)?(.+)?$')
 
 
 def main(own_name, file_path, max_exported_messages):
@@ -53,7 +53,7 @@ def parse_messages(files, own_name):
                 matches = regex_message.search(line)
                 if not matches and text is not None:
                     # We are parsing a multi-line message
-                    text += '\n' + line
+                    text += '\n' + line.strip()
                     continue
                 elif matches and text is not None:
                     # dump previous entry
@@ -67,32 +67,30 @@ def parse_messages(files, own_name):
                     # we are not parsing a multi-line message and we have no matches
                     continue
                 groups = matches.groups()
-                if len(groups) != 3:
+                if len(groups) != 4:
                     continue
                 # get timestamp
                 try:
-                    timestamp = datetime.strptime(groups[0], '%d.%m.%y, %H:%M:%S').timestamp()
+                    timestamp = pd.to_datetime(groups[0], infer_datetime_format=True).timestamp()
                 except ValueError:
                     log.error(f'Could not parse datetime {groups[0]}')
                     # workaround for datetime strings that have different localization in chat export
                     timestamp = datetime.now().timestamp()
                 # check if sender present
-                sender_name = groups[1]
+                sender_name = str(groups[2])
                 if sender_name != own_name:
                     participants.add(sender_name)
                 outgoing = sender_name == own_name
-                text = groups[2].strip()
+                text = groups[3]
+                text = text.strip() if text is not None else ""
             if text is not None and sender_name is not None:
                 # dump last line
                 conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
         # fill conversation_with
         if len(participants) == 0:
             conversation_with_name = ''
-        elif len(participants) == 1:
-            conversation_with_name = str(list(participants)[0])
         else:
-            # case of group chats
-            conversation_with_name = '-'.join(sorted(list(participants)))
+            conversation_with_name = '-'.join(sorted([p for p in participants if p is not None]))
         for i in range(len(conversation_data)):
             conversation_data[i][2] = conversation_with_name
         # add to existing data
