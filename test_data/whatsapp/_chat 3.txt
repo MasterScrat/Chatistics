@@ -3,16 +3,16 @@
 2/11/19, 14:21 - Very long username: Yeah not really. My username contains some spaces even...
 2/11/19, 14:21 - Even longer username with emoticons! 🙈 🙈: Maybe this will crash the parser?
 2/11/19, 14:21 - The final test: Does it work with colons?: Hallelujah!
-2/11/19, 14:18 - n: Ok - so it seems to work?
+2/11/19, 14:18 - John Doe: Ok - so it seems to work?
 2/11/19, 14:21 - The final test: Hope so!
-2/11/19, 14:18 - n: Great!
-2/11/19, 14:18 - n:
+2/11/19, 14:18 - John Doe: Great!
+2/11/19, 14:18 - John Doe:
 
 
 
 
 👍👍👍👍👍👍!
-2/11/19, 14:21 - n: this is a message which contains some dates and colons
+2/11/19, 14:21 - John Doe: this is a message which contains some dates and colons
 
 
 2/11/19: Arrival
