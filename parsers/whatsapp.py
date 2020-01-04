@@ -8,6 +8,7 @@ import re
 from datetime import datetime
 import uuid
 from collections import defaultdict
+from tqdm import tqdm
 
 log = logging.getLogger(__name__)
 regex_message = re.compile(r'^[^0-9]?([0-9./\-]+,?[\sT][0-9:]+)[^0-9]?\s[\-]?\s?(([^:]+):)?(.+)?$')
@@ -38,7 +39,6 @@ def main(own_name, file_path, max_exported_messages):
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
-
 def parse_messages(files, own_name):
     data = []
     for f_path in files:
@@ -48,27 +48,32 @@ def parse_messages(files, own_name):
         conversation_id = uuid.uuid4().hex
         participants = set()
         conversation_data = []
+        multi_line = False
+        num_lines = sum(1 for _ in open(f_path, 'r'))
         with open(f_path, 'r') as f:
-            for line in f:
+            for line in tqdm(f, total=num_lines):
+                # try to extract meta data from line
                 matches = regex_message.search(line)
-                if not matches and text is not None:
-                    # We are parsing a multi-line message
-                    text += '\n' + line.strip()
+                has_info = _has_info(matches)
+                if not multi_line and not has_info:
+                    # We are expecting a new message but could not successfully parse line
+                    log.debug(f'The line "{line.strip()}" in file {f_path} was ignored')
                     continue
-                elif matches and text != "":
-                    # dump previous entry
-                    conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
-                    text = ""
-                    if len(data) + len(conversation_data) >= MAX_EXPORTED_MESSAGES:
-                        log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
-                        # dismiss current conversation data
-                        return data
-                elif not matches and text is None:
-                    # we are not parsing a multi-line message and we have no matches
-                    continue
+                if multi_line:
+                    if not has_info:
+                        # We are parsing a multi-line message, add whole line to existing messages and continue with next line
+                        text += '\n' + line.strip()
+                        continue
+                    else:
+                        # We are at the beginning of a new message. Dump previous entry
+                        conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
+                        text = ""
+                        multi_line = False
+                        if len(data) + len(conversation_data) >= MAX_EXPORTED_MESSAGES:
+                            # dismiss current conversation data
+                            log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
+                            return data
                 groups = matches.groups()
-                if len(groups) != 4:
-                    continue
                 # get timestamp
                 try:
                     timestamp = pd.to_datetime(groups[0], infer_datetime_format=True).timestamp()
@@ -81,8 +86,8 @@ def parse_messages(files, own_name):
                 if sender_name is not None and sender_name != own_name:
                     participants.add(sender_name)
                 outgoing = sender_name == own_name
-                text = groups[3] or ""
-                text = text.strip()
+                text = groups[3].strip() or ""
+                multi_line = True
             if text != "" and sender_name is not None:
                 # dump last line
                 conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
@@ -97,6 +102,17 @@ def parse_messages(files, own_name):
         data.extend(conversation_data)
     return data
 
+def _has_info(matches):
+    """Check if parsed line contains all message data"""
+    if matches is None:
+        return False
+    groups = matches.groups()
+    if len(groups) != 4:
+        return False
+    for m in groups:
+        if m is None:
+            return False
+    return True
 
 def infer_own_name(files, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
@@ -111,9 +127,9 @@ def infer_own_name(files, min_conversations=2):
         with open(f_path, 'r') as f:
             for line in f:
                 matches = regex_message.search(line)
-                if not matches or len(matches.groups()) != 3:
+                if not _has_info(matches):
                     continue
-                participants.add(matches.group(2))
+                participants.add(matches.group(3))
         if len(participants) > 1:
             num_conversations += 1
             for p in participants:
