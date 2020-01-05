@@ -181,6 +181,17 @@ You can use the same filter options as described above.
 
 Pull requests are welcome!
 
+## Development
+Install dev environment using
+```
+conda env create -f environment_dev.yml
+```
+### Tests
+Run tests from project root using
+
+```
+python -m pytest
+```
 
 ## Troubleshooting
 
