@@ -1,7 +1,7 @@
 import pandas as pd
 from telethon import TelegramClient
 from telethon.tl.types import PeerUser, PeerChannel, PeerChat
-from parsers.utils import export_dataframe, detect_language, timestamp_to_ordinal
+from parsers.utils import export_dataframe, detect_language
 from parsers.config import config
 import logging
 
@@ -41,7 +41,7 @@ async def process_dialog_with_user(client, item, own_name):
             sender_name = own_name
         else:
             sender_name = conversation_with_name
-        result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, '', '', ''])
+        result.append([timestamp, user_id, conversation_with_name, sender_name, message.out, text, '', ''])
         if len(result) % 1000 == 0:
             log.info(f'Parsed {len(result):,} telegram messages in conversation {conversation_with_name}...')
     if len(result) == USER_DIALOG_MESSAGES_LIMIT:
@@ -61,8 +61,6 @@ async def _main_loop(client):
     df['platform'] = 'telegram'
     log.info('Detecting languages...')
     df = detect_language(df)
-    log.info('Converting dates...')
-    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     export_dataframe(df, config['telegram']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 

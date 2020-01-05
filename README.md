@@ -31,14 +31,14 @@ Data exported for each message regardless of the platform:
 
 |          Column      |                                        Content                                       |
 |:--------------------:|:------------------------------------------------------------------------------------:|
-| timestamp            | UNIX timestamp                                                                       |
+| timestamp            | UNIX timestamp (in seconds)                                                                       |
 | conversationId       | A conversation ID, unique by platform                                                |
 | conversationWithName | Name of the other people in a direct conversation, **or** name of the group conversation |
 | senderName           | Name of the sender                                                                   |
 | outgoing             | Boolean value whether the message is outgoing/coming from owner                      |
 | text                 | Text of the message                                                                  |
 | language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect) |
-| datetime             | The proleptic Gregorian ordinal (= number of days since 01/01/0001)                  |
+| platform             | Platform (see support matrix above)                                                  |
 
 ## How to use it?
 
@@ -132,7 +132,7 @@ Among other options you can filter messages as needed (also see `python visualiz
   --filter-conversation
                         Limit by conversations with this person/group (default: [])
   --filter-sender
-                        Limit to messages sent by this person/group (default: [])                      
+                        Limit to messages sent by this person/group (default: [])
   --remove-conversation
                         Remove messages by these senders/groups (default: [])
   --remove-sender

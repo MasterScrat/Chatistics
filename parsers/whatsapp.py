@@ -1,5 +1,5 @@
 import pandas as pd
-from parsers.utils import export_dataframe, detect_language, timestamp_to_ordinal
+from parsers.utils import export_dataframe, detect_language
 from parsers.config import config
 import logging
 import glob
@@ -34,8 +34,6 @@ def main(own_name, file_path, max_exported_messages):
     df['platform'] = 'whatsapp'
     log.info('Detecting languages...')
     df = detect_language(df)
-    log.info('Converting dates...')
-    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     # Export
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
@@ -67,7 +65,7 @@ def parse_messages(files, own_name):
                         continue
                     else:
                         # We are at the beginning of a new message. Dump previous entry
-                        conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
+                        conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '']]
                         text = ""
                         multi_line = False
                         if len(data) + len(conversation_data) >= MAX_EXPORTED_MESSAGES:
@@ -91,7 +89,7 @@ def parse_messages(files, own_name):
                 multi_line = True
             if text != "" and sender_name is not None:
                 # dump last line
-                conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '', '']]
+                conversation_data += [[timestamp, conversation_id, '', sender_name, outgoing, text, '', '']]
         # fill conversation_with
         if len(participants) == 0:
             conversation_with_name = ''

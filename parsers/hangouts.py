@@ -1,5 +1,5 @@
 from parsers.config import config
-from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
+from parsers.utils import export_dataframe, detect_language
 import json
 import pandas as pd
 import logging
@@ -29,8 +29,6 @@ def main(own_name, file_path, max_exported_messages):
     df['platform'] = 'hangouts'
     log.info('Detecting languages...')
     df = detect_language(df)
-    log.info('Converting dates...')
-    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     export_dataframe(df, config['hangouts']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
@@ -81,7 +79,7 @@ def parse_messages(archive, own_name):
                         outgoing = sender_name == own_name
                         conversation_with_name = conversation_with_name if conversation_with_name is not None else ''
                         sender_name = sender_name if sender_name is not None else ''
-                        data += [[timestamp, conversationId, conversation_with_name, sender_name, outgoing, text, '', '', '']]
+                        data += [[timestamp, conversationId, conversation_with_name, sender_name, outgoing, text, '', '']]
                     else:
                         # unknown sender
                         log.error(f"No senderName could be found for either senderId ({sender_id}) or ConversationWithId ({conversation_with_id})")

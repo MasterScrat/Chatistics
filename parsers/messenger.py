@@ -1,5 +1,5 @@
 from parsers.config import config
-from parsers.utils import export_dataframe, timestamp_to_ordinal, detect_language
+from parsers.utils import export_dataframe, detect_language
 import json
 import os
 import pandas as pd
@@ -29,8 +29,6 @@ def main(own_name, file_path, max_exported_messages):
     df['platform'] = 'messenger'
     log.info('Detecting languages...')
     df = detect_language(df)
-    log.info('Computing dates...')
-    df['datetime'] = df['timestamp'].apply(timestamp_to_ordinal)
     export_dataframe(df, config['messenger']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
@@ -68,7 +66,7 @@ def parse_messages(file_path, own_name):
                     else:
                         sender_name = conversation_id
                     outgoing = sender_name == own_name
-                    data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, content, '', '', '']]
+                    data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, content, '', '']]
                     if len(data) >= MAX_EXPORTED_MESSAGES:
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
                         return data

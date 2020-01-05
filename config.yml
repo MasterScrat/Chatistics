@@ -8,7 +8,6 @@ ALL_COLUMNS:
   - text
   - language
   - platform
-  - datetime
 
 hangouts:
   DEFAULT_RAW_LOCATION: 'raw_data/hangouts/Hangouts.json'
