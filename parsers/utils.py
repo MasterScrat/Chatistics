@@ -1,7 +1,7 @@
 import os
 import datetime
 import logging
-from langdetect import detect
+import langdetect
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def detect_language(df, min_token_count=5):
     for name, group in df.groupby(df.conversationWithName):
         text = ' '.join(group['text'].dropna().values[:100])
         if len(text.split()) >= min_token_count:
-            lang = detect(text)
+            lang = langdetect.detect(text)
         else:
             lang = 'unknown'
         df.loc[group.index, 'language'] = lang

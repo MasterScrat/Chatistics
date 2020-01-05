@@ -11,7 +11,8 @@ from collections import defaultdict
 from tqdm import tqdm
 
 log = logging.getLogger(__name__)
-regex_message = re.compile(r'^[^0-9]{0,2}([0-9./\-]+,?[\sT][0-9:]+)[^0-9]?\s[\-]?\s?(([^:]+):)?(.+)?$')
+regex_message = re.compile(r'^[^0-9]{0,2}([0-9./\-]+,?[\sT][0-9:]+)[^0-9]?\s[\-]?\s?(([^:]+):)?(.*)?$')
+MAX_EXPORTED_MESSAGES = 1000000
 
 
 def main(own_name, file_path, max_exported_messages):
