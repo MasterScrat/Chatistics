@@ -23,6 +23,9 @@ def add_common_parse_arguments(parser):
     return parser
 
 
+def str2bool(v):
+    return v != 'false';
+
 class ArgParse():
     def __init__(self):
         logging.config.fileConfig('logging.conf')
@@ -70,8 +73,10 @@ class ArgParse():
         parser = add_common_parse_arguments(parser)
         parser.add_argument('-f', '--file-path', dest='file_path', default=config['whatsapp']['DEFAULT_RAW_LOCATION'],
                             help='Path to Facebook messenger chat log folder')
+        parser.add_argument('-i', '--infer-datetime', dest='infer_datetime', type=str2bool, nargs='?',
+                            default=True, help='Infer datetime regex for each chat if true')
         args = parser.parse_args(sys.argv[2:])
-        main(args.own_name, args.file_path, args.max)
+        main(args.own_name, args.file_path, args.max, args.infer_datetime)
 
 
 if __name__ == '__main__':

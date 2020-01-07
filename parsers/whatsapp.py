@@ -11,11 +11,38 @@ from collections import defaultdict
 from tqdm import tqdm
 
 log = logging.getLogger(__name__)
-regex_message = re.compile(r'^[\u0000-\u001F\u0100-\uFFFF]?[^\w]?([0-9./\-]{6,10},?[\sT][0-9:]{5,8})[^\w]?\s[\-]?\s?(([^:]+):\s)?(.*)$')
+regex_left = r'[\u0000-\u001F\u0100-\uFFFF]?'
+regex_datetime = r'[^\w]?([0-9./\-]{6,10},?[\sT][0-9:]{5,8})[^\w]?\s[\-]?\s?'
+regex_right = r'(([^:]+):\s)?(.*)'
+regex_message = re.compile(f'^{regex_left}{regex_datetime}{regex_right}$')
 MAX_EXPORTED_MESSAGES = 1000000
 
+def infer_datetime_regex(f_path, max_messages=100):
+    regex_message = re.compile(f'^{regex_left}({regex_datetime}){regex_right}$')
+    patterns = defaultdict(int)
+    with open(f_path, 'r') as f:
+        for c, line in enumerate(f):
+            if c == max_messages:
+                break;
+            matches = regex_message.search(line)
+            if matches:
+                pattern = ""
+                for l in matches.group(1):
+                    if l in '0123456789':
+                        pattern += '[0-9]'
+                    elif l in '.*+[]{}()\\|':
+                        pattern += '\\' + l
+                    else:
+                        pattern += l
+                patterns[pattern] += 1
+    if len(patterns) > 0:
+        regex_dt = max(patterns, key=patterns.get)
+        log.info(f'Datetime regex inferred: {regex_dt}')
+    else:
+        regex_dt = regex_datetime
+    regex_message = re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
 
-def main(own_name, file_path, max_exported_messages):
+def main(own_name, file_path, max_exported_messages, infer_datetime):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Whatsapp data...')
@@ -25,7 +52,7 @@ def main(own_name, file_path, max_exported_messages):
         exit(0)
     if own_name is None:
         own_name = infer_own_name(files)
-    data = parse_messages(files, own_name)
+    data = parse_messages(files, own_name, infer_datetime)
     log.info('{:,} messages parsed.'.format(len(data)))
     if len(data) < 1:
         log.info('Nothing to save.')
@@ -38,7 +65,7 @@ def main(own_name, file_path, max_exported_messages):
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
-def parse_messages(files, own_name):
+def parse_messages(files, own_name, infer_datetime=True):
     data = []
     for f_path in files:
         log.info(f'Reading {f_path}')
@@ -47,6 +74,8 @@ def parse_messages(files, own_name):
         participants = set()
         conversation_data = []
         text = None
+        if infer_datetime:
+            infer_datetime_regex(f_path)
         num_lines = sum(1 for _ in open(f_path, 'r'))
         with open(f_path, 'r') as f:
             for line in tqdm(f, total=num_lines):
@@ -67,7 +96,7 @@ def parse_messages(files, own_name):
                     continue
                 try:
                     # get timestamp of message
-                    new_timestamp = pd.to_datetime(groups[0], infer_datetime_format=True).timestamp()
+                    new_timestamp = pd.to_datetime(groups[0]).timestamp()
                 except ValueError:
                     # Datetime could not be parsed
                     log.error(f'Could not parse datetime {groups[0]}. False match. Assuming multi-line message instead.')
