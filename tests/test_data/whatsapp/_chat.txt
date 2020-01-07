@@ -1,6 +1,7 @@
 [04.01.18, 11:53:57] Alice Placeholder: This is a test message
 [04.01.18, 11:54:03] Alice Placeholder: This message is from Alice Placeholder
-[04.01.18, 11:54:34] John Doe: This is a test answer from John Doe
+[04.01.18, 11:54:23] This is an info entry
+‎[04.01.18, 11:54:34] John Doe: This is a test answer from John Doe
 [04.01.18, 11:54:47] John Doe: This message should have "outgoing = True", as John Doe is the person exporting their logs in this test scenario
 [04.01.18, 11:55:32] Alice Placeholder: This message should have "outgoing = False"
 [04.01.18, 12:03:16] John Doe: The following messages will test some corner cases
