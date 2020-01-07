@@ -27,20 +27,27 @@ def infer_datetime_regex(f_path, max_messages=100):
             matches = regex_message.search(line)
             if matches:
                 pattern = ""
-                for l in matches.group(1):
+                first = True
+                last = 0
+                for i,l in enumerate(matches.group(1)):
                     if l in '0123456789':
+                        if first:
+                            pattern += '('
+                            first = False
                         pattern += '[0-9]'
+                        last = len(pattern)
                     elif l in '.*+[]{}()\\|':
                         pattern += '\\' + l
                     else:
                         pattern += l
+                pattern = pattern[0:last] + ')' + pattern[last:]
                 patterns[pattern] += 1
     if len(patterns) > 0:
         regex_dt = max(patterns, key=patterns.get)
         log.info(f'Datetime regex inferred: {regex_dt}')
     else:
         regex_dt = regex_datetime
-    regex_message = re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
+    return re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
 
 def main(own_name, file_path, max_exported_messages, infer_datetime):
     global MAX_EXPORTED_MESSAGES
@@ -65,7 +72,7 @@ def main(own_name, file_path, max_exported_messages, infer_datetime):
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
-def parse_messages(files, own_name, infer_datetime=True):
+def parse_messages(files, own_name, infer_datetime):
     data = []
     for f_path in files:
         log.info(f'Reading {f_path}')
@@ -75,7 +82,7 @@ def parse_messages(files, own_name, infer_datetime=True):
         conversation_data = []
         text = None
         if infer_datetime:
-            infer_datetime_regex(f_path)
+            regex_message = infer_datetime_regex(f_path)
         num_lines = sum(1 for _ in open(f_path, 'r'))
         with open(f_path, 'r') as f:
             for line in tqdm(f, total=num_lines):

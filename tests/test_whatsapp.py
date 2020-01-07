@@ -28,10 +28,11 @@ ground_truth_chat1 = {
             "ÅÍÎÏ˝ÓÔÒÚÆ☃",
             "",
             "¯\\_(ツ)_/¯",
+            "What is that?\n2/11/19, 14:48 Alice Placeholder: this is a message from another chat!",
             "This is the last message of this test file."
             ],
-        'outgoing': [False, False, True, True, False, True, True, True, False, True, False, False, False, False, False, True, True, True, False],
-        'senderName': ['Alice Placeholder', 'Alice Placeholder', 'John Doe', 'John Doe', 'Alice Placeholder', 'John Doe', 'John Doe', 'John Doe', 'Alice Placeholder', 'John Doe', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'John Doe', 'John Doe', 'John Doe', 'Alice Placeholder']
+        'outgoing': [False, False, True, True, False, True, True, True, False, True, False, False, False, False, False, True, True, True, True, False],
+        'senderName': ['Alice Placeholder', 'Alice Placeholder', 'John Doe', 'John Doe', 'Alice Placeholder', 'John Doe', 'John Doe', 'John Doe', 'Alice Placeholder', 'John Doe', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'Alice Placeholder', 'John Doe', 'John Doe', 'John Doe', 'John Doe', 'Alice Placeholder']
         }
 
 ground_truth_chat2 = {
@@ -59,7 +60,7 @@ ground_truth_chat3 = {
 
 
 def test_parse_chat_info_chat1():
-    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat.txt')], 'John Doe')
+    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat.txt')], 'John Doe', True)
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df_truth = pd.DataFrame(ground_truth_chat1)
     for i, row in df.iloc[:len(df_truth)].iterrows():
@@ -68,7 +69,7 @@ def test_parse_chat_info_chat1():
         assert row.senderName == df_truth.iloc[i].senderName
 
 def test_parse_eu_datetime_chat2():
-    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat 2.txt')], 'John Doe')
+    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat 2.txt')], 'John Doe', True)
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df_truth = pd.DataFrame(ground_truth_chat2)
     assert len(df_truth) == len(df)
@@ -76,7 +77,7 @@ def test_parse_eu_datetime_chat2():
         assert row.timestamp == df_truth.iloc[i].datetime.timestamp()
 
 def test_parse_us_datetime_chat3():
-    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat 3.txt')], 'John Doe')
+    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat 3.txt')], 'John Doe', True)
     df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
     df_truth = pd.DataFrame(ground_truth_chat3)
     assert len(df_truth) == len(df)
