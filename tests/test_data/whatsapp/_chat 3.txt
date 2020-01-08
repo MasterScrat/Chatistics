@@ -4,6 +4,7 @@
 2/11/19, 14:21 - Even longer username with emoticons! 🙈 🙈: Maybe this will crash the parser?
 2/11/19, 14:21 - The final test: Does it work with colons?: Hallelujah!
 2/11/19, 14:22 - John Doe: Ok - so it seems to work?
+2/11/19, 14:18 - Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info. (Status messages like these should not be collected)
 2/11/19, 14:25 - The final test: Hope so!
 2/11/19, 14:33 - John Doe: Great!
 2/11/19, 14:48 - John Doe:

@@ -44,7 +44,7 @@ def infer_datetime_regex(f_path, max_messages=100):
                 patterns[pattern] += 1
     if len(patterns) > 0:
         regex_dt = max(patterns, key=patterns.get)
-        log.info(f'Datetime regex inferred: {regex_dt}')
+        log.debug(f'Datetime regex inferred: {regex_dt}')
     else:
         regex_dt = regex_datetime
     return re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
