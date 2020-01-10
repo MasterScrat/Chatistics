@@ -10,9 +10,11 @@ Can also generate ggplot histograms and word clouds from fetched chat logs.
 
 ## Changelog
 
+**10 Jan 2020:** UPDATED *ALL* THE THINGS! Thanks to [mar-muel](https://github.com/mar-muel) and [manueth](https://github.com/manueth), pretty much everything has been updated and improved, and **WhatsApp** is now supported!
+
 **21 Oct 2018:** Updated Facebook Messenger and Google Hangouts parsers to make them work with the new exported file formats.
 
-**9 Feb 2018:** Telegram support added thanks to @bmwant.
+**9 Feb 2018:** Telegram support added thanks to [bmwant](https://github.com/bmwant).
 
 **24 Oct 2016:** Initial release supporting Facebook Messenger and Google Hangouts.
 
@@ -64,7 +66,7 @@ Request an archive containing your Hangouts chat logs. Extract the file called `
 Unfortunately, WhatsApp only lets you export your conversations one by one. [See instructions here](https://faq.whatsapp.com/en/wp/22548236)
 
 1. Open the chat you wish to export
-2. On Android, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On iOS, tap on the interlocutor's name > <kbd>Export chat</kbd>
+2. On **Android**, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On **iOS**, tap on the interlocgmutor's name > <kbd>Export chat</kbd>
 3. Choose "Without Media"
 4. Send chat to yourself eg via Email
 5. Unpack the archive and add the individual txt files to the folder `./raw_data/whatsapp/`
@@ -192,28 +194,6 @@ Run tests from project root using
 ```
 python -m pytest
 ```
-
-## Troubleshooting
-
-### ValueError: unknown locale: UTF-8
-
-Fix with:
-
-```
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-```
-
-### LXML incompatible library
-
-```
-ImportError: dlopen(/Users/flaurent/Sites/Chatistics/Chatistics/lib/python2.7/site-packages/lxml/etree.so, 2): Library not loaded: @rpath/libxml2.2.dylib
-  Referenced from: /Users/flaurent/Sites/Chatistics/Chatistics/lib/python2.7/site-packages/lxml/etree.so
-  Reason: Incompatible library version: etree.so requires version 12.0.0 or later, but libxml2.2.dylib provides version 10.0.0
-```
-
-This will fix it: https://stackoverflow.com/a/31607751/318557
-
 
 ## Misc
 
