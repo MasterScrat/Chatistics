@@ -42,36 +42,45 @@ Data exported for each message regardless of the platform:
 | language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect) |
 | platform             | Platform (see support matrix above)                                                  |
 
-## How to use it?
+## How to export your chat logs
 
 ### 1. Download your chat logs
 
 #### Google Hangouts
 
-Use Google Takeout: https://takeout.google.com/settings/takeout
+**Warning:** Google Hangouts archives can take a long time to be ready for download - up to one hour in our experience.
 
-Request an archive containing your Hangouts chat logs. Extract the file called `Hangouts.json` and put it in the `./raw_data/hangouts/` folder of Chatistics.
-
-*Google switched from "Google Talk" to "Google Hangouts" mid-2013. Sadly you will only get your Hangouts logs using Takeout.*
+1. Go to Google Takeout: https://takeout.google.com/settings/takeout
+2. Request an archive containing your Hangouts chat logs
+3. Download the archive, then extract the file called `Hangouts.json`
+4. Move it to `./raw_data/hangouts/`
 
 #### Facebook Messenger
 
-1. Go to the "Settings" page: https://www.facebook.com/settings
-2. Click on "Download a copy of your Facebook data" at the bottom of the General section.
-3. Click on "Start My Archive". It will take Facebook a while to generate it.
-4. Once it is done download and extract the archive, then move the contents of the `messages` folder into `./raw_data/messenger/` folder of Chatistics.
+**Warning:** Facebook archives can take a *very* long time to be ready for download - up to 12 hours! They can weight several gigabytes. Start with an archive containing just a few months of data if you want to quickly get started, this shouldn't take more than a few minutes to complete.
+
+1. Go to the page "Your Facebook Information": https://www.facebook.com/settings?tab=your_facebook_information
+2. Click on "Download Your Information"
+3. Select the date range you want. **The format *must* be JSON.** Media won't be used, so you can set the quality to "Low" to speed things up.
+4. Click on "Deselec`t All", then scroll down to select "Messages" only
+5. Click on "Create File" at the top of the list. It will take Facebook a while to generate your archive.
+4. Once the archive is ready, download and extract it, then move the content of the `messages` folder into `./raw_data/messenger/`
 
 #### WhatsApp
 
-Unfortunately, WhatsApp only lets you export your conversations one by one. [See instructions here](https://faq.whatsapp.com/en/wp/22548236)
+Unfortunately, WhatsApp only lets you export your conversations one by one.
 
-1. Open the chat you wish to export
-2. On **Android**, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On **iOS**, tap on the interlocgmutor's name > <kbd>Export chat</kbd>
+1. Open the chat conversation you want to export
+2. On **Android**, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On **iOS**, tap on the interlocutor's name > <kbd>Export chat</kbd>
 3. Choose "Without Media"
 4. Send chat to yourself eg via Email
-5. Unpack the archive and add the individual txt files to the folder `./raw_data/whatsapp/`
+5. Unpack the archive and add the individual .txt files to the folder `./raw_data/whatsapp/`
 
-### 2. Parse the logs into DataFrames
+#### Telegram
+
+The Telegram API works differently: you will first need to setup Chatistics, then query your chat logs programmatically. This process is documented below. Exporting Telegram chat logs is very fast.
+
+### 2. Setup Chatistics
 
 First, install the required Python packages:
 
@@ -89,6 +98,7 @@ virtualenv chatistics
 source chatistics/bin/activate
 pip install -r requirements.txt
 ```
+
 You can now parse the messages by using the command `python parse.py <platform> <arguments>`.
 
 By default the parsers will try to infer your own name (i.e. your username) from the data. If this fails you can provide your own name to the parser by providing the `--own-name` argument. The name should match your name exactly as used on that chat platform.
@@ -115,10 +125,21 @@ The pickle files will now be ready for analysis in the `data` folder!
 
 For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram --help`).
 
-### 3. Visualise
 
-Chatistics can plot the chat logs as histograms, showing how many messages each interlocutor sent.
-It can also generate word clouds based on word density and a base image.
+### 3. All done! Play with your data
+
+Chatistics can print the chat logs as raw text. It can also create histograms, showing how many messages each interlocutor sent, or generate word clouds based on word density and a base image.
+
+#### Print
+
+You can print the data to standard out by using the command
+
+```
+python print.py
+```
+
+You can use the same filter options as described below.
+
 
 #### Histograms
 
@@ -166,29 +187,21 @@ You will need a mask file to render the word cloud. The white bits of the image 
 
 You can filter which messages to use using the same flags as with histograms.
 
-#### Print
-
-You can print the data to standard out by using the command
-
-```
-python print.py
-```
-You can use the same filter options as described above.
-
-
 ## Improvement ideas
 
 * Parsers for more chat platforms: Signal? Pidgin? ...
 * Handle group chats on more platforms.
+* See [open issues](https://github.com/MasterScrat/Chatistics/issues) for more ideas.
 
 Pull requests are welcome!
 
 ## Development
+
 Install dev environment using
 ```
 conda env create -f environment_dev.yml
 ```
-### Tests
+
 Run tests from project root using
 
 ```
