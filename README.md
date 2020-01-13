@@ -161,7 +161,11 @@ Among other options you can filter messages as needed (also see `python visualiz
   --remove-sender
                         Remove all messages by this sender (default: [])
   --contains-keyword
-                        Filter by messages which contain certain keywords
+                        Filter by messages which contain certain keywords (default: [])
+  --outgoing-only       
+                        Limit by outgoing messages (default: False)
+  --incoming-only       
+                        Limit by incoming messages (default: False)
 ```
 
 Eg to see all the messages sent between you and Jane Doe:
@@ -170,7 +174,7 @@ Eg to see all the messages sent between you and Jane Doe:
 
 To see the messages sent to you by the top 10 people with whom you talk the most:
 
-`python visualize.py breakdown --remove-sender "Your Name" -n 10`
+`python visualize.py breakdown -n 10 --incoming-only`
 
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/histo.png" width="701" height="406">
 
