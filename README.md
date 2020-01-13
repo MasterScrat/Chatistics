@@ -8,7 +8,7 @@ Can also generate histograms and word clouds from the chat logs.
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud3.png" width="400" height="400">
 </p>
 
-#### Changelog
+### Changelog
 
 **10 Jan 2020:** UPDATED *ALL* THE THINGS! Thanks to [mar-muel](https://github.com/mar-muel) and [manueth](https://github.com/manueth), pretty much everything has been updated and improved, and **WhatsApp** is now supported!
 
@@ -18,7 +18,7 @@ Can also generate histograms and word clouds from the chat logs.
 
 **24 Oct 2016:** Initial release supporting Facebook Messenger and Google Hangouts.
 
-#### Support Matrix
+### Support Matrix
 
 |      Platform      | Direct Chat  | Group Chat |
 |:------------------:|:-----------: |:----------:|
@@ -27,7 +27,7 @@ Can also generate histograms and word clouds from the chat logs.
 | Telegram           |     ✔        |     ✘      |
 | WhatsApp           |     ✔        |     ✔      |
 
-#### Exported data
+### Exported data
 
 Data exported for each message regardless of the platform:
 
