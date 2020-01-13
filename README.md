@@ -1,7 +1,7 @@
 # Chatistics
 
 **Python 3 scripts to convert chat logs from various messaging platforms into Panda DataFrames.**
-Can also generate ggplot histograms and word clouds from fetched chat logs.
+Can also generate histograms and word clouds from the chat logs.
 
 <p align="center">
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud.png" width="400" height="400">
