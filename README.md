@@ -8,7 +8,7 @@ Can also generate histograms and word clouds from the chat logs.
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud3.png" width="400" height="400">
 </p>
 
-## Changelog
+#### Changelog
 
 **10 Jan 2020:** UPDATED *ALL* THE THINGS! Thanks to [mar-muel](https://github.com/mar-muel) and [manueth](https://github.com/manueth), pretty much everything has been updated and improved, and **WhatsApp** is now supported!
 
@@ -18,7 +18,7 @@ Can also generate histograms and word clouds from the chat logs.
 
 **24 Oct 2016:** Initial release supporting Facebook Messenger and Google Hangouts.
 
-## Support Matrix
+#### Support Matrix
 
 |      Platform      | Direct Chat  | Group Chat |
 |:------------------:|:-----------: |:----------:|
@@ -27,7 +27,7 @@ Can also generate histograms and word clouds from the chat logs.
 | Telegram           |     ✔        |     ✘      |
 | WhatsApp           |     ✔        |     ✔      |
 
-## Exported data
+#### Exported data
 
 Data exported for each message regardless of the platform:
 
@@ -42,11 +42,11 @@ Data exported for each message regardless of the platform:
 | language             | Language of the conversation as inferred by [langdetect](https://pypi.python.org/pypi/langdetect) |
 | platform             | Platform (see support matrix above)                                                  |
 
-## How to export your chat logs
+# Exporting your chat logs
 
-### 1. Download your chat logs
+## 1. Download your chat logs
 
-#### Google Hangouts
+### Google Hangouts
 
 **Warning:** Google Hangouts archives can take a long time to be ready for download - up to one hour in our experience.
 
@@ -55,32 +55,32 @@ Data exported for each message regardless of the platform:
 3. Download the archive, then extract the file called `Hangouts.json`
 4. Move it to `./raw_data/hangouts/`
 
-#### Facebook Messenger
+### Facebook Messenger
 
 **Warning:** Facebook archives can take a *very* long time to be ready for download - up to 12 hours! They can weight several gigabytes. Start with an archive containing just a few months of data if you want to quickly get started, this shouldn't take more than a few minutes to complete.
 
 1. Go to the page "Your Facebook Information": https://www.facebook.com/settings?tab=your_facebook_information
 2. Click on "Download Your Information"
 3. Select the date range you want. **The format *must* be JSON.** Media won't be used, so you can set the quality to "Low" to speed things up.
-4. Click on "Deselec`t All", then scroll down to select "Messages" only
+4. Click on "Deselect All", then scroll down to select "Messages" only
 5. Click on "Create File" at the top of the list. It will take Facebook a while to generate your archive.
 4. Once the archive is ready, download and extract it, then move the content of the `messages` folder into `./raw_data/messenger/`
 
-#### WhatsApp
+### WhatsApp
 
-Unfortunately, WhatsApp only lets you export your conversations one by one.
+Unfortunately, WhatsApp only lets you export your conversations **from your phone** and **one by one**.
 
-1. Open the chat conversation you want to export
+1. On your phone, open the chat conversation you want to export
 2. On **Android**, tap on <kbd>⋮</kbd> > <kbd>More</kbd> > <kbd>Export chat</kbd>. On **iOS**, tap on the interlocutor's name > <kbd>Export chat</kbd>
 3. Choose "Without Media"
 4. Send chat to yourself eg via Email
 5. Unpack the archive and add the individual .txt files to the folder `./raw_data/whatsapp/`
 
-#### Telegram
+### Telegram
 
 The Telegram API works differently: you will first need to setup Chatistics, then query your chat logs programmatically. This process is documented below. Exporting Telegram chat logs is very fast.
 
-### 2. Setup Chatistics
+## 2. Setup Chatistics
 
 First, install the required Python packages:
 
@@ -114,7 +114,7 @@ python parse.py messenger
 python parse.py whatsapp
 ```
 
-#### Telegram
+### Telegram
 1. Create your Telegram application to access chat logs ([instructions](https://core.telegram.org/api/obtaining_api_id)).
 You will need `api_id` and `api_hash` which we will now set as environment variables.
 2. Run `cp secrets.sh.example secrets.sh` and fill in the values for the environment variables `TELEGRAM_API_ID`, `TELEGRAMP_API_HASH` and `TELEGRAM_PHONE` (your phone number including country code).
@@ -126,11 +126,11 @@ The pickle files will now be ready for analysis in the `data` folder!
 For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram --help`).
 
 
-### 3. All done! Play with your data
+## 3. All done! Play with your data
 
 Chatistics can print the chat logs as raw text. It can also create histograms, showing how many messages each interlocutor sent, or generate word clouds based on word density and a base image.
 
-#### Print
+### Print
 
 You can print the data to standard out by using the command
 
@@ -141,7 +141,7 @@ python print.py
 You can use the same filter options as described below.
 
 
-#### Histograms
+### Histograms
 
 Plot all messages with:
 
@@ -179,7 +179,7 @@ You can also plot the conversation densities using the `--as-density` flag.
 <img src="https://github.com/MasterScrat/Chatistics/raw/master/static/densities.png" width="705" height="418">
 
 
-#### Word Cloud
+### Word Cloud
 
 You will need a mask file to render the word cloud. The white bits of the image will be left empty, the rest will be filled with words using the color of the image. [See the WordCloud library documentation](https://github.com/amueller/word_cloud) for more information.
 
@@ -187,15 +187,7 @@ You will need a mask file to render the word cloud. The white bits of the image 
 
 You can filter which messages to use using the same flags as with histograms.
 
-## Improvement ideas
-
-* Parsers for more chat platforms: Signal? Pidgin? ...
-* Handle group chats on more platforms.
-* See [open issues](https://github.com/MasterScrat/Chatistics/issues) for more ideas.
-
-Pull requests are welcome!
-
-## Development
+# Development
 
 Install dev environment using
 ```
@@ -207,6 +199,14 @@ Run tests from project root using
 ```
 python -m pytest
 ```
+
+## Improvement ideas
+
+* Parsers for more chat platforms: Signal? Pidgin? ...
+* Handle group chats on more platforms.
+* See [open issues](https://github.com/MasterScrat/Chatistics/issues) for more ideas.
+
+Pull requests are welcome!
 
 ## Misc
 
