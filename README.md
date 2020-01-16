@@ -4,8 +4,8 @@
 Can also generate histograms and word clouds from the chat logs.
 
 <p align="center">
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud.png" width="400" height="400">
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud3.png" width="400" height="400">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud.png" width="45%">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/cloud3.png" width="45%">
 </p>
 
 ### Changelog
@@ -179,11 +179,11 @@ To see the messages sent to you by the top 10 people with whom you talk the most
 
 `python visualize.py breakdown -n 10 --incoming-only`
 
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/histo.png" width="701" height="406">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/histo.png" width="100%">
 
 You can also plot the conversation densities using the `--as-density` flag.
 
-<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/densities.png" width="705" height="418">
+<img src="https://github.com/MasterScrat/Chatistics/raw/master/static/densities.png" width="100%">
 
 
 ### Word Cloud
