@@ -130,16 +130,19 @@ For more options use the `-h` argument on the parsers (e.g. `python parse.py tel
 
 Chatistics can print the chat logs as raw text. It can also create histograms, showing how many messages each interlocutor sent, or generate word clouds based on word density and a base image.
 
-### Print
+#### Export
 
-You can print the data to standard out by using the command
+You can view the data in stdout (default) or export it to csv, json, or as a Dataframe pickle.
 
 ```
-python print.py
+python export.py
 ```
+You can use the same filter options as described above in combination with an output format option:
 
-You can use the same filter options as described below.
-
+```
+  -f {stdout,json,csv,pkl}, --format {stdout,json,csv,pkl}
+                        Output format (default: stdout)
+```
 
 ### Histograms
 
