@@ -47,7 +47,6 @@ def infer_datetime_regex(f_path, max_messages=100):
         log.debug(f'Datetime regex inferred: {regex_dt}')
     else:
         regex_dt = regex_datetime
-    print(f"Regex: {regex_left}:-:{regex_dt}:-:{regex_right}")
     return re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
 
 def main(own_name, file_path, max_exported_messages, infer_datetime):
@@ -84,7 +83,6 @@ def parse_messages(files, own_name, infer_datetime):
         text = None
         if infer_datetime:
             regex_message = infer_datetime_regex(f_path)
-            print(regex_message)
         num_lines = sum(1 for _ in open(f_path, 'r'))
         with open(f_path, 'r') as f:
             for line in tqdm(f, total=num_lines):
