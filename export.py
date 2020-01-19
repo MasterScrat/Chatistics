@@ -9,20 +9,27 @@ import pickle
 
 log = logging.getLogger(__name__)
 
+
 def main():
     """Simple method to export message logs to either stdout or to a file"""
-    def get_f_name():
+
+    def get_f_name(compressed):
         ts = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         f_path = os.path.join('exports', f'chatistics_export_{ts}.{args.format}')
+        if compressed:
+            f_path += '.zip'
         return f_path
 
     parser = ArgParseDefault(description='Export parsed chatlog data')
     parser = add_load_data_args(parser)
     parser.add_argument('-n', '--num-rows', dest='num_rows', type=int,
-            default=50, help='Print first n rows (use negative negative for last rows) (only used if output format is stdout)')
-    parser.add_argument('-c', '--cols', dest='cols', nargs='+', default=['timestamp', 'conversationWithName', 'senderName', 'outgoing', 'text', 'language', 'platform'],
+                        default=50, help='Print first n rows (use negative for last rows) (only used if output format is stdout)')
+    parser.add_argument('-c', '--cols', dest='cols', nargs='+',
+                        default=['timestamp', 'conversationWithName', 'senderName', 'outgoing', 'text', 'language', 'platform'],
                         help='Only show specific columns (only used if output format is stdout)')
-    parser.add_argument('-f', '--format', dest='format', default='stdout', choices=['stdout', 'json', 'csv', 'pkl'],  help='Output format')
+    parser.add_argument('-f', '--format', dest='format', default='stdout', choices=['stdout', 'json', 'csv', 'pkl'], help='Output format')
+    parser.add_argument('--compress', action='store_true', help='Compress the output (only used for json and csv formats)')
+
     args = parser.parse_args()
     df = load_data(args)
     if args.format == 'stdout':
@@ -34,17 +41,19 @@ def main():
             print(df[args.cols].to_string(index=False))
     else:
         # Exporting data to a file
-        f_name = get_f_name()
+        f_name = get_f_name(args.compress)
         log.info(f'Exporting data to file {f_name}')
+        compression = 'zip' if args.compress else None
         if args.format == 'json':
-            df.to_json(f_name, orient='records')
+            df.to_json(f_name, orient='records', compression=compression)
         elif args.format == 'csv':
-            df.to_csv(f_name, index=False)
+            df.to_csv(f_name, index=False, compression=compression)
         elif args.format == 'pkl':
             with open(f_name, 'wb') as f:
                 pickle.dump(df, f)
         else:
             raise Exception(f'Format {args.format} is not supported.')
+
 
 if __name__ == '__main__':
     main()
