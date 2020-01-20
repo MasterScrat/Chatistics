@@ -5,6 +5,7 @@ import logging
 import glob
 import os
 import re
+import math
 from datetime import datetime
 import uuid
 from collections import defaultdict
@@ -29,16 +30,24 @@ def infer_datetime_regex(f_path, max_messages=100):
                 pattern = ""
                 first = True
                 last = 0
+                nums = 0
                 for i,l in enumerate(matches.group(1)):
                     if l in '0123456789':
                         if first:
                             pattern += '('
                             first = False
-                        pattern += '[0-9]'
-                        last = len(pattern)
-                    elif l in '.*+[]{}()\\|':
-                        pattern += '\\' + l
+                        nums += 1
                     else:
+                        if nums > 0:
+                            pattern += '[0-9]'
+                            if nums == 4:
+                                pattern += '{4}'
+                            else:
+                                pattern += '{1,2}'
+                            last = len(pattern)
+                            nums = 0
+                        if l in '.*+[]{}()\\|':
+                            pattern += '\\'
                         pattern += l
                 pattern = pattern[0:last] + ')' + pattern[last:]
                 patterns[pattern] += 1
