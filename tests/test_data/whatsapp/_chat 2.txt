@@ -1,4 +1,5 @@
-[17.09.19, 16:37:47] Peter Doe: This is a message from Peter Doe
-[17.09.19, 16:38:06] Peter Doe: This message should have "outgoing = False"
-[17.09.19, 16:38:59] John Doe: This message should have "outgoing = True", as John Doe is the person exporting their logs in this test scenario
-[17.09.19, 16:39:52] John Doe: This is the last message of this test file.
+[17.9.2019, 16:37:47] Peter Doe: This is a message from Peter Doe
+[1.9.19, 00:00:00] Peter Doe: this is the second line of the first message
+[17.9.2019, 16:38:06] Peter Doe: This message should have "outgoing = False"
+[17.9.2019, 16:38:59] John Doe: This message should have "outgoing = True", as John Doe is the person exporting their logs in this test scenario
+[17.09.2019, 16:39:52] John Doe: This is the last message of this test file.
