@@ -130,7 +130,7 @@ For more options use the `-h` argument on the parsers (e.g. `python parse.py tel
 
 Chatistics can print the chat logs as raw text. It can also create histograms, showing how many messages each interlocutor sent, or generate word clouds based on word density and a base image.
 
-#### Export
+### Export
 
 You can view the data in stdout (default) or export it to csv, json, or as a Dataframe pickle.
 
@@ -209,13 +209,27 @@ python -m pytest
 
 ## Improvement ideas
 
-* Parsers for more chat platforms: Signal? Pidgin? ...
+* Parsers for more chat platforms: Discord? Signal? Pidgin? ...
 * Handle group chats on more platforms.
 * See [open issues](https://github.com/MasterScrat/Chatistics/issues) for more ideas.
 
 Pull requests are welcome!
 
-## Misc
+## Social medias
+
+[HackerNews '20](https://news.ycombinator.com/item?id=22069699)
+
+[/r/MachineLearning '20](https://www.reddit.com/r/MachineLearning/comments/epi628/p_chatistics_python_scripts_to_turn_your/)
+
+[/r/datascience '18](https://www.reddit.com/r/datascience/comments/7vvpbl/chatistics_python_scripts_to_turn_your_messenger/)
+
+[/r/MachineLearning '18](https://www.reddit.com/r/MachineLearning/comments/7s1d2a/p_chatistics_python_scripts_to_turn_your/)
+
+## Projects using Chatistics
+
+[Meet your Artificial Self: Generate text that sounds like you](https://github.com/mar-muel/artificial-self-AMLD-2020) workshop
+
+## Credits
 
 * Word cloud generated using https://github.com/amueller/word_cloud
 * Stopwords from https://github.com/6/stopwords-json
