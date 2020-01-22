@@ -61,6 +61,7 @@ def parse_messages(file_path, own_name):
                 timestamp = message["timestamp_ms"] / 1000
                 if "content" in message and "sender_name" in message:
                     content = message["content"]
+                    content = fix_text_encoding(content)
                     if "sender_name" in message:
                         sender_name = message["sender_name"]
                     else:
@@ -71,6 +72,11 @@ def parse_messages(file_path, own_name):
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
                         return data
     return data
+
+
+def fix_text_encoding(text):
+    """Fixes text encoding, see https://stackoverflow.com/questions/50008296/facebook-json-badly-encoded"""
+    return text.encode('latin1').decode('utf8')
 
 
 def infer_own_name(file_path, min_conversations=2):
