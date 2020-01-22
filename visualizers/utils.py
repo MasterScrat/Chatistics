@@ -21,7 +21,7 @@ def get_stopwords(stopword_paths):
     stopwords = []
     for stopword_path in stopword_paths:
         log.info(f'Loading stopwords from {stopword_path}...')
-        with open(stopword_path, 'r') as f:
+        with open(stopword_path, 'r', encoding="utf8") as f:
             stopword_data = json.load(f)
         stopwords.extend(stopword_data)
     stopwords = list(set(stopwords))

@@ -49,7 +49,7 @@ def main():
         elif args.format == 'csv':
             df.to_csv(f_name, index=False, compression=compression)
         elif args.format == 'pkl':
-            with open(f_name, 'wb') as f:
+            with open(f_name, 'wb', encoding="utf8") as f:
                 pickle.dump(df, f)
         else:
             raise Exception(f'Format {args.format} is not supported.')
