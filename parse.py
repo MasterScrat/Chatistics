@@ -1,6 +1,6 @@
-import argparse
-import sys
 import logging.config
+import sys
+
 from parsers.config import config
 from utils import ArgParseDefault
 
@@ -24,7 +24,8 @@ def add_common_parse_arguments(parser):
 
 
 def str2bool(v):
-    return v != 'false';
+    return v != 'false'
+
 
 class ArgParse():
     def __init__(self):
