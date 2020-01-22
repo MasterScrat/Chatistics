@@ -1,15 +1,15 @@
-import pandas as pd
-from parsers.utils import export_dataframe, detect_language
-from parsers.config import config
-import logging
 import glob
+import logging
 import os
-import re
-import math
-from datetime import datetime
-import uuid
 from collections import defaultdict
+
+import pandas as pd
+import re
+import uuid
 from tqdm import tqdm
+
+from parsers.config import config
+from parsers.utils import export_dataframe, detect_language
 
 log = logging.getLogger(__name__)
 regex_left = r'[\u0000-\u001F\u0100-\uFFFF]?'
@@ -18,10 +18,11 @@ regex_right = r'(([^:]+):\s)?(.*)'
 regex_message = re.compile(f'^{regex_left}{regex_datetime}{regex_right}$')
 MAX_EXPORTED_MESSAGES = 1000000
 
+
 def infer_datetime_regex(f_path, max_messages=100):
     regex_message = re.compile(f'^{regex_left}({regex_datetime}){regex_right}$')
     patterns = defaultdict(int)
-    with open(f_path, 'r') as f:
+    with open(f_path, 'r', encoding="utf8") as f:
         for c, line in enumerate(f):
             if c == max_messages:
                 break;
@@ -31,7 +32,7 @@ def infer_datetime_regex(f_path, max_messages=100):
                 first = True
                 last = 0
                 nums = 0
-                for i,l in enumerate(matches.group(1)):
+                for i, l in enumerate(matches.group(1)):
                     if l in '0123456789':
                         if first:
                             pattern += '('
@@ -58,6 +59,7 @@ def infer_datetime_regex(f_path, max_messages=100):
         regex_dt = regex_datetime
     return re.compile(f'^{regex_left}{regex_dt}{regex_right}$')
 
+
 def main(own_name, file_path, max_exported_messages, infer_datetime):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
@@ -81,6 +83,7 @@ def main(own_name, file_path, max_exported_messages, infer_datetime):
     export_dataframe(df, config['whatsapp']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
+
 def parse_messages(files, own_name, infer_datetime):
     data = []
     for f_path in files:
@@ -92,8 +95,8 @@ def parse_messages(files, own_name, infer_datetime):
         text = None
         if infer_datetime:
             regex_message = infer_datetime_regex(f_path)
-        num_lines = sum(1 for _ in open(f_path, 'r'))
-        with open(f_path, 'r') as f:
+        num_lines = sum(1 for _ in open(f_path, 'r', encoding="utf8"))
+        with open(f_path, 'r', encoding="utf8") as f:
             for line in tqdm(f, total=num_lines):
                 # try to extract meta data from line
                 matches = regex_message.search(line)
@@ -147,6 +150,7 @@ def parse_messages(files, own_name, infer_datetime):
         data.extend(conversation_data)
     return data
 
+
 def infer_own_name(files, min_conversations=2):
     """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
     if len(files) < min_conversations:
@@ -157,7 +161,7 @@ def infer_own_name(files, min_conversations=2):
     log.info('Trying to infer own_name from data...')
     for f_path in files:
         participants = set()
-        with open(f_path, 'r') as f:
+        with open(f_path, 'r', encoding="utf8") as f:
             for line in f:
                 matches = regex_message.search(line)
                 if not matches or not matches.group(3):

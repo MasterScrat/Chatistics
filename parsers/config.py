@@ -6,7 +6,7 @@ import logging
 def get_config():
     log = logging.getLogger(__name__)
     # basic config
-    with open('config.yml', 'r') as config_file:
+    with open('config.yml', 'r', encoding="utf8") as config_file:
         config = yaml.safe_load(config_file)
     # secrets
     for env_var in ['TELEGRAM_API_ID', 'TELEGRAM_API_HASH', 'TELEGRAM_PHONE']:

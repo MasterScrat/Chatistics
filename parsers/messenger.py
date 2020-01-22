@@ -42,7 +42,7 @@ def parse_messages(file_path, own_name):
             conversation_id = root.split('/')[-1]
             conversation_with_name = None
             document = os.path.join(root, filename)
-            with open(document) as f:
+            with open(document, encoding="utf8") as f:
                 json_data = json.load(f)
             if "messages" not in json_data or "participants" not in json_data:
                 log.warning(f"Missing messages or participant list in conversation {conversation_id}")
@@ -89,7 +89,7 @@ def infer_own_name(file_path, min_conversations=2):
             if not filename.endswith('.json'):
                 continue
             document_path = os.path.join(root, filename)
-            with open(document_path, 'r') as f:
+            with open(document_path, 'r', encoding="utf8") as f:
                 json_data = json.load(f)
             if "participants" not in json_data:
                 continue
