@@ -31,7 +31,7 @@ def main():
     parser.add_argument('--compress', action='store_true', help='Compress the output (only used for json and csv formats)')
     parser.add_argument('--pseudomize', action='store_true', help='Hash sender and conversation names.')
     parser.add_argument('--anonymize', default=None, choices=['weak', 'strong', 'all'], help='Replace senderNames with "<me>" (outgoing) and "<you>" (other) and conversation names with "<conversation>". Further, replace occurances of potentially identifying tokens for `strong` and `all` options (experimental and EN only!).')
-    parser.add_argument('-s', '--sample', dest='sample', type=float, default=0, help='Take random sample of size n.')
+    parser.add_argument('-s', '--sample', dest='sample', type=float, default=0, help='Take random sample. If arg > 1 then n=int(arg). If 0 < arg <= 1, the fraction arg of the whole data set is sampled. arg = 0 has no effect.')
 
     args = parser.parse_args()
     df = load_data(args)
@@ -79,19 +79,24 @@ def main():
                     return ""
                 # remove telephone numbers, emails, IBAN, and credit card numbers
                 for key, reg in regs.items():
-                    # replace occurances of patterns in text
+                    # replace occurances of patterns in text with <TYPE>
                     text = re.sub(reg, f'<{key}>', text)
                 # process message with spacy nlp
                 doc = nlp(text)
-                # remove words that are recognized as proper noun
-                tokens = [token.text if token.pos_ not in ['PROPN'] else f'<{token.pos_}>' for token in doc]
-                # remove named entities
-                # 'strong' removes certain types of entities while 'all' removes all recongized entities including amounts of money etc. see https://spacy.io/api/annotation for all types.
+                # Option 'strong' removes certain types of named entities while 'all' removes all types of entities.
+                # See https://spacy.io/api/annotation for all types.
                 entities = {entity.text: '<' + entity.label_ + '>' for entity in doc.ents if entity.label_ in ['PERSON','NORP','FAC','GPE','LOC','EVENT','DATE'] or args.anonymize == 'all'}
-                tokens = [token if token not in entities else entities[token] for token in tokens]
-                # join tokens to text again
-                text = ' '.join(tokens)
-                # return text with replaced tokens
+                # additional safegaurds for option 'all'
+                if args.anonymize == 'all':
+                    # remove tokens that are recognized as proper nouns but not as named entities
+                    for token in doc:
+                        if token.pos_ == 'PROPN' and token.text not in entities:
+                            entities[token.text] = f'<{token.tag_}>'
+                # remove entities
+                for key, rep in entities.items():
+                    # replace occurances of entities in text with <TYPE>
+                    text = text.replace(key, rep)
+                # return anonymized text
                 return text
 
             # load spacy en langauge model
@@ -102,18 +107,20 @@ def main():
 
             # allows pandas to show processing progress with tqdm
             tqdm.pandas()
+
             # some regex patterns to remove email, iban, payment card numbers, phone numbers, social media handles
             # the regexes are simplified, might not catch all relevant info but might also catch irrelevant!
             regs = {
-                'EMAIL': re.compile(r'[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}'),
-                'IBAN': re.compile(r'([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30}$)((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?'),
-                'CARD': re.compile(r'[1-9][0-9 .\-]{6,17}[0-9]'),
-                'PHONE': re.compile(r'(\+|00)?[0-9 .\-\']{2,14}[0-9]'),
-                'HANDLE': re.compile(r'@[\-_.\w]+')
+                'EMAIL': re.compile(r'[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,4}', flags=re.IGNORECASE),
+                'IBAN': re.compile(r'([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30}$)((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?', flags=re.IGNORECASE),
+                'CARD': re.compile(r'[1-9][0-9]{3}([ .\-]?[0-9]{4}){2}[ .\-]?[0-9]{4}'),
+                'PHONE': re.compile(r'((\+|\(?00)[1-9][0-9]{0,2}\)?)?[ .\-\']{0,3}\(?[0-9]{1,3}\)?([ .\-\']?[0-9]{2,5}){2,4}'),
+                'HANDLE': re.compile(r'@[\-_.\w]+'),
             }
-            # add cases above to tokenizer
+            # add regex cases to tokenizer as special tokens
             for key, reg in regs.items():
                 nlp.tokenizer.add_special_case(f'<{key}>', [{'ORTH': f'<{key}>'}])
+
             # remove potentially harmful info as good as possible
             df.text = df.text.progress_apply(partial(remove_identifyers, nlp, args, regs))
 
