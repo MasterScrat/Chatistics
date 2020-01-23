@@ -17,3 +17,4 @@ Telethon==1.10.3
 tornado==6.0.3
 tqdm==4.40.0
 seaborn==0.9.0
+spacy==2.2.3
