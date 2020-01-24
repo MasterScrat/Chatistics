@@ -30,21 +30,23 @@ def main():
     parser.add_argument('-f', '--format', dest='format', default='stdout', choices=['stdout', 'json', 'csv', 'pkl'], help='Output format')
     parser.add_argument('--compress', action='store_true', help='Compress the output (only used for json and csv formats)')
     parser.add_argument('--pseudomize', action='store_true', help='Hash sender and conversation names.')
-    parser.add_argument('--anonymize', default=None, choices=['weak', 'strong', 'all'], help='Replace senderNames with "<me>" (outgoing) and "<you>" (other) and conversation names with "<conversation>". Further, replace occurances of potentially identifying tokens for `strong` and `all` options (experimental and EN only!).')
-    parser.add_argument('-s', '--sample', dest='sample', type=float, default=0, help='Take random sample. If arg > 1 then n=int(arg). If 0 < arg <= 1, the fraction arg of the whole data set is sampled. arg = 0 has no effect.')
+    parser.add_argument('--anonymize', default=None, choices=['weak', 'medium', 'strong', 'all'], help='Replace senderNames with "<me>" (outgoing) and "<you>" (other) and conversation names with "<conversation>". Replace occurances of potentially identifying tokens for `medium`, `strong`, and `all` options (experimental and EN only!).')
+    parser.add_argument('-s', '--sample', dest='sample', type=float, default=0, help='Take random sample. If arg >= 1 then n=int(arg). If 0 < arg < 1, the fraction arg of the whole data set is sampled. arg = 0 has no effect and all messages are exported.')
+    parser.add_argument('--print-removed', dest='print_removed', action='store_true', help='Print removed tokens.')
+
 
     args = parser.parse_args()
     df = load_data(args)
 
 
-    # filter EN messages for anonymization with 'strong' and 'all' options
+    # filter EN messages for anonymization with 'medium', 'strong', and 'all' options
     # has to be done before sampling to not remove items from the sample
     if args.anonymize and args.anonymize != 'weak':
         # working for EN only!
         df = df[df.language=='en']
 
     if args.sample > 0:
-        if args.sample <= 1:
+        if args.sample < 1:
             df = df.sample(frac=args.sample)
         else:
             df = df.sample(min(int(args.sample), len(df)))
@@ -62,10 +64,10 @@ def main():
         df.senderName = ['<me>' if x else '<you>' for x in df.outgoing]
 
         # also remove potenitally sensitive or identifiable information in messages
-        if args.anonymize != 'weak': # 'strong' and 'all' options
+        if args.anonymize != 'weak': # 'medium', 'strong', and 'all' options
             # log warning for these options
-            log.warn('/!\ The `strong` and `all` options for the anonymize feature are experimental and will export messages in English only.')
-            log.warn('/!\ Using this anonymization does ot garuantee that all dientifiable or sensitive information will be removed!')
+            log.warn('/!\ The `medium`, `strong`, and `all` options for the anonymize feature are experimental and will export messages in English only.')
+            log.warn('/!\ Using this anonymization does ot guarantee that all dientifiable or sensitive information will be removed!')
             # import anonymize-only packages
             import spacy
             import re
@@ -77,15 +79,25 @@ def main():
                 # return empty string if text is None or empty
                 if not text:
                     return ""
+                # we keep the removed tokens for informative puproses
+                removed = []
                 # remove telephone numbers, emails, IBAN, and credit card numbers
                 for key, reg in regs.items():
+                    # add removed tokens
+                    removed += [(x.group(0), f'<{key}>') for x in re.finditer(reg, text)]
                     # replace occurances of patterns in text with <TYPE>
                     text = re.sub(reg, f'<{key}>', text)
                 # process message with spacy nlp
                 doc = nlp(text)
-                # Option 'strong' removes certain types of named entities while 'all' removes all types of entities.
+                # Option 'medium' and 'strong' removes certain types of named entities while 'all' removes all types of entities.
                 # See https://spacy.io/api/annotation for all types.
-                entities = {entity.text: '<' + entity.label_ + '>' for entity in doc.ents if entity.label_ in ['PERSON','NORP','FAC','GPE','LOC','EVENT','DATE'] or args.anonymize == 'all'}
+                if args.anonymize == 'medium':
+                    remove_types = ['PERSON']
+                elif args.anonymize == 'strong':
+                    remove_types = ['PERSON','NORP','FAC','GPE','LOC','EVENT','DATE']
+                else:
+                    remove_types = []
+                entities = {entity.text: '<' + entity.label_ + '>' for entity in doc.ents if entity.label_ in remove_types or args.anonymize == 'all'}
                 # additional safegaurds for option 'all'
                 if args.anonymize == 'all':
                     # remove tokens that are recognized as proper nouns but not as named entities
@@ -94,10 +106,12 @@ def main():
                             entities[token.text] = f'<{token.tag_}>'
                 # remove entities
                 for key, rep in entities.items():
+                    # add removed tokens
+                    removed.append((key, rep))
                     # replace occurances of entities in text with <TYPE>
                     text = text.replace(key, rep)
                 # return anonymized text
-                return text
+                return text, removed
 
             # load spacy en langauge model
             try:
@@ -114,7 +128,7 @@ def main():
                 'EMAIL': re.compile(r'[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,4}', flags=re.IGNORECASE),
                 'IBAN': re.compile(r'([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30}$)((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?', flags=re.IGNORECASE),
                 'CARD': re.compile(r'[1-9][0-9]{3}([ .\-]?[0-9]{4}){2}[ .\-]?[0-9]{4}'),
-                'PHONE': re.compile(r'((\+|\(?00)[1-9][0-9]{0,2}\)?)?[ .\-\']{0,3}\(?[0-9]{1,3}\)?([ .\-\']?[0-9]{2,5}){2,4}'),
+                'PHONE': re.compile(r'((\+|\(?00)[1-9][0-9]{0,2}\)?[ .\-\']{0,3})?\(?[0-9]{1,3}\)?([ .\-\']?[0-9]{2,5}){2,4}'),
                 'HANDLE': re.compile(r'@[\-_.\w]+'),
             }
             # add regex cases to tokenizer as special tokens
@@ -122,8 +136,18 @@ def main():
                 nlp.tokenizer.add_special_case(f'<{key}>', [{'ORTH': f'<{key}>'}])
 
             # remove potentially harmful info as good as possible
-            df.text = df.text.progress_apply(partial(remove_identifyers, nlp, args, regs))
+            anonymized = df.text.progress_apply(partial(remove_identifyers, nlp, args, regs))
+            dfa = pd.DataFrame()
+            dfa[['text','removed']] = pd.DataFrame(anonymized.tolist(), index=df.index)
 
+            # log removed tokens
+            if args.print_removed:
+                removed = {r for rs in dfa.removed for r in rs}
+                removed_str = "\n".join([str(t) for t in removed][:args.num_rows])
+                log.info(f'Removed tokens ({len(removed)}):\n{removed_str}')
+
+            # replace original message with anonymized message
+            df.text = dfa.text
             log.info(f'Anonymized {len(df)} messages.')
 
 
