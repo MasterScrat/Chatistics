@@ -231,6 +231,7 @@ Pull requests are welcome!
 
 ## Credits
 
+* Main contributors: [@MasterScrat](https://github.com/MasterScrat), [@mar-muel](https://github.com/mar-muel), [@manueth](https://github.com/manueth), [@bmwant](https://github.com/bmwant)
 * Word cloud generated using https://github.com/amueller/word_cloud
 * Stopwords from https://github.com/6/stopwords-json
 * Code under MIT license
