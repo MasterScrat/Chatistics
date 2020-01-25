@@ -59,9 +59,21 @@ def main():
         df.senderName = [x.hexdigest() for x in map(hashlib.sha256, df.senderName.str.encode('utf-8'))]
 
     if args.anonymize:
-        # replace user names
-        df.conversationWithName = '<conversation>'
-        df.senderName = ['<me>' if x else '<you>' for x in df.outgoing]
+        # replace user and conversation names
+        if args.anonymize != 'all': # keep distinction among other speakers
+            # replace conversation names
+            conversation_names = {}
+            for i, name in enumerate(df.conversationWithName.unique(), start=1):
+                conversation_names[name] = f'<conversation{i}>'
+            df.conversationWithName = [conversation_names[name] for name in df.conversationWithName]
+            # replace user names
+            sender_names = {}
+            for i, name in enumerate(df[df.outgoing==False].senderName.unique(), start=1):
+                sender_names[name] = f'<you{i}>'
+            df.senderName = ['<me>' if outgoing else sender_names[name] for name, outgoing in df[['senderName','outgoing']].itertuples(index=False)]
+        else: # omit distinction among other speakers
+            df.conversationWithName = '<conversation>'
+            df.senderName = ['<me>' if x else '<you>' for x in df.outgoing]
 
         # also remove potenitally sensitive or identifiable information in messages
         if args.anonymize != 'weak': # 'medium', 'strong', and 'all' options
