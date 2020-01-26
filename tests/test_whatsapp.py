@@ -58,6 +58,24 @@ ground_truth_chat3 = {
             ]
         }
 
+ground_truth_chat4 = {
+        'datetime': [
+            datetime(2019, 9, 17, 8, 30, 52),
+            datetime(2019, 9, 17, 16, 30, 10),
+            datetime(2019, 9, 18, 16, 50, 32),
+            ],
+        'text': [
+            'US datetime format',
+            'US datetime format',
+            'US datetime format',
+            ],
+        'senderName': [
+            'John Doe',
+            'John Doe',
+            'John Doe',
+            ]
+        }
+
 
 def test_parse_chat_info_chat1():
     data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat.txt')], 'John Doe', True)
@@ -83,3 +101,13 @@ def test_parse_us_datetime_chat3():
     assert len(df_truth) == len(df)
     for i, row in df.iloc[:len(df_truth)].iterrows():
         assert row.timestamp == df_truth.iloc[i].datetime.timestamp()
+
+def test_parse_us_datetime_chat4():
+    data = parse_messages([os.path.join(TEST_DATA_LOCATION, '_chat 4.txt')], 'John Doe', True)
+    df = pd.DataFrame(data, columns=config['ALL_COLUMNS'])
+    df_truth = pd.DataFrame(ground_truth_chat4)
+    assert len(df_truth) == len(df)
+    for i, row in df.iloc[:len(df_truth)].iterrows():
+        assert row.timestamp == df_truth.iloc[i].datetime.timestamp()
+        assert row.text == df_truth.iloc[i].text
+        assert row.senderName == df_truth.iloc[i].senderName
