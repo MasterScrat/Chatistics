@@ -13,7 +13,7 @@ from parsers.utils import export_dataframe, detect_language
 
 log = logging.getLogger(__name__)
 regex_left = r'[\u0000-\u001F\u0100-\uFFFF]?'
-regex_datetime = r'[^\w]?([0-9./\-]{6,10},?[\sT][0-9:]{5,8})[^\w]?\s[\-]?\s?'
+regex_datetime = r'[^\w]?([0-9./\-]{6,10},?[\sT][0-9:]{5,8}\s?[AP]?M?)[^\w]?\s?[\-\–]?\s'
 regex_right = r'(([^:]+):\s)?(.*)'
 regex_message = re.compile(f'^{regex_left}{regex_datetime}{regex_right}$')
 MAX_EXPORTED_MESSAGES = 1000000
@@ -26,7 +26,7 @@ def infer_datetime_regex(f_path, max_messages=100):
         for c, line in enumerate(f):
             if c == max_messages:
                 break;
-            matches = regex_message.search(line)
+            matches = regex_message.search(line.upper())
             if matches:
                 pattern = ""
                 first = True
@@ -50,6 +50,9 @@ def infer_datetime_regex(f_path, max_messages=100):
                         if l in '.*+[]{}()\\|':
                             pattern += '\\'
                         pattern += l
+                        if i > 0 and pattern[-2:] in ['AM','PM']:
+                            pattern = pattern[:-2] + '[APap][Mm]'
+                            last = len(pattern)
                 pattern = pattern[0:last] + ')' + pattern[last:]
                 patterns[pattern] += 1
     if len(patterns) > 0:
