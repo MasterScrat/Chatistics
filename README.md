@@ -217,13 +217,13 @@ Pull requests are welcome!
 
 ## Social medias
 
-[HackerNews '20](https://news.ycombinator.com/item?id=22069699)
+- [HackerNews '20](https://news.ycombinator.com/item?id=22069699)
 
-[/r/MachineLearning '20](https://www.reddit.com/r/MachineLearning/comments/epi628/p_chatistics_python_scripts_to_turn_your/)
+- [/r/MachineLearning '20](https://www.reddit.com/r/MachineLearning/comments/epi628/p_chatistics_python_scripts_to_turn_your/)
 
-[/r/datascience '18](https://www.reddit.com/r/datascience/comments/7vvpbl/chatistics_python_scripts_to_turn_your_messenger/)
+- [/r/datascience '18](https://www.reddit.com/r/datascience/comments/7vvpbl/chatistics_python_scripts_to_turn_your_messenger/)
 
-[/r/MachineLearning '18](https://www.reddit.com/r/MachineLearning/comments/7s1d2a/p_chatistics_python_scripts_to_turn_your/)
+- [/r/MachineLearning '18](https://www.reddit.com/r/MachineLearning/comments/7s1d2a/p_chatistics_python_scripts_to_turn_your/)
 
 ## Projects using Chatistics
 
