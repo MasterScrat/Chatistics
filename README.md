@@ -82,21 +82,11 @@ The Telegram API works differently: you will first need to setup Chatistics, the
 
 ## 2. Setup Chatistics
 
-First, install the required Python packages:
-
-**Use conda (recommended)**
+First, install the required Python packages using conda:
 
 ```
 conda env create -f environment.yml
 conda activate chatistics
-```
-
-**Or virtualenv**
-
-```
-virtualenv chatistics
-source chatistics/bin/activate
-pip install -r requirements.txt
 ```
 
 You can now parse the messages by using the command `python parse.py <platform> <arguments>`.
