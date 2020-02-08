@@ -6,6 +6,7 @@ import pandas as pd
 import logging
 from collections import defaultdict
 import glob
+from sys import exit
 
 log = logging.getLogger(__name__)
 
