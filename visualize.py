@@ -49,6 +49,14 @@ class ArgParse():
         args = parser.parse_args(sys.argv[2:])
         main(args)
 
+    def emoji(self):
+        from visualizers.emoji import main
+        parser = ArgParseDefault(description='Visualize emoji usage')
+        parser = add_load_data_args(parser)
+        parser.add_argument('--top-n-users', dest='top_n_users', type=int, default=10, help='Show top n users')
+        parser.add_argument('--top-n-emojis', dest='top_n_emojis', type=int, default=20, help='Show top n emojis per user')
+        args = parser.parse_args(sys.argv[2:])
+        main(args)
 
 if __name__ == '__main__':
     ArgParse()
