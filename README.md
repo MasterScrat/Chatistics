@@ -20,12 +20,13 @@ Can also generate histograms and word clouds from the chat logs.
 
 ### Support Matrix
 
-|      Platform      | Direct Chat  | Group Chat |
-|:------------------:|:-----------: |:----------:|
-| Facebook Messenger |     ✔        |     ✘      |
-| Google Hangouts    |     ✔        |     ✘      |
-| Telegram           |     ✔        |     ✘      |
-| WhatsApp           |     ✔        |     ✔      |
+|      Platform             | Direct Chat | Group Chat |
+|:-------------------------:|:-----------:|:----------:|
+| Facebook Messenger        |     ✔       |     ✘     |
+| Google Hangouts           |     ✔       |     ✘     |
+| Telegram (API)            |     ✔       |     ✘     |
+| Telegram (Desktop Client) |     ✔       |     ✔     |
+| WhatsApp                  |     ✔       |     ✔     |
 
 ### Exported data
 
@@ -76,9 +77,16 @@ Unfortunately, WhatsApp only lets you export your conversations **from your phon
 4. Send chat to yourself eg via Email
 5. Unpack the archive and add the individual .txt files to the folder `./raw_data/whatsapp/`
 
-### Telegram
+### Telegram (Desktop Client)
 
-The Telegram API works differently: you will first need to setup Chatistics, then query your chat logs programmatically. This process is documented below. Exporting Telegram chat logs is very fast.
+1. Open Telegram Desktop Client
+2. Open Settings > Export Telegram data
+5. Unpack result.json file to the folder `./raw_data/telegram/`
+
+### Telegram (API)
+
+The Telegram API works differently: you will first need to setup Chatistics, then query your chat logs programmatically. 
+This process is documented below. Exporting Telegram chat logs is very fast.
 
 ## 2. Setup Chatistics
 
@@ -102,18 +110,21 @@ python parse.py messenger
 
 # WhatsApp
 python parse.py whatsapp
+
+# Telegram (Desktop Client)
+python parse.py telegram_json
 ```
 
-### Telegram
+### Telegram (API)
 1. Create your Telegram application to access chat logs ([instructions](https://core.telegram.org/api/obtaining_api_id)).
 You will need `api_id` and `api_hash` which we will now set as environment variables.
 2. Run `cp secrets.sh.example secrets.sh` and fill in the values for the environment variables `TELEGRAM_API_ID`, `TELEGRAMP_API_HASH` and `TELEGRAM_PHONE` (your phone number including country code).
 3. Run `source secrets.sh`
-4. Execute the parser script using `python parse.py telegram`
+4. Execute the parser script using `python parse.py telegram_api`
 
 The pickle files will now be ready for analysis in the `data` folder!
 
-For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram --help`).
+For more options use the `-h` argument on the parsers (e.g. `python parse.py telegram_api --help`).
 
 
 ## 3. All done! Play with your data
@@ -144,7 +155,7 @@ Among other options you can filter messages as needed (also see `python visualiz
 
 ```
   --platforms {telegram,whatsapp,messenger,hangouts}
-                        Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts'])
+                        Use data only from certain platforms (default: ['telegram_api', 'telegram_json', 'whatsapp', 'messenger', 'hangouts'])
   --filter-conversation
                         Limit by conversations with this person/group (default: [])
   --filter-sender

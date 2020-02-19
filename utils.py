@@ -16,7 +16,7 @@ class ArgParseDefault(argparse.ArgumentParser):
 
 def add_load_data_args(parser):
     """Adds common data loader arguments to arg parser"""
-    platforms = ['telegram', 'whatsapp', 'messenger', 'hangouts']
+    platforms = ['telegram_api', 'telegram_json', 'whatsapp', 'messenger', 'hangouts']
     parser.add_argument('-p', '--platforms', default=platforms, choices=platforms, nargs='+', help='Use data only from certain platforms')
     parser.add_argument('--filter-conversation', dest='filter_conversation', nargs='+', default=[], help='Limit by conversations with this person/group')
     parser.add_argument('--filter-sender', dest='filter_sender', nargs='+', default=[], help='Limit by messages by this sender')
