@@ -79,6 +79,9 @@ def parse_messages(archive, own_id, own_name):
         conversation_with_name = conversation["displayName"]
         if conversation_with_name:
             conversation_with_name = html.unescape(conversation_with_name)
+        else:
+            # If conversation_with_name is None we are collecting caller log files -> skip
+            continue
         for message in conversation["MessageList"]:
             message_type = message["messagetype"]
             timestamp = parse(message["originalarrivaltime"]).timestamp()
@@ -98,18 +101,18 @@ def parse_messages(archive, own_id, own_name):
                     ind = sender_id.rfind(":")
                     sender_name = sender_id[ind+1:]
                     save_name_for_id(sender_name, sender_id)
-                
+
                 soup = BeautifulSoup(content, "html.parser")
 
                 # remove quotes
                 for script in soup(["quote", "legacyquote"]):
-                    script.extract() 
+                    script.extract()
 
                 content = soup.get_text()
 
                 # saves the message
                 data += [[timestamp, conversation_with_id, conversation_with_name, sender_name, outgoing, content, '', '']]
-                
+
                 if len(data) >= MAX_EXPORTED_MESSAGES:
                     log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
                     return data
@@ -122,7 +125,7 @@ def parse_messages(archive, own_id, own_name):
                     ind = sender_id.rfind(":")
                     sender_name = sender_id[ind+1:]
                     save_name_for_id(sender_name, sender_id)
-                
+
                 # saves the message
                 data += [[timestamp, conversation_with_id, conversation_with_name, sender_name, outgoing, content, '', '']]
 
