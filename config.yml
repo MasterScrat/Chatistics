@@ -21,3 +21,6 @@ telegram:
 whatsapp:
   DEFAULT_RAW_LOCATION: 'raw_data/whatsapp'
   OUTPUT_PICKLE_NAME: 'whatsapp.pkl'
+skype:
+  DEFAULT_RAW_LOCATION: 'raw_data/skype/messages.json'
+  OUTPUT_PICKLE_NAME: 'skype.pkl'

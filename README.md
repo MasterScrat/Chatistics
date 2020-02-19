@@ -20,12 +20,13 @@ Can also generate histograms and word clouds from the chat logs.
 
 ### Support Matrix
 
-|      Platform      | Direct Chat  | Group Chat |
-|:------------------:|:-----------: |:----------:|
+|      Platform      | Direct Chat  | Group Chat  |
+|:------------------:|:------------:|:-----------:|
 | Facebook Messenger |     ✔        |     ✘      |
 | Google Hangouts    |     ✔        |     ✘      |
 | Telegram           |     ✔        |     ✘      |
 | WhatsApp           |     ✔        |     ✔      |
+| Skype              |     ✔        |     ✔      |
 
 ### Exported data
 
@@ -80,6 +81,18 @@ Unfortunately, WhatsApp only lets you export your conversations **from your phon
 
 The Telegram API works differently: you will first need to setup Chatistics, then query your chat logs programmatically. This process is documented below. Exporting Telegram chat logs is very fast.
 
+### Skype
+
+**Warning:** Skype archives can take a long time to be ready for download - up to one hour in our experience.
+
+1. Login to your Skype account: https://go.skype.com/export
+2. Select the option to download your Conversations, and then select Submit request
+3. When your request is complete, you'll receive a notification in Skype with a link to view or download your file.
+   If you don't receive a notification in Skype, check the [export page](http://go.skype.com/export). 
+   A link to download your files will also appear there once they are available to download.
+4. Click the Download button to download your files
+5. Extract the file called `messages.json` to `./raw_data/skype/`
+
 ## 2. Setup Chatistics
 
 First, install the required Python packages using conda:
@@ -102,6 +115,9 @@ python parse.py messenger
 
 # WhatsApp
 python parse.py whatsapp
+
+# Skype
+python parse.py skype
 ```
 
 ### Telegram
@@ -144,7 +160,7 @@ Among other options you can filter messages as needed (also see `python visualiz
 
 ```
   --platforms {telegram,whatsapp,messenger,hangouts}
-                        Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts'])
+                        Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts', 'skype'])
   --filter-conversation
                         Limit by conversations with this person/group (default: [])
   --filter-sender

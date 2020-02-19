@@ -12,6 +12,7 @@ Available commands:
   hangouts         Parse logs from hangouts
   messenger        Parse logs from messenger
   whatsapp         Parse logs from whatsapp
+  skype            Parse logs from skype
 """
 
 
@@ -78,6 +79,15 @@ class ArgParse():
                             default=True, help='Infer datetime regex for each chat if true')
         args = parser.parse_args(sys.argv[2:])
         main(args.own_name, args.file_path, args.max, args.infer_datetime)
+
+    def skype(self):
+        from parsers.skype import main
+        parser = ArgParseDefault(description='Parse message logs from Skype')
+        parser = add_common_parse_arguments(parser)
+        parser.add_argument('-f', '--file-path', dest='file_path', default=config['skype']['DEFAULT_RAW_LOCATION'],
+                            help='Path to Skype chat log file (json file)')
+        args = parser.parse_args(sys.argv[2:])
+        main(args.own_name, args.file_path, args.max)
 
 
 if __name__ == '__main__':
