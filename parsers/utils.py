@@ -4,6 +4,7 @@ import logging
 import langdetect
 from langdetect.lang_detect_exception import LangDetectException
 
+
 log = logging.getLogger(__name__)
 
 
