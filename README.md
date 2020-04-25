@@ -159,7 +159,7 @@ Plot all messages with:
 Among other options you can filter messages as needed (also see `python visualize.py breakdown --help`):
 
 ```
-  --platforms {telegram,whatsapp,messenger,hangouts}
+  --platforms {telegram,whatsapp,messenger,hangouts,skype}
                         Use data only from certain platforms (default: ['telegram', 'whatsapp', 'messenger', 'hangouts', 'skype'])
   --filter-conversation
                         Limit by conversations with this person/group (default: [])
