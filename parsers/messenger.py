@@ -55,7 +55,7 @@ def parse_messages(file_path, own_name):
                 continue
             for participant in participants:
                 if participant['name'] != own_name:
-                    conversation_with_name = participant['name']
+                    conversation_with_name = fix_text_encoding(participant['name'])
             if conversation_with_name is None: conversation_with_name = conversation_id
             for message in json_data["messages"]:
                 timestamp = message["timestamp_ms"] / 1000
@@ -63,10 +63,10 @@ def parse_messages(file_path, own_name):
                     content = message["content"]
                     content = fix_text_encoding(content)
                     if "sender_name" in message:
-                        sender_name = message["sender_name"]
+                        sender_name = fix_text_encoding(message["sender_name"])
                     else:
                         sender_name = conversation_id
-                    outgoing = sender_name == own_name
+                    outgoing = sender_name == fix_text_encoding(own_name)
                     data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, content, '', '']]
                     if len(data) >= MAX_EXPORTED_MESSAGES:
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
