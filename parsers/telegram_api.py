@@ -61,7 +61,7 @@ async def _main_loop(client):
     df['platform'] = 'telegram'
     log.info('Detecting languages...')
     df = detect_language(df)
-    export_dataframe(df, config['telegram']['OUTPUT_PICKLE_NAME'])
+    export_dataframe(df, config['telegram_api']['OUTPUT_PICKLE_NAME'])
     log.info('Done.')
 
 

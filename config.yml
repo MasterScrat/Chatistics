@@ -15,9 +15,12 @@ hangouts:
 messenger:
   DEFAULT_RAW_LOCATION: 'raw_data/messenger'
   OUTPUT_PICKLE_NAME: 'messenger.pkl'
-telegram:
+telegram_api:
   USER_DIALOG_MESSAGES_LIMIT: 100000
-  OUTPUT_PICKLE_NAME: 'telegram.pkl'
+  OUTPUT_PICKLE_NAME: 'telegram_api.pkl'
+telegram_json:
+  DEFAULT_RAW_LOCATION: 'raw_data/telegram/result.json'
+  OUTPUT_PICKLE_NAME: 'telegram_json.pkl'
 whatsapp:
   DEFAULT_RAW_LOCATION: 'raw_data/whatsapp'
   OUTPUT_PICKLE_NAME: 'whatsapp.pkl'
