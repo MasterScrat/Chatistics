@@ -11,5 +11,6 @@ dependencies:
   - pip==19.3.1
   - seaborn==0.9.0
   - wordcloud==1.6.0
+  - beautifulsoup4==4.8.2
   - pip:
       - telethon==1.10.9

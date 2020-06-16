@@ -18,7 +18,6 @@ def timestamp_to_ordinal(value):
     return datetime.datetime.fromtimestamp(float(value)).toordinal()
 
 
-
 def detect_language(df, min_token_count=5):
     """Detects language of input text"""
     for name, group in df.groupby(df.conversationWithName):
