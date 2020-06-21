@@ -14,7 +14,7 @@ def main(own_name, file_path, max_exported_messages):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Facebook messenger data...')
-    if len(glob.glob(os.path.join(file_path, '**', '*.json'))) == 0:
+    if len(glob.glob(os.path.join(file_path, '**', '**', '*.json'))) == 0:
         log.error(f'No input files found under {file_path}')
         exit(0)
     if own_name is None:
