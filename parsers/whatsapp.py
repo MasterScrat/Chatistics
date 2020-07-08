@@ -25,7 +25,7 @@ def infer_datetime_regex(f_path, max_messages=100):
     with open(f_path, 'r', encoding="utf8") as f:
         for c, line in enumerate(f):
             if c == max_messages:
-                break;
+                break
             matches = regex_message.search(line.upper())
             if matches:
                 pattern = ""
@@ -67,7 +67,7 @@ def main(own_name, file_path, max_exported_messages, infer_datetime):
     global MAX_EXPORTED_MESSAGES
     MAX_EXPORTED_MESSAGES = max_exported_messages
     log.info('Parsing Whatsapp data...')
-    files = glob.glob(os.path.join(file_path, '*.txt'))
+    files = glob.glob(os.path.join(file_path, '*', '*.txt'))
     if len(files) == 0:
         log.error(f'No input files found under {file_path}')
         exit(0)
@@ -91,7 +91,6 @@ def parse_messages(files, own_name, infer_datetime):
     data = []
     for f_path in files:
         log.info(f'Reading {f_path}')
-        f_name = os.path.basename(f_path)
         conversation_id = uuid.uuid4().hex
         participants = set()
         conversation_data = []
