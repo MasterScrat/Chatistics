@@ -45,6 +45,11 @@ def load_data(args):
         log.info(f'Reading data for platform {platform}')
         _df = pd.read_pickle(data_path)
         df.append(_df)
+
+    if len(df) == 0:
+        log.error('No data to load!')
+        exit(0)
+
     df = pd.concat(df, axis=0, ignore_index=True)
     original_len = len(df)
     # filtering

@@ -93,22 +93,36 @@ def parse_messages(archive, own_name):
 
     def save_name_for_id(name, _id):
         if _id not in id_to_name_map:
+            log.debug(f'Found name {name}')
             id_to_name_map[_id] = name
+
         elif id_to_name_map[_id] != name:
             log.info(f'Assuming {name} is {id_to_name_map[_id]}')
 
-    data = []
-    log.info('Extracting messages...')
-    for conversation in archive['conversations']:
-        conversation_with_id = ''
+            # prefer the name that is not an email address
+            if '@' in name:
+                log.debug(f'Keeping {id_to_name_map[_id]}')
+            else:
+                log.debug(f'Keeping {name}')
+                id_to_name_map[_id] = name
 
-        # saves the fallback_name of all participants
+    # Extract ids before parsing messages, as sometimes the fallback_name is only found after the person's first message
+    log.info('Extracting all interlocutor ids...')
+    for conversation in archive['conversations']:
         if 'conversation' in conversation['conversation']:
             for participant in conversation['conversation']['conversation']['participant_data']:
                 if 'fallback_name' in participant:
-                    save_name_for_id(participant['fallback_name'], participant['id']['chat_id'])
+                    full_name = participant['fallback_name']
+                    chat_id = participant['id']['chat_id']
+                    save_name_for_id(full_name, chat_id)
+
+    data = []
+    log.info('Parsing messages...')
+    for conversation in archive['conversations']:
+        conversation_with_id = ''
 
         for event in conversation['events']:
+            # there are many types of events, we are only interested in the chat messages with actual text content
             if 'chat_message' in event and 'segment' in event['chat_message']['message_content']:
                 timestamp = int(event['timestamp'])
                 content = event['chat_message']['message_content']
@@ -127,7 +141,6 @@ def parse_messages(archive, own_name):
                     conversation_with_name = id_to_name(conversation_with_id)
 
                     if sender_name is not None or conversation_with_name is not None:
-
                         # checks that the sender is either own_name or the interlocutor
                         if sender_name != own_name and sender_id != conversation_with_id:
                             log.error(f'Parsing error. Is your own_name {own_name} correct?')
@@ -138,7 +151,7 @@ def parse_messages(archive, own_name):
 
                         # saves the message
                         timestamp = timestamp / 1000000
-                        outgoing = sender_name == own_name
+                        outgoing = (sender_name == own_name)
                         conversation_with_name = conversation_with_name if conversation_with_name is not None else ''
                         sender_name = sender_name if sender_name is not None else ''
                         data += [[timestamp, conversation_id, conversation_with_name, sender_name, outgoing, text, '', '']]
@@ -149,6 +162,7 @@ def parse_messages(archive, own_name):
                     if len(data) >= MAX_EXPORTED_MESSAGES:
                         log.warning(f'Reached max exported messages limit of {MAX_EXPORTED_MESSAGES}. Increase limit in order to parse all messages.')
                         return data
+
     return data
 
 
@@ -160,13 +174,11 @@ def read_archive(file_path):
 
 
 def infer_own_name(archive, min_conversations=2):
-    '''Infers own name from multiple conversations by finding the person who participated most in the conversations'''
+    """Infers own name from multiple conversations by finding the person who participated most in the conversations"""
     participants_conversation_count = defaultdict(int)
     num_conversations = 0
     log.info('Trying to infer own_name from data...')
     for conversation in archive['conversations']:
-        conversation_with_id = ''
-        conversationWithName = ''
         if 'conversation' in conversation['conversation']:
             participants = conversation['conversation']['conversation']['participant_data']
             participants = [p['fallback_name'] for p in participants if 'fallback_name' in p]
@@ -174,8 +186,9 @@ def infer_own_name(archive, min_conversations=2):
                 num_conversations += 1
                 for p in participants:
                     participants_conversation_count[p] += 1
+
     if num_conversations >= min_conversations and len(participants_conversation_count.keys()) >= 2:
         own_name = max(participants_conversation_count, key=participants_conversation_count.get)
         log.info(f'Successfully inferred own-name to be {own_name}')
         return own_name
-    raise Exception('Could not infer own name from existing converstations. Please provide your username manually with the --own-name argument')
+    raise Exception('Could not infer own name from existing conversations. Please provide your username manually with the --own-name argument')
