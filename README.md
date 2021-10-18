@@ -64,7 +64,7 @@ Data exported for each message regardless of the platform:
 3. Select the date range you want. **The format *must* be JSON.** Media won't be used, so you can set the quality to "Low" to speed things up.
 4. Click on "Deselect All", then scroll down to select "Messages" only
 5. Click on "Create File" at the top of the list. It will take Facebook a while to generate your archive.
-4. Once the archive is ready, download and extract it, then move the content of the `messages` folder into `./raw_data/messenger/`
+4. Once the archive is ready, download and extract it, then move the `messages` folder into `./raw_data/messenger/`
 
 ### WhatsApp
 
